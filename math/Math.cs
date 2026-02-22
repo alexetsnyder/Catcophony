@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Quasar.math
 {
@@ -59,6 +60,59 @@ namespace Quasar.math
             }
 
             return minDistCellCoord;
+        }
+
+        public static List<Vector2I> MaxConnectedArea(List<Vector2I> allPoints, Func<Vector2I, bool> validPoint)
+        {
+            List<Vector2I> adjDir = [new(1, 0), new(0, 1), new(-1, 0), new(0, -1),
+                                     new(1, 1), new(-1, 1), new(1, -1), new(-1, -1)];
+            Dictionary<Vector2I, bool> visited = allPoints.ToDictionary(p => p, _ => false);
+
+            List<Vector2I> maxConnectedArea = [];
+
+            foreach (var cellCoord in allPoints)
+            {
+                if (visited[cellCoord])
+                {
+                    continue;
+                }
+
+                Queue<Vector2I> queue = [];
+                List<Vector2I> connectedArea = [];
+
+                queue.Enqueue(cellCoord);
+
+                while (queue.Count > 0)
+                {
+                    var nextCoord = queue.Dequeue();
+
+                    if (!validPoint(nextCoord) || visited[nextCoord])
+                    {
+                        continue;
+                    }
+
+                    visited[nextCoord] = true;
+
+                    connectedArea.Add(nextCoord);
+
+                    foreach (var adjCoord in adjDir.Select(c => nextCoord + c))
+                    {
+                        queue.Enqueue(adjCoord);
+                    }
+                }
+
+                if (connectedArea.Count > 0)
+                {
+                    GD.Print($"Area Count: {connectedArea.Count}");
+                }
+
+                if (connectedArea.Count > maxConnectedArea.Count)
+                {
+                    maxConnectedArea = connectedArea;
+                }
+            }
+
+            return maxConnectedArea;
         }
     }
 }

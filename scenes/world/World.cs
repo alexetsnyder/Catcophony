@@ -353,7 +353,7 @@ namespace Quasar.scenes.world
             _aStarGrid2d.CellSize = _worldLayer.TileSet.TileSize;
             _aStarGrid2d.DefaultComputeHeuristic = AStarGrid2D.Heuristic.Manhattan;
             _aStarGrid2d.DefaultEstimateHeuristic = AStarGrid2D.Heuristic.Manhattan;
-            _aStarGrid2d.DiagonalMode = AStarGrid2D.DiagonalModeEnum.Never;
+            _aStarGrid2d.DiagonalMode = AStarGrid2D.DiagonalModeEnum.Always;
             _aStarGrid2d.Update();
 
             foreach (var cellCoord in _worldLayer.GetUsedCellsById())
@@ -382,11 +382,11 @@ namespace Quasar.scenes.world
                 var tileSize = _worldLayer.TileSet.TileSize;
                 cat.Scale = new(tileSize.X / cat.Width, tileSize.Y / cat.Height);
 
-                var largestArea = GetLargestConnectedArea();
+                var maxConnnectedArea = Math.MaxConnectedArea(GetAllPoints(), (v) => IsInBounds(v) && !IsImpassable(v));
 
                 Vector2I center = new(Rows / 2, Cols / 2);
 
-                var cellCoord = Math.MinDistanceToPoint(largestArea, center);
+                var cellCoord = Math.MinDistanceToPoint(maxConnnectedArea, center);
 
                 if (cellCoord != null)
                 {
@@ -396,53 +396,6 @@ namespace Quasar.scenes.world
                     HideCell(cellCoord.Value);
                 }
             } 
-        }
-
-        private List<Vector2I> GetLargestConnectedArea()
-        {
-            var allPoints = GetAllPoints();
-            Dictionary<Vector2I, bool> visited = allPoints.ToDictionary(p => p, _ => false);
-
-            List<Vector2I> largestArea = [];
-
-            foreach (var cellCoord in allPoints)
-            {
-                if (visited[cellCoord])
-                {
-                    continue;
-                }
-
-                Queue<Vector2I> queue = [];
-                List<Vector2I> connectedArea = [];
-
-                queue.Enqueue(cellCoord);
-
-                while (queue.Count > 0)
-                {
-                    var nextCoord = queue.Dequeue();
-
-                    if (!IsInBounds(nextCoord) || IsImpassable(nextCoord) || visited[nextCoord])
-                    {
-                        continue;
-                    }
-
-                    visited[nextCoord] = true;
-
-                    connectedArea.Add(nextCoord);
-
-                    foreach (var adjCoord in GetAdjacentCells(nextCoord))
-                    {
-                        queue.Enqueue(adjCoord);
-                    }
-                }
-
-                if (connectedArea.Count > largestArea.Count)
-                {
-                    largestArea = connectedArea;
-                }
-            }
-
-            return largestArea;
         }
 
         public List<Vector2I> GetAllPoints()

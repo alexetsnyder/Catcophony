@@ -30,13 +30,15 @@ namespace Quasar.data
 
         public static Vector2I HILLS_02 { get => new(14, 6); }
 
-        public static Vector2I DIRT {  get => new(10, 15); }
+        public static Vector2I GRASS_01 {  get => new(10, 15); }
 
-        public static Vector2I GRASS_01 { get => new(12, 2); }
+        public static Vector2I GRASS_02 { get => new(12, 2); }
 
-        public static Vector2I GRASS_02 { get => new(0, 6); }
+        public static Vector2I GRASS_03 { get => new(0, 6); }
 
-        public static Vector2I GRASS_03 { get => new(7, 2); }
+        public static Vector2I GRASS_04 { get => new(7, 2); }
+
+        public static Vector2I DIRT { get => new(7, 15); }
 
         public static string GetTileStrReflection(Vector2I atlasCoord)
         {

@@ -79,11 +79,27 @@ namespace Quasar.scenes.world
 
         private WorldCell[,] _worldCellArray;
 
-        private readonly List<Vector2I> _groundVariance = [AtlasCoordWorld.DIRT, AtlasCoordWorld.GRASS_01, 
-                                                           AtlasCoordWorld.GRASS_02, AtlasCoordWorld.GRASS_03];
+        private readonly List<Vector2I> _groundVariance = [AtlasCoordWorld.GRASS_01, AtlasCoordWorld.GRASS_02, 
+                                                           AtlasCoordWorld.GRASS_03, AtlasCoordWorld.GRASS_04];
 
         private readonly List<Color> _colorVariance = [ColorConstants.RED, ColorConstants.GREEN, ColorConstants.GRASS_GREEN, 
                                                        ColorConstants.YELLOW, ColorConstants.ORANGE, ColorConstants.AMBER];
+
+        #region TileMapLayer SourceIds
+
+        private int _gridLayerSourceId = 1;
+
+        private int _worldLayerSourceId = 0;
+
+        private int _hideLayerSourceId = 0;
+
+        private int _selectingLayerSourceId = 0;
+
+        private int _selectLayerSourceId = 0;
+
+        private int _pathLayerSourceId = 0;
+
+        #endregion
 
         #endregion
 
@@ -100,8 +116,8 @@ namespace Quasar.scenes.world
             _selectLayer = GetNode<TileMapLayer>("SelectLayer");
             _pathLayer = GetNode<TileMapLayer>("PathLayer");
             _selectionRect = GetNode<ColorRect>("SelectionRect");
-            _heightNoise = new SimplexNoise(_rng.RandiRange(int.MinValue, int.MaxValue));
 
+            _heightNoise = new SimplexNoise(_rng.RandiRange(int.MinValue, int.MaxValue));
             _worldCellArray = new WorldCell[Rows, Cols];
 
             GenerateWorld();
@@ -121,8 +137,6 @@ namespace Quasar.scenes.world
                 _selectionRect.Size = newSelectionRect.Size;
                 SetSelectingArea();
             }
-
-            //CheckForWork();
         }
 
         public override void _UnhandledInput(InputEvent @event)
@@ -227,7 +241,7 @@ namespace Quasar.scenes.world
             var start = _worldLayer.LocalToMap(startPos);
             var end = _worldLayer.LocalToMap(endPos);
 
-            return [.. _aStarGrid2d.GetPointPath(start, end)];
+            return [.._aStarGrid2d.GetPointPath(start, end)];
         }
 
         public void ShowPath(List<Vector2> path)
@@ -238,21 +252,22 @@ namespace Quasar.scenes.world
             {
                 var cellCoord = _worldLayer.LocalToMap(point);
 
-                SelectCell(_pathLayer, cellCoord, new(0, 0), PathColor);
+                SelectCell(_pathLayer, cellCoord, _pathLayerSourceId, new(0, 0), PathColor);
             }
 
         }
+
         public void ClearPath()
         {
             _pathLayer.Clear();
         }
 
-        public void HideCell(Vector2 localPos)
+        public void HideTile(Vector2 localPos)
         {
             HideCell(_worldLayer.LocalToMap(localPos));
         }
 
-        public void ShowCell(Vector2 localPos)
+        public void ShowTile(Vector2 localPos)
         {
             ShowCell(_worldLayer.LocalToMap(localPos));
         }
@@ -262,20 +277,15 @@ namespace Quasar.scenes.world
             return [..GetAdjacentCells(_worldLayer.LocalToMap(localPos), includeDiagonals).Select(a => _worldLayer.MapToLocal(a))];
         }
 
-        public bool IsSolid(Vector2 localPos)
-        {
-            return IsSolid(_worldLayer.LocalToMap(localPos));
-        }
-
         public void Dig(Vector2 localPos)
         {
             var cellCoord = _worldLayer.LocalToMap(localPos);
 
             if (IsSolid(cellCoord) && _selectLayer.GetCellSourceId(cellCoord) != -1)
             {
-                SetCell(_worldLayer, cellCoord, 0, AtlasCoordWorld.DIRT, 6, ColorConstants.BURNT_ORANGE);
+
+                UpdateWorldTile(TileType.DIRT, cellCoord);
                 SetCell(_selectLayer, cellCoord);
-                _worldCellArray[cellCoord.X, cellCoord.Y] = new(AtlasCoordWorld.DIRT, ColorConstants.BURNT_ORANGE, 6);
                 _aStarGrid2d.SetPointSolid(cellCoord, false);
 
                 foreach (var adjCell in GetAdjacentCells(cellCoord, true))
@@ -288,21 +298,23 @@ namespace Quasar.scenes.world
             }
         }
 
-        public bool IsEdge(Vector2 localPos)
-        {
-            return IsEdge(_worldLayer.LocalToMap(localPos));
-        }
-
         #endregion
 
         #region Private Methods
 
+        private void UpdateWorldTile(TileType tileType, Vector2I cellCoord)
+        {
+            var atlasCoord = GetAtlasCoord(tileType);
+            var modulate = GetTileColor(tileType, out int alternativeTile);
+
+            _worldCellArray[cellCoord.X, cellCoord.Y] = new(tileType, atlasCoord, modulate, alternativeTile);
+
+            SetCell(_worldLayer, cellCoord, _worldLayerSourceId, atlasCoord, alternativeTile, modulate);
+        }
+
         private void SetWall(Vector2I cellCoord)
         {
-            var atlasCoord = AtlasCoordWorld.SOLID_WALL;
-            var modulate = GetTileColor(atlasCoord, out int colorIndex);
-            _worldCellArray[cellCoord.X, cellCoord.Y] = new(atlasCoord, modulate, colorIndex);
-            SetCell(_worldLayer, cellCoord, 0, atlasCoord, 0, modulate);
+            UpdateWorldTile(TileType.SOLID_WALL, cellCoord);
         }
 
         private void GenerateWorld()
@@ -312,9 +324,10 @@ namespace Quasar.scenes.world
                 for (int j = 0; j < Cols; j++)
                 {
                     var noiseVal = _heightNoise.GetNoise(j, i);
-                    var atlasCoord = GetAtlasCoord(noiseVal);
-                    var modulate = GetTileColor(atlasCoord, out int colorIndex);
-                    _worldCellArray[i, j] = new(atlasCoord, modulate, colorIndex);
+                    var tileType = GetTileType(noiseVal);
+                    var atlasCoord = GetAtlasCoord(tileType);
+                    var modulate = GetTileColor(tileType, out int alternativeTile);
+                    _worldCellArray[i, j] = new(tileType, atlasCoord, modulate, alternativeTile);
                 }
             }
 
@@ -330,9 +343,7 @@ namespace Quasar.scenes.world
                     var cellCoord = new Vector2I(i, j);
                     if (IsEdge(cellCoord))
                     {
-                        var atlasCoord = AtlasCoordWorld.SOLID_WALL;
-                        var modulate = GetTileColor(atlasCoord, out int colorIndex);
-                        _worldCellArray[i, j] = new(atlasCoord, modulate, colorIndex);
+                        SetWall(cellCoord);
                     }
                 }
             }
@@ -383,28 +394,21 @@ namespace Quasar.scenes.world
                     var cellCoord = new Vector2I(i, j);
                     var worldCell = _worldCellArray[i, j];
 
-                    SetCell(_worldLayer, cellCoord, 0, worldCell.AtlasCoord, worldCell.AlternateTile, worldCell.Modulate);
-                    SetCell(_gridLayer, cellCoord, 1, new(0, 0), 0, ColorConstants.GREY);
+                    SetCell(_worldLayer, cellCoord, _worldLayerSourceId, worldCell.AtlasCoord, worldCell.AlternateTile, worldCell.Modulate);
+                    SetCell(_gridLayer, cellCoord, _gridLayerSourceId, new(0, 0), 0, ColorConstants.GREY);
                 }
             }
         }
 
-        private Vector2I GetAtlasCoord(Vector2I cellCoord)
+        private bool IsSolid(Vector2I tileCoord)
         {
-            var worldCell = GetWorldCell(cellCoord);
-
+            var worldCell = GetWorldCell(tileCoord);
             if (worldCell == null)
             {
-                return AtlasCoordWorld.SOLID;
+                return true;
             }
 
-            return worldCell.AtlasCoord;
-        }
-
-        private bool IsSolid(Vector2I cellCoord)
-        {
-            var atlasCoord = GetAtlasCoord(cellCoord);
-            return (atlasCoord == AtlasCoordWorld.SOLID || atlasCoord == AtlasCoordWorld.SOLID_WALL);
+            return (worldCell.TileType == TileType.SOLID || worldCell.TileType == TileType.SOLID_WALL);
         }
 
         private static void SetCell(TileMapLayer tileMapLayer, Vector2I cellCoord, int sourceId = -1, Vector2I? atlasCoord = null, int alternateTile = 0, Color? modulate = null)
@@ -441,10 +445,15 @@ namespace Quasar.scenes.world
 
         private bool IsImpassable(Vector2I cellCoord)
         {
-            var atlasCoord = _worldLayer.GetCellAtlasCoords(cellCoord);
-            return (atlasCoord == AtlasCoordWorld.SOLID || 
-                    atlasCoord == AtlasCoordWorld.SOLID_WALL || 
-                    atlasCoord == AtlasCoordWorld.WATER);
+            var worldCell = GetWorldCell(cellCoord);
+            if (worldCell == null)
+            {
+                return true;
+            }
+
+            return (worldCell.TileType == TileType.SOLID ||
+                    worldCell.TileType == TileType.SOLID_WALL ||
+                    worldCell.TileType == TileType.WATER);
         }
 
         public List<Vector2I> GetAllPoints()
@@ -522,12 +531,12 @@ namespace Quasar.scenes.world
 
                     if (_selectionState == SelectionState.CANCEL)
                     {
-                        SelectCell(_selectingLayer, cellCoord, AtlasCoordSelection.CANCEL, ColorConstants.WARNING_RED);
+                        SelectCell(_selectingLayer, cellCoord, _selectingLayerSourceId, AtlasCoordSelection.CANCEL, ColorConstants.WARNING_RED);
                     }
                     else
                     {
                         var atlasCoord = GetAtlasCoordForSelection(i, j, startingRow, endingRow, startingCol, endingCol);
-                        SelectCell(_selectingLayer, cellCoord, atlasCoord, SelectionColor);
+                        SelectCell(_selectingLayer, cellCoord, _selectingLayerSourceId, atlasCoord, SelectionColor);
                     }  
                 }
             }
@@ -558,8 +567,8 @@ namespace Quasar.scenes.world
                         var cellCoord = new Vector2I(j, i);
                         if (IsSolid(cellCoord) && _selectLayer.GetCellSourceId(cellCoord) == -1)
                         {
-                            SelectCell(_selectLayer, cellCoord, AtlasCoordSelection.DIG, ColorConstants.GREY);
-                            workList.Add(new("DIGGING", WorkType.DIGGING, _worldLayer.MapToLocal(cellCoord), IsEdge(cellCoord)));
+                            SelectCell(_selectLayer, cellCoord, _selectLayerSourceId, AtlasCoordSelection.DIG, ColorConstants.GREY);
+                            workList.Add(new("DIGGING", WorkType.DIGGING, _worldLayer.MapToLocal(cellCoord)));
                         }
                     }
                 }
@@ -632,51 +641,75 @@ namespace Quasar.scenes.world
             return atlasCoord;
         }
 
-        private void SelectCell(TileMapLayer tileMapLayer, Vector2I cellCoord, Vector2I atlasCoord, Color? modulate = null)
+        private void SelectCell(TileMapLayer tileMapLayer, Vector2I cellCoord, int sourceId, Vector2I atlasCoord, Color? modulate = null)
         {
             if (_worldLayer.GetCellSourceId(cellCoord) != -1)
             {
-                SetCell(tileMapLayer, cellCoord, 0, atlasCoord, 0, modulate);
+                SetCell(tileMapLayer, cellCoord, sourceId, atlasCoord, 0, modulate);
             }
         }
 
-        private Vector2I GetAtlasCoord(float heightNoiseVal)
+        private TileType GetTileType(float heightNoiseVal)
         {
             if (heightNoiseVal < 25.0f)
             {
-                return AtlasCoordWorld.WATER;
+                return TileType.WATER;
             }
             else if (heightNoiseVal < 65.0f)
             {
-                return RandomChoice(_groundVariance, out _);
+                return TileType.GRASS;
             }
             else //(heightNoiseVal < 100.0f)
             {
-                return AtlasCoordWorld.SOLID;
+                return TileType.SOLID;
             }
         }
 
-        private Color GetTileColor(Vector2I atlasCoord, out int colorIndex)
+        private Vector2I GetAtlasCoord(TileType tileType)
         {
-            colorIndex = 0;
-            if (atlasCoord == AtlasCoordWorld.WATER)
+            switch (tileType)
             {
-                return ColorConstants.BLUE;
+                case TileType.WATER:
+                    return AtlasCoordWorld.WATER;
+                case TileType.GRASS:
+                    return RandomChoice(_groundVariance, out _);
+                case TileType.DIRT:
+                    return AtlasCoordWorld.DIRT;
+                case TileType.SOLID_WALL:
+                    return AtlasCoordWorld.SOLID_WALL;
+                case TileType.SOLID:
+                    return AtlasCoordWorld.SOLID;
+                default:
+                    return AtlasCoordWorld.SOLID;
             }
-            else if (atlasCoord == AtlasCoordWorld.DIRT ||
-                     atlasCoord == AtlasCoordWorld.GRASS_01 ||
-                     atlasCoord == AtlasCoordWorld.GRASS_02 ||
-                     atlasCoord == AtlasCoordWorld.GRASS_03)
+        }
+
+        /// <summary>
+        /// Returns the modulate color of tile given tile type.
+        /// </summary>
+        /// <param name="tileType"></param>
+        /// <param name="alternativeTile">
+        /// List Index matches alternative tiles in TileSet.
+        /// </param>
+        /// <returns> Return Tile Color </returns>
+        private Color GetTileColor(TileType tileType, out int alternativeTile)
+        {
+            alternativeTile = 0; 
+            switch (tileType)
             {
-                return RandomChoice(_colorVariance, out colorIndex);
-            }
-            else if (atlasCoord == AtlasCoordWorld.SOLID_WALL)
-            {
-                return ColorConstants.WALL_PURPLE;
-            }
-            else //(atlasCoord == AtlasTileCoords.SOLID)
-            {
-                return ColorConstants.BLACK;
+                case TileType.WATER:
+                    return ColorConstants.BLUE;
+                case TileType.GRASS:
+                    return RandomChoice(_colorVariance, out alternativeTile);
+                case TileType.DIRT:
+                    alternativeTile = 1;
+                    return ColorConstants.BURNT_ORANGE;
+                case TileType.SOLID_WALL:
+                    return ColorConstants.WALL_PURPLE;
+                case TileType.SOLID:
+                    return ColorConstants.BLACK;
+                default:
+                    return ColorConstants.BLACK;
             }
         }
 

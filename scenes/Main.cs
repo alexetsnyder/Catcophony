@@ -192,63 +192,54 @@ namespace Quasar.scenes
         {
             if (_workList.Count > 0 && _cat.CanWork())
             {
-                List<Vector2> reachableWorkPosList = [.. _workList.Where(w => w.IsReachable).Select(w => w.WorldPos)];
-                System.Collections.Generic.Dictionary<Vector2, List<Vector2>> adjTiles = [];
-
-                foreach (var workPos in reachableWorkPosList)
+                var path = ShortestPath(out Vector2? workPos);
+                if (workPos.HasValue)
                 {
-                    if (!adjTiles.ContainsKey(workPos))
-                    {
-                        adjTiles.Add(workPos, []);
-                    }
-
-                    foreach (var adjPos in _world.GetAdjacentTiles(workPos, true))
-                    {
-                        if (!_world.IsSolid(adjPos))
-                        {
-                            adjTiles[workPos].Add(adjPos);
-                        }
-                    }
-                }
-
-                if (adjTiles.Count > 0)
-                {
-                    var shortestPath = ShortestPath(adjTiles, out Vector2 minPoint);
-                    _cat.SetPath(shortestPath);
-                    _world.ShowPath(shortestPath);
-                    _cat.SetWork(WorkType.DIGGING, minPoint);   
+                    StartWork(WorkType.DIGGING, workPos.Value, path);
                 }
             }
         }
 
-        private List<Vector2> ShortestPath(System.Collections.Generic.Dictionary<Vector2, List<Vector2>> allPoints, out Vector2 minPoint)
+        private List<Vector2> ShortestPath(out Vector2? workPos)
         {
             List<Vector2> shortestPath = [];
-            int minPath = int.MaxValue;
-            minPoint = Vector2.Zero;
+            int minPathCount = int.MaxValue;
+            workPos = null;
 
-            foreach (var workPos in allPoints)
+            foreach (var worldPos in _workList.Select(w => w.WorldPos))
             {
-                foreach (var point in workPos.Value)
+                foreach (var adjPos in _world.GetAdjacentTiles(worldPos, true))
                 {
-                    var newPath = _world.FindPath(_cat.Position, point);
+                    if (_cat.Position.IsEqualApprox(adjPos))
+                    {
+                        workPos = worldPos;
+                        return [];
+                    }
+                    
+                    var path = _world.FindPath(_cat.Position, adjPos);
 
-                    //No path to adjacent tile
-                    if (newPath.Count == 0 && !_cat.Position.IsEqualApprox(point))
+                    if (path.Count == 0)
                     {
                         continue;
                     }
 
-                    if (newPath.Count < minPath)
+                    if (path.Count < minPathCount)
                     {
-                        minPath = newPath.Count;
-                        shortestPath = newPath;
-                        minPoint = workPos.Key;
+                        workPos = worldPos;
+                        minPathCount = path.Count;
+                        shortestPath = path;
                     }
                 }
-            } 
+            }
 
             return shortestPath;
+        }
+
+        private void StartWork(WorkType workType, Vector2 workPos, List<Vector2> path)
+        {
+            _cat.SetPath(path);
+            _world.ShowPath(path);
+            _cat.SetWork(workType, workPos);
         }
 
         private void OnToolBarDigPressed()
@@ -285,8 +276,8 @@ namespace Quasar.scenes
 
         private void OnCatMovedOne(Vector2 lastPos, Vector2 newPos)
         {
-            _world.ShowCell(lastPos);
-            _world.HideCell(newPos);
+            _world.ShowTile(lastPos);
+            _world.HideTile(newPos);
         }
 
         private void OnCatPathComplete()
@@ -330,11 +321,6 @@ namespace Quasar.scenes
             cat.CompleteWork();
             var work = _workList.First(w =>  w.WorldPos == workPos);
             _workList.Remove(work);
-
-            foreach (var w in _workList)
-            {
-                w.IsReachable = _world.IsEdge(w.WorldPos);
-            }
         }
     }
 }

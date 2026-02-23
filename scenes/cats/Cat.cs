@@ -30,11 +30,13 @@ namespace Quasar.scenes.cats
 
         public CatData CatData { get; private set; }
 
-        public bool IsWorking { get; set; } = false;
+        public bool IsWorking { get; private set; } = false;
 
         public float Width { get => _catSprite.GetRect().Size.X;  }
 
         public float Height { get => _catSprite.GetRect().Size.Y; }
+
+        private TextureProgressBar _workProgress;
 
         private Sprite2D _catSprite;
 
@@ -53,6 +55,9 @@ namespace Quasar.scenes.cats
         public override void _Ready()
         {
             _catSprite = GetNode<Sprite2D>("CatSprite");
+            _workProgress = GetNode<TextureProgressBar>("WorkProgress");
+            _workProgress.Visible = false;
+
             CatData = new("Fern", "Stinky Cat", "Uncomfortable", 100, WorkType.NONE);
         }
 
@@ -80,6 +85,14 @@ namespace Quasar.scenes.cats
             IsWorking = true;
             CatData.Work = workType;
             _workPos = workPos;
+            _workProgress.Value = 0;
+            _workProgress.Visible = true;
+        }
+
+        public void CompleteWork()
+        {
+            IsWorking = false;
+            _workProgress.Visible = false;
         }
 
         public void SetPath(List<Vector2> path)
@@ -115,6 +128,8 @@ namespace Quasar.scenes.cats
         private void Work(double delta)
         {
             ElapsedWorkTime += delta;
+
+            _workProgress.Value = ElapsedWorkTime * 10;
 
             if (ElapsedWorkTime >= WorkTicks)
             {

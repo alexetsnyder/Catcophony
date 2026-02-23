@@ -2,8 +2,12 @@
 
 [ext_resource type="Script" uid="uid://la4tgj2gtf1y" path="res://scenes/cats/Cat.cs" id="1_3xrku"]
 [ext_resource type="Texture2D" uid="uid://cjhhn8cuuvft8" path="res://assets/textures/CatFace.png" id="2_3xrku"]
+[ext_resource type="Texture2D" uid="uid://cl14bh8kqrrch" path="res://assets/textures/WorkProgressBarUnder.png" id="2_4egey"]
+[ext_resource type="Texture2D" uid="uid://dw7xxj8kau110" path="res://assets/textures/WorkProgressBarOver.png" id="3_8glx2"]
+[ext_resource type="Texture2D" uid="uid://cvhwfke1b867i" path="res://assets/textures/WorkProgressBarProgress.png" id="4_6hcyl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_3xrku"]
+size = Vector2(18, 18)
 
 [node name="Cat" type="Node2D" unique_id=1361943199]
 script = ExtResource("1_3xrku")
@@ -15,5 +19,16 @@ texture = ExtResource("2_3xrku")
 
 [node name="CatAreaCollision" type="CollisionShape2D" parent="CatArea" unique_id=1920732016]
 shape = SubResource("RectangleShape2D_3xrku")
+
+[node name="WorkProgress" type="TextureProgressBar" parent="." unique_id=1646681410]
+offset_left = -9.0
+offset_top = 8.0
+offset_right = 9.0
+offset_bottom = 12.0
+value = 10.0
+nine_patch_stretch = true
+texture_under = ExtResource("2_4egey")
+texture_over = ExtResource("3_8glx2")
+texture_progress = ExtResource("4_6hcyl")
 
 [connection signal="input_event" from="CatArea" to="." method="OnCatAreaInputEvent"]

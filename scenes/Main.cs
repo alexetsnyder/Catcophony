@@ -233,6 +233,12 @@ namespace Quasar.scenes
                 {
                     var newPath = _world.FindPath(_cat.Position, point);
 
+                    //No path to adjacent tile
+                    if (newPath.Count == 0 && !_cat.Position.IsEqualApprox(point))
+                    {
+                        continue;
+                    }
+
                     if (newPath.Count < minPath)
                     {
                         minPath = newPath.Count;
@@ -321,7 +327,7 @@ namespace Quasar.scenes
         private void OnCatWork(Cat cat, Vector2 workPos)
         {
             _world.Dig(workPos);
-            cat.IsWorking = false;
+            cat.CompleteWork();
             var work = _workList.First(w =>  w.WorldPos == workPos);
             _workList.Remove(work);
 

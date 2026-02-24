@@ -1,4 +1,5 @@
 using Godot;
+using System.Collections.Generic;
 
 namespace Quasar.data
 {
@@ -39,6 +40,27 @@ namespace Quasar.data
         public static Vector2I GRASS_04 { get => new(7, 2); }
 
         public static Vector2I DIRT { get => new(7, 15); }
+
+        public static List<Vector2I> GetAllAtlasTileCoords()
+        {
+            List<Vector2I> atlasCoords = [];
+
+            var type = typeof(AtlasCoordWorld);
+            foreach (var property in type.GetProperties())
+            {
+                var getter = property.GetGetMethod();
+                if (getter != null)
+                {
+                    var atlasCoord = (Vector2I)getter.Invoke(null, null);
+                    if (!atlasCoords.Contains(atlasCoord))
+                    {
+                        atlasCoords.Add(atlasCoord);
+                    }
+                }
+            }
+
+            return atlasCoords;
+        }
 
         public static string GetTileStrReflection(Vector2I atlasCoord)
         {

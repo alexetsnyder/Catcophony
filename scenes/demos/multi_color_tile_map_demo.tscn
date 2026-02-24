@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://dqybihcfj6pd7"]
+
+[ext_resource type="Script" uid="uid://c00gy0y43x5cr" path="res://scenes/demos/MultiColorTileMapDemo.cs" id="1_lwmj2"]
+
+[sub_resource type="TileSet" id="TileSet_lwmj2"]
+tile_size = Vector2i(18, 18)
+
+[node name="MultiColorTileMapLayer" type="TileMapLayer" unique_id=1679749506]
+tile_set = SubResource("TileSet_lwmj2")
+script = ExtResource("1_lwmj2")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=554944849]
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer" unique_id=340243996]
+offset_right = 121.0
+offset_bottom = 30.0
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+
+[node name="LineEdit" type="LineEdit" parent="CanvasLayer/MarginContainer" unique_id=1705458797]
+layout_mode = 2
+
+[connection signal="text_submitted" from="CanvasLayer/MarginContainer/LineEdit" to="." method="OnLineEditTextSubmitted"]

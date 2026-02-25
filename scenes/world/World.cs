@@ -157,6 +157,7 @@ namespace Quasar.scenes.world
                                 _selectionRect.Size = new Vector2();
                                 break;
                             case SelectionState.BUILDING:
+                                Build(GetGlobalMousePosition());
                                 break;
                             default:
                                 GD.Print($"Selection State {_selectionState} set incorrectly.");
@@ -273,21 +274,32 @@ namespace Quasar.scenes.world
 
         public void Dig(Vector2 localPos)
         {
-            var cellCoord = _worldTileMapLayer.LocalToMap(localPos);
+            var coords = _worldTileMapLayer.LocalToMap(localPos);
 
-            if (IsSolid(cellCoord) && _selectedTileMapLayer.GetCellSourceId(cellCoord) != -1)
+            if (IsSolid(coords) && _selectedTileMapLayer.GetCellSourceId(coords) != -1)
             {
-                UpdateWorldTile(TileType.DIRT, cellCoord);
-                SetCell(_selectedTileMapLayer, cellCoord);
-                _aStarGrid2d.SetPointSolid(cellCoord, false);
+                UpdateWorldTile(TileType.DIRT, coords);
+                SetCell(_selectedTileMapLayer, coords);
+                _aStarGrid2d.SetPointSolid(coords, false);
 
-                foreach (var adjCell in GetAdjacentCells(cellCoord, true))
+                foreach (var adjCell in GetAdjacentCells(coords, true))
                 {
                     if (IsSolid(adjCell))
                     {
                         SetWall(adjCell);
                     }
                 }
+            }
+        }
+
+        public void Build(Vector2 localPos)
+        {
+            var coords = _worldTileMapLayer.LocalToMap(localPos);
+
+            if (!IsImpassable(coords))
+            {
+                UpdateWorldTile(TileType.WALL, coords);
+                _aStarGrid2d.SetPointSolid(coords, true);
             }
         }
 
@@ -677,6 +689,8 @@ namespace Quasar.scenes.world
                     return Random.RandomChoice<Vector2I>(_rng, _groundVariance);
                 case TileType.DIRT:
                     return AtlasCoordWorld.DIRT;
+                case TileType.WALL:
+                    return AtlasCoordWorld.WALL;
                 case TileType.SOLID_WALL:
                     return AtlasCoordWorld.SOLID_WALL;
                 case TileType.SOLID:
@@ -704,6 +718,8 @@ namespace Quasar.scenes.world
                     return Random.RandomChoice<Color>(_rng, _colorVariance);
                 case TileType.DIRT:
                     return ColorConstants.BURNT_ORANGE;
+                case TileType.WALL:
+                    return ColorConstants.GREY;
                 case TileType.SOLID_WALL:
                     return ColorConstants.WALL_PURPLE;
                 case TileType.SOLID:

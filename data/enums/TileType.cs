@@ -8,5 +8,6 @@ namespace Quasar.data.enums
         WATER,
         SOLID,
         SOLID_WALL,
+        WALL,
     }
 }

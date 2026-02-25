@@ -41,6 +41,8 @@ namespace Quasar.data
 
         public static Vector2I DIRT { get => new(7, 15); }
 
+        public static Vector2I WALL { get => new(10, 11); }
+
         public static List<Vector2I> GetAllAtlasTileCoords()
         {
             List<Vector2I> atlasCoords = [];

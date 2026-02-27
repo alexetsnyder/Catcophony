@@ -44,6 +44,15 @@ namespace Quasar.scenes.world
 
         #endregion
 
+        #region Getters
+
+        public Vector2 Center 
+        { 
+            get => _worldTileMapLayer.MapToLocal(new(Rows / 2, Cols / 2)); 
+        }
+
+        #endregion
+
         #region Children
 
         private IMultiColorTileMapLayer _gridTileMapLayer;
@@ -208,21 +217,32 @@ namespace Quasar.scenes.world
             _selectionState = selectionState;
         }
 
-        public Vector2? PlaceCat()
+        /// <summary>
+        /// Get spawn points in the largest connected area and closest to point.
+        /// </summary>
+        /// <param name="localPoint"></param>
+        /// <returns>
+        /// List of position in the world to spawn.
+        /// </returns>
+        public List<Vector2> GetSpawnPoints(Vector2 localPoint, int n = 1)
         {
-            var maxConnnectedArea = Math.MaxConnectedArea(GetAllPoints(), (v) => IsInBounds(v) && !IsImpassable(v));
+            var toPoint = _worldTileMapLayer.LocalToMap(localPoint);
+            var allPoints = GetAllPoints();
+            var maxConnnectedArea = Math.MaxConnectedArea(allPoints, (v) => !IsImpassable(v));
 
-            Vector2I center = new(Rows / 2, Cols / 2);
+            var coordsSpawnPoints = Math.MinDistanceToPoint(allPoints, toPoint, n);
 
-            var coords = Math.MinDistanceToPoint(maxConnnectedArea, center);
+            List<Vector2> localSpawnPoints = [];
 
-            if (coords != null)
+            foreach (var spawnPoint in coordsSpawnPoints)
             {
-                HideCell(coords.Value);
-                return _worldTileMapLayer.MapToLocal(coords.Value);
+                if (spawnPoint != null)
+                {
+                    localSpawnPoints.Add(_worldTileMapLayer.MapToLocal(spawnPoint.Value));
+                }
             }
 
-            return null;
+            return localSpawnPoints; 
         }
 
         public List<Vector2> FindPath(Vector2 startPos, Vector2 endPos)
@@ -251,14 +271,14 @@ namespace Quasar.scenes.world
             _pathTileMapLayer.Clear();
         }
 
-        public void HideTile(Vector2 localPos)
+        public void PlaceItem(Vector2 newPos, Vector2? oldPos = null)
         {
-            HideCell(_worldTileMapLayer.LocalToMap(localPos));
-        }
+            if (oldPos != null)
+            {
+                ShowCell(_worldTileMapLayer.LocalToMap(oldPos.Value));
+            }
 
-        public void ShowTile(Vector2 localPos)
-        {
-            ShowCell(_worldTileMapLayer.LocalToMap(localPos));
+            HideCell(_worldTileMapLayer.LocalToMap(newPos));
         }
 
         public List<Vector2> GetAdjacentTiles(Vector2 localPos, bool includeDiagonals = false)

@@ -60,10 +60,12 @@ namespace Quasar.scenes
             if (_cat != null)
             {
                 AddChild(_cat);
-                var catPos = _world.PlaceCat();
-                if (catPos.HasValue)
+                var catPosList = _world.GetSpawnPoints(_world.Center);
+                if (catPosList.Count > 0)
                 {
-                    _cat.Position = catPos.Value;
+                    var catPos = catPosList.First();
+                    _cat.Position = catPos;
+                    _world.PlaceItem(catPos);
                 }
                 _cat.Speed = 8;
                 _cat.CatClickedOn += OnCatClickedOn;
@@ -282,15 +284,14 @@ namespace Quasar.scenes
             {
                 var path = _world.FindPath(_cat.Position, tileSelected);
                 _world.ShowPath(path);
-                GD.Print($"Path Count: {path.Count}");
                 _cat.SetPath(path);
             } 
         }
 
         private void OnCatMovedOne(Vector2 lastPos, Vector2 newPos)
         {
-            _world.ShowTile(lastPos);
-            _world.HideTile(newPos);
+            _world.PlaceItem(newPos, lastPos);
+
         }
 
         private void OnCatPathComplete()

@@ -44,22 +44,53 @@ namespace Quasar.math
             return ((xDiff * xDiff) + (yDiff * yDiff));
         }
 
-        public static Vector2I? MinDistanceToPoint(List<Vector2I> fromPoints, Vector2I toPoint)
+        /// <summary>
+        /// Return n points that are closest to the toPoint.
+        /// </summary>
+        /// <param name="fromPoints"></param>
+        /// <param name="toPoint"></param>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static Vector2I?[] MinDistanceToPoint(List<Vector2I> fromPoints, Vector2I toPoint, int n = 1)
         {
-            float minDistance = float.MaxValue;
-            Vector2I? minDistCellCoord = null;
+            float[] minDistances = new float[n];
+            var points = new Vector2I?[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                minDistances[i] = float.MaxValue;
+                points[i] = null;
+            }
 
             foreach (var point in fromPoints)
             {
                 var d = Distance(point, toPoint);
-                if (d < minDistance)
+                for (int i = 0; i < n; i++)
                 {
-                    minDistance = d;
-                    minDistCellCoord = point;
+                    if (d < minDistances[i])
+                    {
+                        BubbleMinRec(minDistances, points, n, i);
+                        minDistances[i] = d;
+                        points[i] = point;
+                    }
                 }
             }
 
-            return minDistCellCoord;
+            return points;
+        }
+
+        private static void BubbleMinRec(float[] minDistances, Vector2I?[] points, int n, int index)
+        {
+            for (int j = index + 1; j < n; j++)
+            {
+                if (minDistances[index] < minDistances[j])
+                {
+                    minDistances[j] = minDistances[index];
+                    points[j] = points[index];
+
+                    BubbleMinRec(minDistances, points, n, j);
+                }
+            }
         }
 
         public static List<Vector2I> MaxConnectedArea(List<Vector2I> allPoints, Func<Vector2I, bool> validPoint)

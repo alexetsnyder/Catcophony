@@ -329,7 +329,7 @@ namespace Quasar.scenes
             _world.SetSelectionState(SelectionState.SINGLE);
         }
 
-        private void OnToolBarDigPressed()
+        private void OnToolBarMinePressed()
         {
             _world.SetSelectionState(SelectionState.MINING);
         }

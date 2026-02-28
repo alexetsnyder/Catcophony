@@ -1,15 +1,12 @@
 using Godot;
 
-public partial class ToolBarControl : MarginContainer
+public partial class ToolBarControl : Control
 {
-	[Signal]
-	public delegate void DigPressedEventHandler();
+    [Signal]
+    public delegate void SelectPressedEventHandler();
 
-	[Signal]
-	public delegate void SelectPressedEventHandler();
-
-	[Signal]
-	public delegate void CancelPressedEventHandler();
+    [Signal]
+	public delegate void MinePressedEventHandler();
 
 	[Signal]
 	public delegate void BuildPressedEventHandler();
@@ -20,48 +17,48 @@ public partial class ToolBarControl : MarginContainer
 	[Signal]
 	public delegate void FishPressedEventHandler();
 
-	private Button _digButton;
+    [Signal]
+    public delegate void CancelPressedEventHandler();
 
-	private Button _selectButton;
-
+    private ItemList _buildMenu;
 	public override void _Ready()
 	{
-		_selectButton = GetNode<Button>("ToolBarContainer/SelectButton");
-		_digButton = GetNode<Button>("ToolBarContainer/DigButton");
-	}
-
-	public override void _Process(double delta)
-	{
-
+		_buildMenu = GetNode<ItemList>("BuildMenu");
 	}
 
     private void OnSelectButtonPressed()
     {
+        _buildMenu.Visible = false;
         EmitSignal(SignalName.SelectPressed);
     }
 
-    private void OnDigButtonPressed()
+    private void OnMineButtonPressed()
 	{
-        EmitSignal(SignalName.DigPressed);
-	}
-
-	private void OnCancelButtonPressed()
-	{
-		EmitSignal(SignalName.CancelPressed);
+        _buildMenu.Visible = false;
+        EmitSignal(SignalName.MinePressed);
 	}
 
 	private void OnBuildButtonPressed()
 	{
+		_buildMenu.Visible = true;
 		EmitSignal(SignalName.BuildPressed);
 	}
 
 	private void OnFarmButtonPressed()
 	{
-		EmitSignal(SignalName.FarmPressed);
+        _buildMenu.Visible = false;
+        EmitSignal(SignalName.FarmPressed);
 	}
 
 	private void OnFishButtonPressed()
 	{
-		EmitSignal(SignalName.FishPressed);
+        _buildMenu.Visible = false;
+        EmitSignal(SignalName.FishPressed);
 	}
+
+    private void OnCancelButtonPressed()
+    {
+        _buildMenu.Visible = false;
+        EmitSignal(SignalName.CancelPressed);
+    }
 }

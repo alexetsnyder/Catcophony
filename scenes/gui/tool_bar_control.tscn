@@ -10,17 +10,52 @@
 [ext_resource type="Texture2D" uid="uid://d4dhx8rp7sywu" path="res://assets/textures/BuildIcon.png" id="7_r1sxl"]
 [ext_resource type="Texture2D" uid="uid://cdql2irvx48uo" path="res://assets/textures/FarmIcon.png" id="8_6ogpc"]
 [ext_resource type="Texture2D" uid="uid://co2yspy2e0jbv" path="res://assets/textures/Fish.png" id="9_6ogpc"]
+[ext_resource type="Texture2D" uid="uid://da81fqa30562p" path="res://assets/textures/Haowan_Curses_1440x450.png" id="11_utjv6"]
 
-[node name="ToolBarMargin" type="MarginContainer" unique_id=1173881308]
-offset_right = 56.0
-offset_bottom = 34.0
+[sub_resource type="AtlasTexture" id="AtlasTexture_nfl5i"]
+atlas = ExtResource("11_utjv6")
+region = Rect2(180, 198, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wjxwe"]
+atlas = ExtResource("11_utjv6")
+region = Rect2(180, 216, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_utjv6"]
+atlas = ExtResource("11_utjv6")
+region = Rect2(234, 216, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pk1ca"]
+atlas = ExtResource("11_utjv6")
+region = Rect2(162, 216, 18, 18)
+
+[node name="ToolBar" type="Control" unique_id=1705562377]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -90.5
+offset_top = -85.0
+offset_right = 90.5
+grow_horizontal = 2
+grow_vertical = 0
 script = ExtResource("1_g5gns")
 
-[node name="ToolBarContainer" type="HBoxContainer" parent="." unique_id=1946687116]
+[node name="ToolBarMargin" type="MarginContainer" parent="." unique_id=1173881308]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -34.0
+offset_right = 176.0
+grow_vertical = 0
+
+[node name="ToolBarContainer" type="HBoxContainer" parent="ToolBarMargin" unique_id=1946687116]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="SelectButton" type="Button" parent="ToolBarContainer" unique_id=1100485162]
+[node name="SelectButton" type="Button" parent="ToolBarMargin/ToolBarContainer" unique_id=1100485162]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -33,7 +68,7 @@ button_group = ExtResource("2_akbxs")
 icon = ExtResource("2_njpgj")
 icon_alignment = 1
 
-[node name="DigButton" type="Button" parent="ToolBarContainer" unique_id=1192215528]
+[node name="MineButton" type="Button" parent="ToolBarMargin/ToolBarContainer" unique_id=1192215528]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -45,7 +80,7 @@ button_group = ExtResource("2_akbxs")
 icon = ExtResource("1_a25xm")
 icon_alignment = 1
 
-[node name="BuildButton" type="Button" parent="ToolBarContainer" unique_id=1132722821]
+[node name="BuildButton" type="Button" parent="ToolBarMargin/ToolBarContainer" unique_id=1132722821]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -57,7 +92,7 @@ button_group = ExtResource("2_akbxs")
 icon = ExtResource("7_r1sxl")
 icon_alignment = 1
 
-[node name="FarmButton" type="Button" parent="ToolBarContainer" unique_id=670508186]
+[node name="FarmButton" type="Button" parent="ToolBarMargin/ToolBarContainer" unique_id=670508186]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -69,7 +104,7 @@ button_group = ExtResource("2_akbxs")
 icon = ExtResource("8_6ogpc")
 icon_alignment = 1
 
-[node name="FishButton" type="Button" parent="ToolBarContainer" unique_id=144863582]
+[node name="FishButton" type="Button" parent="ToolBarMargin/ToolBarContainer" unique_id=144863582]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -86,7 +121,7 @@ button_group = ExtResource("2_akbxs")
 icon = ExtResource("9_6ogpc")
 icon_alignment = 1
 
-[node name="CancelButton" type="Button" parent="ToolBarContainer" unique_id=822691304]
+[node name="CancelButton" type="Button" parent="ToolBarMargin/ToolBarContainer" unique_id=822691304]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -103,9 +138,25 @@ button_group = ExtResource("2_akbxs")
 icon = ExtResource("6_5j5p6")
 icon_alignment = 1
 
-[connection signal="pressed" from="ToolBarContainer/SelectButton" to="." method="OnSelectButtonPressed"]
-[connection signal="pressed" from="ToolBarContainer/DigButton" to="." method="OnDigButtonPressed"]
-[connection signal="pressed" from="ToolBarContainer/BuildButton" to="." method="OnBuildButtonPressed"]
-[connection signal="pressed" from="ToolBarContainer/FarmButton" to="." method="OnFarmButtonPressed"]
-[connection signal="pressed" from="ToolBarContainer/FishButton" to="." method="OnFishButtonPressed"]
-[connection signal="pressed" from="ToolBarContainer/CancelButton" to="." method="OnCancelButtonPressed"]
+[node name="BuildMenu" type="ItemList" parent="." unique_id=2124420520]
+visible = false
+layout_mode = 1
+offset_right = 176.0
+offset_bottom = 52.0
+item_count = 4
+max_columns = 2
+item_0/text = "vWall"
+item_0/icon = SubResource("AtlasTexture_nfl5i")
+item_1/text = "cWall"
+item_1/icon = SubResource("AtlasTexture_wjxwe")
+item_2/text = "hWall"
+item_2/icon = SubResource("AtlasTexture_utjv6")
+item_3/text = "cWall"
+item_3/icon = SubResource("AtlasTexture_pk1ca")
+
+[connection signal="pressed" from="ToolBarMargin/ToolBarContainer/SelectButton" to="." method="OnSelectButtonPressed"]
+[connection signal="pressed" from="ToolBarMargin/ToolBarContainer/MineButton" to="." method="OnMineButtonPressed"]
+[connection signal="pressed" from="ToolBarMargin/ToolBarContainer/BuildButton" to="." method="OnBuildButtonPressed"]
+[connection signal="pressed" from="ToolBarMargin/ToolBarContainer/FarmButton" to="." method="OnFarmButtonPressed"]
+[connection signal="pressed" from="ToolBarMargin/ToolBarContainer/FishButton" to="." method="OnFishButtonPressed"]
+[connection signal="pressed" from="ToolBarMargin/ToolBarContainer/CancelButton" to="." method="OnCancelButtonPressed"]

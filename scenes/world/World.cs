@@ -1,16 +1,14 @@
 using Godot;
-using Godot.Collections;
 using Quasar.data;
 using Quasar.data.enums;
 using Quasar.math;
 using Quasar.scenes.common.interfaces;
-using Quasar.scenes.work;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Quasar.scenes.world
 {
-    public partial class World : Node2D
+    public partial class World : Node2D, IWorld
     {
         #region Exports
 
@@ -24,23 +22,11 @@ namespace Quasar.scenes.world
         public bool ShowGrid { get; set; } = false;
 
         [Export]
-        public Color SelectionColor { get; set; } = new Color(1.0f, 0.0f, 0.0f, 1.0f);
-
-        [Export]
         public Color PathColor { get; set; } = new Color(1.0f, 0.0f, 1.0f, 1.0f);
 
         #endregion
 
         #region Signals
-
-        [Signal]
-        public delegate void TileSelectedEventHandler(Vector2 tilePos);
-
-        [Signal]
-        public delegate void WorkCreatedEventHandler(Array<Work> workArray);
-
-        [Signal]
-        public delegate void CancelWorkEventHandler(Array<Vector2> worldPosArray);
 
         #endregion
 
@@ -59,23 +45,11 @@ namespace Quasar.scenes.world
 
         private IMultiColorTileMapLayer _worldTileMapLayer;
 
-        private IMultiColorTileMapLayer _selectingTileMapLayer;
-
-        private IMultiColorTileMapLayer _selectedTileMapLayer;
-
         private IMultiColorTileMapLayer _pathTileMapLayer;
-
-        private ColorRect _selectionRect;
 
         #endregion
 
         #region Private Variables
-
-        private SelectionState _selectionState = SelectionState.SINGLE;
-
-        private bool _isSelecting = false;
-
-        private Vector2 _selectionStart;
 
         private SimplexNoise _heightNoise;
 
@@ -99,10 +73,7 @@ namespace Quasar.scenes.world
         {
             _gridTileMapLayer = GetNode<IMultiColorTileMapLayer>("GridTileMapLayer");
             _worldTileMapLayer = GetNode<IMultiColorTileMapLayer>("WorldTileMapLayer");
-            _selectingTileMapLayer = GetNode<IMultiColorTileMapLayer>("SelectingTileMapLayer");
-            _selectedTileMapLayer = GetNode<IMultiColorTileMapLayer>("SelectedTileMapLayer");
             _pathTileMapLayer = GetNode<IMultiColorTileMapLayer>("PathTileMapLayer");
-            _selectionRect = GetNode<ColorRect>("SelectionRect");
 
             _heightNoise = new SimplexNoise(_rng.RandiRange(int.MinValue, int.MaxValue));
             _worldCellArray = new WorldCell[Rows, Cols];
@@ -112,63 +83,6 @@ namespace Quasar.scenes.world
             SetUpAStar();
 
             _gridTileMapLayer.Visible = ShowGrid;
-        }
-
-        public override void _Process(double delta)
-        {
-            if (_isSelecting)
-            {
-                var currentMousePos = GetGlobalMousePosition();
-                var newSelectionRect = new Rect2(_selectionStart, currentMousePos - _selectionStart).Abs();
-                _selectionRect.Position = newSelectionRect.Position;
-                _selectionRect.Size = newSelectionRect.Size;
-                SetSelectingArea();
-            }
-        }
-
-        public override void _UnhandledInput(InputEvent @event)
-        {
-            if (@event is InputEventMouseButton inputEventMouseButton)
-            {
-                if (inputEventMouseButton.ButtonIndex == MouseButton.Left)
-                {
-                    if (@event.IsPressed())
-                    {
-                        switch (_selectionState)
-                        {
-                            case SelectionState.SINGLE:
-                                var mousePos = GetGlobalMousePosition();
-                                if (!CellOccupied(mousePos))
-                                {
-                                    EmitSignal(SignalName.TileSelected, mousePos);
-                                }
-                                break;
-                            case SelectionState.MINING:
-                            case SelectionState.FARMING:
-                            case SelectionState.FISHING:
-                            case SelectionState.BUILDING:
-                            case SelectionState.CANCEL:
-                                _isSelecting = true;
-                                _selectionStart = GetGlobalMousePosition();
-                                _selectionRect.Position = _selectionStart;
-                                _selectionRect.Size = new Vector2();
-                                break;
-                            default:
-                                GD.Print($"Selection State {_selectionState} set incorrectly.");
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        if (_isSelecting)
-                        {
-                            _isSelecting = false;
-                            _selectionRect.Visible = false;
-                            SelectArea();
-                        }
-                    }
-                }
-            }
         }
 
         public string GetTileTypeStr(Vector2 localPos)
@@ -207,11 +121,6 @@ namespace Quasar.scenes.world
             }
 
             return worldCell.Color;
-        }
-
-        public void SetSelectionState(SelectionState selectionState)
-        {
-            _selectionState = selectionState;
         }
 
         /// <summary>
@@ -309,10 +218,9 @@ namespace Quasar.scenes.world
         {
             var coords = _worldTileMapLayer.LocalToMap(localPos);
 
-            if (IsSolid(coords) && _selectedTileMapLayer.GetCellSourceId(coords) != -1)
+            if (IsSolid(coords))
             {
                 UpdateWorldTile(TileType.DIRT, coords);
-                SelectCell(_selectedTileMapLayer, coords);
 
                 foreach (var adjCell in GetAdjacentCells(coords, true))
                 {
@@ -331,7 +239,6 @@ namespace Quasar.scenes.world
             if (!IsImpassable(coords))
             {
                 UpdateWorldTile(TileType.WALL, coords, true);
-                SelectCell(_selectedTileMapLayer, coords);
             }
         }
 
@@ -342,7 +249,6 @@ namespace Quasar.scenes.world
             if (!IsImpassable(coords))
             {
                 UpdateWorldTile(TileType.TILLED, coords, false);
-                SelectCell(_selectedTileMapLayer, coords);
             }
         }
 
@@ -352,15 +258,58 @@ namespace Quasar.scenes.world
 
             if (IsWater(coords))
             {
-                SelectCell(_selectedTileMapLayer, coords);
+
             }
         }
 
-        #endregion
+        public bool IsSolid(Vector2I coords)
+        {
+            var worldCell = GetWorldCell(coords);
+            if (worldCell == null)
+            {
+                return true;
+            }
 
-        #region Private Methods
+            return (worldCell.TileType == TileType.SOLID || worldCell.TileType == TileType.NATURAL_WALL || worldCell.TileType == TileType.WALL);
+        }
 
-        private bool CellOccupied(Vector2 localPos)
+        public bool IsWater(Vector2I coords)
+        {
+            var worldCell = GetWorldCell(coords);
+            if (worldCell == null)
+            {
+                return false;
+            }
+
+            return (worldCell.TileType == TileType.WATER);
+        }
+
+        public bool IsImpassable(Vector2I coords)
+        {
+            var worldCell = GetWorldCell(coords);
+            if (worldCell == null)
+            {
+                return true;
+            }
+
+            return (worldCell.TileType == TileType.SOLID ||
+                    worldCell.TileType == TileType.NATURAL_WALL ||
+                    worldCell.TileType == TileType.WALL ||
+                    worldCell.TileType == TileType.WATER);
+        }
+
+        public bool IsInBounds(Vector2I coords)
+        {
+            if (coords.X < 0 || coords.Y < 0 ||
+                coords.X >= Rows || coords.Y >= Cols)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public bool TileOccupied(Vector2 localPos)
         {
             var coords = _worldTileMapLayer.LocalToMap(localPos);
             if (_worldTileMapLayer.GetCellSourceId(coords) == -1)
@@ -370,6 +319,10 @@ namespace Quasar.scenes.world
 
             return false;
         }
+
+        #endregion
+
+        #region Private Methods
 
         private void UpdateWorldTile(TileType tileType, Vector2I coords, bool isSolid = false)
         {
@@ -471,28 +424,6 @@ namespace Quasar.scenes.world
             }
         }
 
-        private bool IsSolid(Vector2I coords)
-        {
-            var worldCell = GetWorldCell(coords);
-            if (worldCell == null)
-            {
-                return true;
-            }
-
-            return (worldCell.TileType == TileType.SOLID || worldCell.TileType == TileType.NATURAL_WALL || worldCell.TileType == TileType.WALL);
-        }
-
-        private bool IsWater(Vector2I coords)
-        {
-            var worldCell = GetWorldCell(coords);
-            if (worldCell == null)
-            {
-                return false;
-            }
-
-            return (worldCell.TileType == TileType.WATER);
-        }
-
         private static void SetCell(IMultiColorTileMapLayer tileMapLayer, Vector2I coords, Vector2I? atlasCoords = null, Color? color = null)
         {
             tileMapLayer.SetCell(coords, atlasCoords, color);
@@ -522,20 +453,6 @@ namespace Quasar.scenes.world
                     _aStarGrid2d.SetPointSolid(coords);
                 }
             }
-        }
-
-        private bool IsImpassable(Vector2I coords)
-        {
-            var worldCell = GetWorldCell(coords);
-            if (worldCell == null)
-            {
-                return true;
-            }
-
-            return (worldCell.TileType == TileType.SOLID ||
-                    worldCell.TileType == TileType.NATURAL_WALL ||
-                    worldCell.TileType == TileType.WALL ||
-                    worldCell.TileType == TileType.WATER);
         }
 
         public List<Vector2I> GetAllPoints()
@@ -579,167 +496,6 @@ namespace Quasar.scenes.world
             }
 
             return _worldCellArray[cellCoord.X, cellCoord.Y];
-        }
-
-        private bool IsInBounds(Vector2I coords)
-        {
-            if (coords.X < 0 || coords.Y < 0 ||
-                coords.X >= Rows || coords.Y >= Cols)
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        private void SetSelectingArea()
-        {
-            _selectingTileMapLayer.Clear();
-
-            GetSelection(out int startingRow, out int endingRow, out int startingCol, out int endingCol);
-
-            for (int i = startingRow; i < endingRow; i++)
-            {
-                for (int j = startingCol; j < endingCol; j++)
-                {
-                    var coords = new Vector2I(j, i);
-
-                    if (_selectionState == SelectionState.CANCEL)
-                    {
-                        SelectCell(_selectingTileMapLayer, coords, AtlasCoordSelection.CANCEL, ColorConstants.WARNING_RED);
-                    }
-                    else
-                    {
-                        var atlasCoords = GetAtlasCoordForSelection(i, j, startingRow, endingRow, startingCol, endingCol);
-                        SelectCell(_selectingTileMapLayer, coords, atlasCoords, SelectionColor);
-                    }  
-                }
-            }
-        }
-
-        private void SelectArea()
-        {
-            _selectingTileMapLayer.Clear();
-
-            if (_selectionState == SelectionState.MINING)
-            {
-                EmitSignal(SignalName.WorkCreated, GetWorkArray((c) => !IsSolid(c)));
-            }
-            else if (_selectionState == SelectionState.BUILDING ||
-                     _selectionState == SelectionState.FARMING)
-            {
-                EmitSignal(SignalName.WorkCreated, GetWorkArray(IsImpassable));
-            }
-            else if (_selectionState == SelectionState.FISHING)
-            {
-                EmitSignal(SignalName.WorkCreated, GetWorkArray((c) => !IsWater(c)));
-            }
-            else if (_selectionState == SelectionState.CANCEL)
-            {
-                GetSelection(out int startingRow, out int endingRow, out int startingCol, out int endingCol);
-
-                Array<Vector2> worldPosList = [];
-
-                for (int i = startingRow; i < endingRow; i++)
-                {
-                    for (int j = startingCol; j < endingCol; j++)
-                    {
-                        var coords = new Vector2I(j, i);
-
-                        if (_selectedTileMapLayer.GetCellSourceId(coords) != -1)
-                        {
-                            SelectCell(_selectedTileMapLayer, coords);
-                            worldPosList.Add(_worldTileMapLayer.MapToLocal(coords));
-                        }
-                    }
-                } 
-
-                EmitSignal(SignalName.CancelWork, worldPosList);
-            } 
-        }
-
-        private Array<Work> GetWorkArray(System.Func<Vector2I, bool> filter)
-        {
-            Array<Work> workPosArray = [];
-
-            GetSelection(out int startingRow, out int endingRow, out int startingCol, out int endingCol);
-
-            var workType = GetWorkType(_selectionState);
-            var atlasCoords = GetAtlasCoords(workType);
-            var color = GetCellColor(workType);
-
-            for (int i = startingRow; i < endingRow; i++)
-            {
-                for (int j = startingCol; j < endingCol; j++)
-                {
-                    var coords = new Vector2I(j, i);
-                    if (!filter(coords) && _selectedTileMapLayer.GetCellSourceId(coords) == -1)
-                    {
-                        SelectCell(_selectedTileMapLayer, coords, atlasCoords, color);
-                        workPosArray.Add(new(workType.ToString(), workType, _worldTileMapLayer.MapToLocal(coords)));
-                    }
-                }
-            }
-
-            return workPosArray;
-        }
-
-        private void GetSelection(out int startingRow, out int endingRow, out int startingCol, out int endingCol)
-        {
-            var tileSize = _worldTileMapLayer.TileSize;
-            var left = _selectionRect.Position.X;
-            var right = left + _selectionRect.Size.X;
-            var top = _selectionRect.Position.Y;
-            var bottom = top + _selectionRect.Size.Y;
-
-            startingCol = Mathf.FloorToInt(left / tileSize.X);
-            endingCol = Mathf.CeilToInt(right / tileSize.X);
-            startingRow = Mathf.FloorToInt(top / tileSize.Y);
-            endingRow = Mathf.CeilToInt(bottom / tileSize.Y);
-        }
-
-        private static Vector2I GetAtlasCoordForSelection(int i, int j, int startingRow, int endingRow, int startingCol, int endingCol)
-        {
-            Vector2I atlasCoord;
-
-            if (i == startingRow && j == startingCol)
-            {
-                atlasCoord = AtlasCoordSelection.LEFT_TOP_SELECTION;
-            }
-            else if (i == startingRow && j == endingCol - 1)
-            {
-                atlasCoord = AtlasCoordSelection.RIGHT_TOP_SELECTION;
-            }
-            else if (i == endingRow - 1 && j == startingCol)
-            {
-                atlasCoord = AtlasCoordSelection.LEFT_BOTTOM_SELECTION;
-            }
-            else if (i == endingRow - 1 && j == endingCol - 1)
-            {
-                atlasCoord = AtlasCoordSelection.RIGHT_BOTTOM_SELECTION;
-            }
-            else if (i == startingRow)
-            {
-                atlasCoord = AtlasCoordSelection.TOP_SELECTION;
-            }
-            else if (i == endingRow - 1)
-            {
-                atlasCoord = AtlasCoordSelection.BOTTOM_SELECTION;
-            }
-            else if (j == startingCol)
-            {
-                atlasCoord = AtlasCoordSelection.LEFT_SELECTION;
-            }
-            else if (j == endingCol - 1)
-            {
-                atlasCoord = AtlasCoordSelection.RIGHT_SELECTION;
-            }
-            else
-            {
-                atlasCoord = AtlasCoordSelection.MIDDLE_SELECTION;
-            }
-
-            return atlasCoord;
         }
 
         private static TileType GetTileType(float heightNoiseVal)
@@ -809,59 +565,6 @@ namespace Quasar.scenes.world
                     return ColorConstants.BLACK;
                 default:
                     return ColorConstants.BLACK;
-            }
-        }
-
-        private static WorkType GetWorkType(SelectionState selectionState)
-        {
-            switch (selectionState)
-            {
-                case SelectionState.MINING:
-                    return WorkType.MINING;
-                case SelectionState.BUILDING:
-                    return WorkType.BUILDING;
-                case SelectionState.FARMING:
-                    return WorkType.FARMING;
-                case SelectionState.FISHING:
-                    return WorkType.FISHING;
-                default:
-                    GD.Print("Incorrect Selection State in GetWorkType(selectionState).");
-                    return WorkType.NONE;
-            }
-        }
-
-        private static Vector2I GetAtlasCoords(WorkType workType)
-        {
-            switch (workType)
-            {
-                case WorkType.MINING:
-                    return AtlasCoordSelection.MINE;
-                case WorkType.BUILDING:
-                    return AtlasCoordSelection.BUILD;
-                case WorkType.FARMING:
-                    return AtlasCoordSelection.TILL;
-                case WorkType.FISHING:
-                    return AtlasCoordSelection.FISH;
-                default:
-                    GD.Print("Incorrect WorkType in GetAtlasCoords(workType).");
-                    return AtlasCoordSelection.MIDDLE_SELECTION;
-
-            }
-        }
-
-        private static Color GetCellColor(WorkType workType)
-        {
-            switch (workType)
-            {
-                case WorkType.MINING:
-                case WorkType.BUILDING:
-                case WorkType.FARMING:
-                    return ColorConstants.GREY;
-                case WorkType.FISHING:
-                    return ColorConstants.ORANGE;
-                default:
-                    GD.Print("Incorrect WorkType in GetCellColor(workType).");
-                    return ColorConstants.WHITE;
             }
         }
 

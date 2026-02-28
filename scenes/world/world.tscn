@@ -13,12 +13,6 @@ shader = ExtResource("2_1fp7r")
 [sub_resource type="TileSet" id="TileSet_bq33v"]
 tile_size = Vector2i(18, 18)
 
-[sub_resource type="TileSet" id="TileSet_6m72w"]
-tile_size = Vector2i(18, 18)
-
-[sub_resource type="TileSet" id="TileSet_v5dby"]
-tile_size = Vector2i(18, 18)
-
 [sub_resource type="TileSet" id="TileSet_t5ptc"]
 tile_size = Vector2i(18, 18)
 
@@ -43,29 +37,9 @@ TexturePath = "res://assets/textures/Haowan_Curses_1440x450.png"
 TileSize = Vector2i(18, 18)
 metadata/_custom_type_script = "uid://di86uya3cyg7d"
 
-[node name="SelectingTileMapLayer" type="TileMapLayer" parent="." unique_id=947365447]
-tile_set = SubResource("TileSet_6m72w")
-script = ExtResource("3_v5dby")
-TexturePath = "res://assets/textures/SelectionTileSet.png"
-TileSize = Vector2i(18, 18)
-metadata/_custom_type_script = "uid://di86uya3cyg7d"
-
-[node name="SelectedTileMapLayer" type="TileMapLayer" parent="." unique_id=1084405859]
-tile_set = SubResource("TileSet_v5dby")
-script = ExtResource("3_v5dby")
-TexturePath = "res://assets/textures/SelectionTileSet.png"
-TileSize = Vector2i(18, 18)
-metadata/_custom_type_script = "uid://di86uya3cyg7d"
-
 [node name="PathTileMapLayer" type="TileMapLayer" parent="." unique_id=970252362]
 tile_set = SubResource("TileSet_t5ptc")
 script = ExtResource("3_v5dby")
 TexturePath = "res://assets/textures/CellBorder.png"
 TileSize = Vector2i(18, 18)
 metadata/_custom_type_script = "uid://di86uya3cyg7d"
-
-[node name="SelectionRect" type="ColorRect" parent="." unique_id=875267900]
-visible = false
-offset_right = 40.0
-offset_bottom = 40.0
-color = Color(0, 0.31764707, 1, 0.4745098)

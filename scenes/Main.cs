@@ -1,5 +1,4 @@
 using Godot;
-using Godot.Collections;
 using Quasar.data;
 using Quasar.data.enums;
 using Quasar.scenes.camera;
@@ -21,6 +20,8 @@ namespace Quasar.scenes
 
         private MapCamera2d _camera;
 
+        private SelectionSystem _selectionSystem;
+
         private CanvasLayer _debugGUI;
 
         private CanvasLayer _gui;
@@ -36,6 +37,8 @@ namespace Quasar.scenes
         private Vector2 _prevCameraPos;
 
         private List<Cat> _cats = [];
+
+        private Cat _selectedCat = null;
 
         private List<WorkType> _possibleWorkTypes = [WorkType.MINING, WorkType.BUILDING, WorkType.FARMING, WorkType.FISHING];
 
@@ -54,6 +57,8 @@ namespace Quasar.scenes
             _gui = GetNode<CanvasLayer>("GUI");
             _map = GetNode<Map>("Map");
             _world = GetNode<World>("World");
+            _selectionSystem = GetNode<SelectionSystem>("SelectionSystem");
+            _selectionSystem.World = _world;
             _camera = GetNode<MapCamera2d>("MapCamera2D");
             _tileTypeDisplay = GetNode<BasicLabelDisplay>("DebugGUI/TileTypeDisplay");
             _tileColorDisplay = GetNode<BasicLabelDisplay>("DebugGUI/TileColorDisplay");
@@ -324,50 +329,113 @@ namespace Quasar.scenes
             }
         }
 
+        private void RemoveWork(List<Vector2> worldPosList)
+        {
+            List<Work> removeList = [];
+
+            foreach (var worldPos in worldPosList)
+            {
+                foreach (var work in _workList)
+                {
+                    if (work.WorldPos == worldPos)
+                    {
+                        removeList.Add(work);
+                        break;
+                    }
+                }
+            }
+
+            foreach (var work in removeList)
+            {
+                _workList.Remove(work);
+            }
+        }
+
+        private WorkType GetWorkType(SelectionState selectionState)
+        {
+            switch (selectionState)
+            {
+                case SelectionState.MINING:
+                    return WorkType.MINING;
+                case SelectionState.BUILDING:
+                    return WorkType.BUILDING;
+                case SelectionState.FARMING:
+                    return WorkType.FARMING;
+                case SelectionState.FISHING:
+                    return WorkType.FISHING;
+                default:
+                    GD.Print("Incorrect SelectionState in GetWorkType");
+                    return WorkType.NONE;
+            }
+        }
+
         private void OnToolBarSelectPressed()
         {
-            _world.SetSelectionState(SelectionState.SINGLE);
+            _selectionSystem.SelectionState = SelectionState.SINGLE;
         }
 
         private void OnToolBarMinePressed()
         {
-            _world.SetSelectionState(SelectionState.MINING);
+            _selectionSystem.SelectionState = SelectionState.MINING;
         }
 
         private void OnToolBarBuildPressed()
         {
-            _world.SetSelectionState(SelectionState.BUILDING);
+            _selectionSystem.SelectionState = SelectionState.BUILDING;
         }
 
         private void OnToolBarFarmPressed()
         {
-            _world.SetSelectionState(SelectionState.FARMING);
+            _selectionSystem.SelectionState = SelectionState.FARMING;
         }
 
         private void OnToolBarFishPressed()
         {
-            _world.SetSelectionState(SelectionState.FISHING);
+            _selectionSystem.SelectionState = SelectionState.FISHING;
         }
 
         private void OnToolBarCancelPressed()
         {
-            _world.SetSelectionState(SelectionState.CANCEL);
+            _selectionSystem.SelectionState = SelectionState.CANCEL;
+        }
+
+        private void OnSelectionCreated(Selection selection)
+        {
+            switch (selection.SelectionState)
+            {
+                case SelectionState.MINING:
+                case SelectionState.BUILDING:
+                case SelectionState.FARMING:
+                case SelectionState.FISHING:
+                    var workType = GetWorkType(selection.SelectionState);
+                    _workList.AddRange(selection.Coords.Select(c => new Work(workType, c)));
+                    break;
+                case SelectionState.CANCEL:
+                    RemoveWork(selection.Coords);
+                    break;
+                default:
+                    GD.Print("Incorrect SelectionState in OnSelectionCreated");
+                    break;
+            }
+        }
+
+        private void OnTileSelected(Vector2 localPos)
+        {
+            if (_selectedCat != null &&
+                _selectedCat.CanWork() &&
+                !_world.TileOccupied(localPos))
+            {
+                var path = _world.FindPath(_selectedCat.Position, localPos);
+                _world.ShowPath(path);
+                _selectedCat.SetPath(path);
+            } 
         }
 
         private void OnCatClickedOn(Cat cat)
         {
+            _selectedCat = cat;
             _characterDisplay.SetCatData(cat.CatData);
             _characterDisplay.Visible = true;
-        }
-
-        private void OnWorldTileSelected(Vector2 tileSelected)
-        {
-            if (!_cats.First().IsWorking)
-            {
-                var path = _world.FindPath(_cats.First().Position, tileSelected);
-                _world.ShowPath(path);
-                _cats.First().SetPath(path);
-            } 
         }
 
         private void OnCatMovedOne(Vector2 lastPos, Vector2 newPos)
@@ -380,33 +448,6 @@ namespace Quasar.scenes
             _world.ClearPath();
         }
 
-        private void OnWorldWorkCreated(Array<Work> workArray)
-        {
-            _workList.AddRange(workArray);
-        }
-
-        private void OnWorldCancelWork(Array<Vector2> worldPosArray)
-        {
-            List<Work> removeList = [];
-
-            foreach (var worldPos in worldPosArray)
-            {
-                foreach (var work in _workList)
-                {
-                    if (work.WorldPos == worldPos)
-                    {
-                        removeList.Add(work); 
-                        break; 
-                    }
-                }
-            }
-
-            foreach (var work in removeList)
-            {
-                _workList.Remove(work);
-            }
-        }
-
         private void OnCatWork(Cat cat, Vector2 worldPos)
         {
             var work = _workList.FirstOrDefault(w => w.WorldPos == worldPos);
@@ -415,6 +456,7 @@ namespace Quasar.scenes
             if (work != null)
             {
                 _world.Work(work.WorkType, worldPos);
+                _selectionSystem.Deselect(worldPos);
                 _workList.Remove(work);
             }
             else

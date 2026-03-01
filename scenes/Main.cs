@@ -63,7 +63,6 @@ namespace Quasar.scenes
             _world = GetNode<World>("World");
             _selectionSystem = GetNode<SelectionSystem>("SelectionSystem");
             _pathingSystem = GetNode<PathingSystem>("PathingSystem");
-            _selectionSystem._world = _world;
             _camera = GetNode<MapCamera2d>("MapCamera2D");
             _tileTypeDisplay = GetNode<BasicLabelDisplay>("DebugGUI/TileTypeDisplay");
             _tileColorDisplay = GetNode<BasicLabelDisplay>("DebugGUI/TileColorDisplay");

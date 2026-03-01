@@ -38,8 +38,9 @@ ZoomOutLimit = 0.25
 WorldSize = Vector2(3456, 3456)
 WorldMargins = Vector4(80, 80, 80, 80)
 
-[node name="SelectionSystem" parent="." unique_id=1554002201 instance=ExtResource("2_tipki")]
+[node name="SelectionSystem" parent="." unique_id=1554002201 node_paths=PackedStringArray("WorldNode") instance=ExtResource("2_tipki")]
 SelectionState = 1
+WorldNode = NodePath("../World")
 
 [node name="PathingSystem" parent="." unique_id=66750832 node_paths=PackedStringArray("World") instance=ExtResource("6_85g3d")]
 World = NodePath("../World")

@@ -1,5 +1,4 @@
 using Godot;
-using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using Quasar.scenes.time;
 using Quasar.scenes.work;
@@ -84,10 +83,11 @@ namespace Quasar.scenes.cats
             CatData = data;
         }
 
-        public void SetWork(WorkType workType, Vector2 workPos)
+        public void SetWork(Work work, Path path)
         {
+            SetPath(path);
             IsWorking = true;
-            CatData.WorkPos = workPos;
+            CatData.WorkPos = work.WorldPos;
             _workProgress.Value = 0;
             _workProgress.Visible = true;
         }

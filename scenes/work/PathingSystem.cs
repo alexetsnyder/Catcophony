@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Quasar.scenes.work
 {
-    public partial class PathingSystem : Node2D
+    public partial class PathingSystem : Node2D, IPathingSystem
     {
         [Export]
         public Color PathColor { get; set; } = new Color(1.0f, 0.0f, 1.0f, 1.0f);
@@ -28,6 +28,13 @@ namespace Quasar.scenes.work
             _pathingTileMapLayer = GetNode<IMultiColorTileMapLayer>("PathingTileMapLayer");
 
             SetUpAStar();
+        }
+
+        public Path CreateEmptyPath()
+        {
+            _paths.Add(_nextId, new(_nextId, new()));
+
+            return _paths[_nextId++];
         }
 
         public Path FindPath(Vector2 startPos, Vector2 endPos)

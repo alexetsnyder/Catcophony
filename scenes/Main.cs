@@ -7,6 +7,7 @@ using Quasar.scenes.gui;
 using Quasar.scenes.map;
 using Quasar.scenes.work;
 using Quasar.scenes.world;
+using Quasar.system;
 using System.Collections.Generic;
 
 namespace Quasar.scenes
@@ -94,7 +95,7 @@ namespace Quasar.scenes
         {
             if (@event.IsActionPressed("Quit"))
             {
-                GetTree().Quit();
+                GlobalSystem.Instance.Quit();
             }
             else if (@event.IsActionPressed("Map"))
             {

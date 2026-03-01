@@ -2,6 +2,7 @@ using Godot;
 using Quasar.data;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
+using Quasar.system;
 
 namespace Quasar.scenes.work
 {
@@ -40,10 +41,7 @@ namespace Quasar.scenes.work
             _selectedTileMapLayer = GetNode<IMultiColorTileMapLayer>("SelectedTileMapLayer");
             _selectingTileMapLayer = GetNode<IMultiColorTileMapLayer>("SelectingTileMapLayer");
 
-            if (WorldNode is IWorld world)
-            {
-                _world = world;
-            }
+            GlobalSystem.Instance.LoadInterface<IWorld>(WorldNode, out _world);
         }
 
         public override void _Process(double delta)

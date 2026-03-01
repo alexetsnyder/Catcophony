@@ -49,8 +49,8 @@ WorldMargins = Vector4(80, 80, 80, 80)
 SelectionState = 1
 WorldNode = NodePath("../World")
 
-[node name="PathingSystem" parent="." unique_id=66750832 node_paths=PackedStringArray("World") instance=ExtResource("6_85g3d")]
-World = NodePath("../World")
+[node name="PathingSystem" parent="." unique_id=66750832 node_paths=PackedStringArray("WorldNode") instance=ExtResource("6_85g3d")]
+WorldNode = NodePath("../World")
 
 [node name="DebugGUI" type="CanvasLayer" parent="." unique_id=809005585]
 

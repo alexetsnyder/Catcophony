@@ -1,5 +1,6 @@
 using Godot;
 using Quasar.scenes.common.interfaces;
+using Quasar.system;
 using System.Collections.Generic;
 
 
@@ -11,7 +12,9 @@ namespace Quasar.scenes.work
         public Color PathColor { get; set; } = new Color(1.0f, 0.0f, 1.0f, 1.0f);
 
         [Export]
-        public Node World { get; set; }
+        public Node WorldNode { get; set; }
+
+        private IWorld _world;
 
         private int _nextId = 0;
 
@@ -26,6 +29,8 @@ namespace Quasar.scenes.work
         public override void _Ready()
         {
             _pathingTileMapLayer = GetNode<IMultiColorTileMapLayer>("PathingTileMapLayer");
+
+            GlobalSystem.Instance.LoadInterface<IWorld>(WorldNode, out _world);
 
             SetUpAStar();
         }
@@ -93,21 +98,18 @@ namespace Quasar.scenes.work
 
         private void SetUpAStar()
         {
-            if (World is IWorld world)
-            {
-                _aStarGrid2d.Region = new Rect2I(0, 0, world.Rows + 1, world.Cols + 1);
-                _aStarGrid2d.CellSize = _pathingTileMapLayer.TileSize;
-                _aStarGrid2d.DefaultComputeHeuristic = AStarGrid2D.Heuristic.Manhattan;
-                _aStarGrid2d.DefaultEstimateHeuristic = AStarGrid2D.Heuristic.Manhattan;
-                _aStarGrid2d.DiagonalMode = AStarGrid2D.DiagonalModeEnum.Always;
-                _aStarGrid2d.Update();
+            _aStarGrid2d.Region = new Rect2I(0, 0, _world.Rows + 1, _world.Cols + 1);
+            _aStarGrid2d.CellSize = _pathingTileMapLayer.TileSize;
+            _aStarGrid2d.DefaultComputeHeuristic = AStarGrid2D.Heuristic.Manhattan;
+            _aStarGrid2d.DefaultEstimateHeuristic = AStarGrid2D.Heuristic.Manhattan;
+            _aStarGrid2d.DiagonalMode = AStarGrid2D.DiagonalModeEnum.Always;
+            _aStarGrid2d.Update();
 
-                foreach (var coords in world.GetAllPoints())
+            foreach (var coords in _world.GetAllPoints())
+            {
+                if (_world.IsImpassable(coords))
                 {
-                    if (world.IsImpassable(coords))
-                    {
-                        _aStarGrid2d.SetPointSolid(coords);
-                    }
+                    _aStarGrid2d.SetPointSolid(coords);
                 }
             }
         }

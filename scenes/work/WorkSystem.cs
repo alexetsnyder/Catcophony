@@ -2,6 +2,7 @@ using Godot;
 using Quasar.data.enums;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
+using Quasar.system;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,12 +28,8 @@ namespace Quasar.scenes.work
 
         public override void _Ready()
         {
-            LoadInterface<IPathingSystem>(PathingSystemNode, out  _pathingSystem);
-            LoadInterface<IWorld>(WorldNode, out _world);
-        }
-
-        public override void _Process(double delta)
-        {
+            GlobalSystem.Instance.LoadInterface<IPathingSystem>(PathingSystemNode, out  _pathingSystem);
+            GlobalSystem.Instance.LoadInterface<IWorld>(WorldNode, out _world);
         }
 
         public Work GetWork(Vector2 worldPos)
@@ -148,30 +145,6 @@ namespace Quasar.scenes.work
             }
 
             return shortestPath;
-        }
-
-        private void LoadInterface<T>(Node node, out T toInterface)
-        {
-            toInterface = default;
-
-            if (node is T tempInterface)
-            {
-                toInterface = tempInterface;
-            }
-            else
-            {
-                Quit(1, $"Failed to Load Interface: {typeof(T)}");
-            }
-        }
-
-        private void Quit(int exitCode, string errorMessage = "")
-        {
-            if (errorMessage != "")
-            {
-                GD.Print(errorMessage);
-            }
-
-            GetTree().Quit(exitCode);
         }
     }
 }

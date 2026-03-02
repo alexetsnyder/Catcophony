@@ -5,7 +5,13 @@ namespace Quasar.data.enums
         NONE,
         SOLID,
         NATURAL_WALL,
+
         WALL,
+        CORNER_WALL,
+        THREE_CONNECT_WALL,
+        FOUR_CONNECT_WALL,
+        STORAGE,
+
         GRASS,
         DIRT,
         WATER, 

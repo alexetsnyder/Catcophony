@@ -10,7 +10,13 @@ namespace Quasar.data
         {
             { TileType.SOLID, [ new(11, 13) ] },
             { TileType.NATURAL_WALL, [ new(1, 11) ] },
-            { TileType.WALL, [ new(10, 11), new(10, 12), new(13, 12), new(9, 12), new(2, 11) ] },
+
+            { TileType.WALL, [ new(10, 11), new(13, 12) ] },
+            { TileType.CORNER_WALL, [ new(11, 11), new(12, 11), new(8, 12), new(9, 12),  ] },
+            { TileType.THREE_CONNECT_WALL, [ new(9, 11), new(10, 12), new(11, 12), new(12, 12) ] },
+            { TileType.FOUR_CONNECT_WALL, [ new(14, 12) ] },
+            { TileType.STORAGE, [ new(12, 14) ] },
+
             { TileType.GRASS, [ new(10, 15), new(12, 2), new(0, 6), new(7, 2) ] },
             { TileType.DIRT, [ new(7, 15) ] },
             { TileType.WATER, [ new(7, 15) ] },
@@ -34,9 +40,15 @@ namespace Quasar.data
         {
             { TileType.SOLID, [ ColorConstants.BLACK ] },
             { TileType.NATURAL_WALL, [ ColorConstants.WALL_PURPLE ] },
+
             { TileType.WALL, [ ColorConstants.GREY ] },
-            { TileType.GRASS, [ ColorConstants.RED, ColorConstants.GREEN, ColorConstants.GRASS_GREEN, ColorConstants.YELLOW,
-                                ColorConstants.ORANGE, ColorConstants.AMBER ] },
+            { TileType.CORNER_WALL, [ ColorConstants.GREY ] },
+            { TileType.THREE_CONNECT_WALL, [ ColorConstants.GREY ] },
+            { TileType.FOUR_CONNECT_WALL, [ ColorConstants.GREY ] },
+            { TileType.STORAGE, [ ColorConstants.GREY ] },
+
+            { TileType.GRASS, [ ColorConstants.RED, ColorConstants.GREEN, ColorConstants.GRASS_GREEN, 
+                                ColorConstants.YELLOW, ColorConstants.ORANGE, ColorConstants.AMBER ] },
             { TileType.DIRT, [ ColorConstants.BURNT_ORANGE ] },
             { TileType.WATER, [ ColorConstants.BLUE ] },
             { TileType.TILLED, [ ColorConstants.LAVENDER ] },

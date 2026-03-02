@@ -12,21 +12,25 @@
 [ext_resource type="Texture2D" uid="uid://co2yspy2e0jbv" path="res://assets/textures/Fish.png" id="9_6ogpc"]
 [ext_resource type="Texture2D" uid="uid://da81fqa30562p" path="res://assets/textures/Haowan_Curses_1440x450.png" id="11_utjv6"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_nfl5i"]
-atlas = ExtResource("11_utjv6")
-region = Rect2(180, 198, 18, 18)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_wjxwe"]
-atlas = ExtResource("11_utjv6")
-region = Rect2(180, 216, 18, 18)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_utjv6"]
 atlas = ExtResource("11_utjv6")
 region = Rect2(234, 216, 18, 18)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_pk1ca"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_nfl5i"]
+atlas = ExtResource("11_utjv6")
+region = Rect2(180, 216, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wjxwe"]
 atlas = ExtResource("11_utjv6")
 region = Rect2(162, 216, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pk1ca"]
+atlas = ExtResource("11_utjv6")
+region = Rect2(252, 216, 18, 18)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ojp43"]
+atlas = ExtResource("11_utjv6")
+region = Rect2(216, 252, 18, 18)
 
 [node name="ToolBar" type="Control" unique_id=1705562377]
 layout_mode = 3
@@ -141,18 +145,21 @@ icon_alignment = 1
 [node name="BuildMenu" type="ItemList" parent="." unique_id=2124420520]
 visible = false
 layout_mode = 1
+offset_top = -23.0
 offset_right = 176.0
 offset_bottom = 52.0
-item_count = 4
+item_count = 5
 max_columns = 2
-item_0/text = "vWall"
-item_0/icon = SubResource("AtlasTexture_nfl5i")
-item_1/text = "cWall"
-item_1/icon = SubResource("AtlasTexture_wjxwe")
-item_2/text = "hWall"
-item_2/icon = SubResource("AtlasTexture_utjv6")
-item_3/text = "cWall"
+item_0/text = "Wall"
+item_0/icon = SubResource("AtlasTexture_utjv6")
+item_1/text = "3Wall"
+item_1/icon = SubResource("AtlasTexture_nfl5i")
+item_2/text = "cWall"
+item_2/icon = SubResource("AtlasTexture_wjxwe")
+item_3/text = "4Wall"
 item_3/icon = SubResource("AtlasTexture_pk1ca")
+item_4/text = "Storage"
+item_4/icon = SubResource("AtlasTexture_ojp43")
 
 [connection signal="pressed" from="ToolBarMargin/ToolBarContainer/SelectButton" to="." method="OnSelectButtonPressed"]
 [connection signal="pressed" from="ToolBarMargin/ToolBarContainer/MineButton" to="." method="OnMineButtonPressed"]

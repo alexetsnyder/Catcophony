@@ -3,6 +3,7 @@ using Quasar.data;
 using Quasar.data.enums;
 using Quasar.math;
 using Quasar.scenes.common.interfaces;
+using Quasar.scenes.work;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -151,7 +152,7 @@ namespace Quasar.scenes.world
             return [..GetAdjacentCells(_worldTileMapLayer.LocalToMap(localPos), includeDiagonals).Select(a => _worldTileMapLayer.MapToLocal(a))];
         }
 
-        public void Work(WorkType workType, Vector2 localPos, BuildingType? buildingType = null)
+        public void Work(WorkType workType, Vector2 localPos, Buildable buildable)
         {
             switch(workType)
             {
@@ -159,7 +160,7 @@ namespace Quasar.scenes.world
                     Mine(localPos);
                     break;
                 case WorkType.BUILDING:
-                    Build(localPos, buildingType.Value);
+                    Build(localPos, buildable);
                     break;
                 case WorkType.FARMING:
                     Till(localPos);
@@ -191,14 +192,14 @@ namespace Quasar.scenes.world
             }
         }
 
-        public void Build(Vector2 localPos, BuildingType buildingType)
+        public void Build(Vector2 localPos, Buildable buildable)
         {
             var coords = _worldTileMapLayer.LocalToMap(localPos);
 
             if (!IsImpassable(coords))
             {
-                var atlasCoords = GetAtlasCoords(buildingType);
-                var color = GetCellColor(TileType.WALL);
+                var atlasCoords = buildable.AtlasCoords;
+                var color = buildable.Color;
 
                 _worldCellArray[coords.X, coords.Y] = new(TileType.WALL, atlasCoords, color);
 

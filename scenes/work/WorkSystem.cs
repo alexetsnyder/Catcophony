@@ -43,13 +43,13 @@ namespace Quasar.scenes.work
             return null;
         }
 
-        public void CreateWork(WorkType workType, List<Vector2> worldPosList)
+        public void CreateWork(WorkType workType, List<Vector2> worldPosList, Buildable buildable = null)
         {
             _allWork.TryAdd(workType, []);
             
             foreach (var worldPos in worldPosList)
             {
-                _allWork[workType].Add(_nextId, new(_nextId++, workType, worldPos));
+                _allWork[workType].Add(_nextId, new(_nextId++, workType, worldPos, buildable));
             }
         }
 

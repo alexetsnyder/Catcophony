@@ -24,6 +24,8 @@ namespace Quasar.scenes
 
         private PathingSystem _pathingSystem;
 
+        private BuildingSystem _buildingSystem;
+
         private WorkSystem _workSystem;
 
         private CanvasLayer _debugGUI;
@@ -42,7 +44,7 @@ namespace Quasar.scenes
 
         private Vector2 _prevCameraPos;
 
-        private List<Cat> _cats = [];
+        private readonly List<Cat> _cats = [];
 
         private Cat _selectedCat = null;
 
@@ -53,8 +55,6 @@ namespace Quasar.scenes
             new("New Year", "Russian Blue Cat", "Curious", 100, WorkType.FISHING),
         ];
 
-        private BuildingType _currentBuildable = BuildingType.NONE;
-
         public override void _Ready()
         {
             _debugGUI = GetNode<CanvasLayer>("DebugGUI");
@@ -63,6 +63,7 @@ namespace Quasar.scenes
             _world = GetNode<World>("World");
             _selectionSystem = GetNode<SelectionSystem>("SelectionSystem");
             _pathingSystem = GetNode<PathingSystem>("PathingSystem");
+            _buildingSystem = GetNode<BuildingSystem>("BuildingSystem");
             _workSystem = GetNode<WorkSystem>("WorkSystem");
             _camera = GetNode<MapCamera2d>("MapCamera2D");
             _tileTypeDisplay = GetNode<BasicLabelDisplay>("DebugGUI/TileTypeDisplay");
@@ -107,6 +108,13 @@ namespace Quasar.scenes
             else if (@event.IsActionPressed("DebugUI"))
             {
                 _debugGUI.Visible = !_debugGUI.Visible;
+            }
+            else if (@event.IsActionPressed("SwitchBuildable"))
+            {
+                if (_selectionSystem.SelectionState == SelectionState.BUILDING)
+                {
+                    _buildingSystem.NextBuildable();
+                }
             }
         }
 
@@ -261,19 +269,6 @@ namespace Quasar.scenes
             cat.SetWork(work, path);
         }
 
-        private void CancelCatWork(Vector2 workPos)
-        {
-            foreach (var cat in _cats)
-            {
-                if (!cat.CanWork() && cat.CatData.WorkPos == workPos)
-                {
-                    GD.Print("Cancel from CancelCatWork");
-                    cat.CompleteWork();
-                    break;
-                }
-            }
-        }
-
         private void RemoveWork(List<Vector2> worldPosList)
         {
             _workSystem.RemoveWork(worldPosList);
@@ -299,32 +294,38 @@ namespace Quasar.scenes
 
         private void OnToolBarSelectPressed()
         {
+            _buildingSystem.Clear();
             _selectionSystem.SelectionState = SelectionState.SINGLE;
         }
 
         private void OnToolBarMinePressed()
         {
+            _buildingSystem.Clear();
             _selectionSystem.SelectionState = SelectionState.MINING;
         }
 
-        private void OnToolBarBuildPressed(int buildableType)
+        private void OnToolBarBuildPressed(int tileType)
         {
-            _currentBuildable = (BuildingType)buildableType;
+            _buildingSystem.Clear();
+            _buildingSystem.SetCurrent((TileType)tileType);
             _selectionSystem.SelectionState = SelectionState.BUILDING;
         }
 
         private void OnToolBarFarmPressed()
         {
+            _buildingSystem.Clear();
             _selectionSystem.SelectionState = SelectionState.FARMING;
         }
 
         private void OnToolBarFishPressed()
         {
+            _buildingSystem.Clear();
             _selectionSystem.SelectionState = SelectionState.FISHING;
         }
 
         private void OnToolBarCancelPressed()
         {
+            _buildingSystem.Clear();
             _selectionSystem.SelectionState = SelectionState.CANCEL;
         }
 
@@ -337,7 +338,7 @@ namespace Quasar.scenes
                 case SelectionState.FARMING:
                 case SelectionState.FISHING:
                     var workType = GetWorkType(selection.SelectionState);
-                    _workSystem.CreateWork(workType, selection.Points);
+                    _workSystem.CreateWork(workType, selection.Points, _buildingSystem.Current);
                     break;
                 case SelectionState.CANCEL:
                     RemoveWork(selection.Points);
@@ -389,7 +390,7 @@ namespace Quasar.scenes
 
             if (work != null)
             {
-                _world.Work(work.WorkType, worldPos, _currentBuildable);
+                _world.Work(work.WorkType, worldPos, work.Buildable);
                 _selectionSystem.Deselect(worldPos);
 
                 switch (work.WorkType)
@@ -403,10 +404,6 @@ namespace Quasar.scenes
                 }
 
                 _workSystem.RemoveWork(work);
-            }
-            else
-            {
-                GD.Print("Cancel from OnCatWork");
             }
         }
     }

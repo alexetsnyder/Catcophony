@@ -1,4 +1,5 @@
 using Godot;
+using Quasar.data.enums;
 
 public partial class ToolBarControl : Control
 {
@@ -9,7 +10,7 @@ public partial class ToolBarControl : Control
 	public delegate void MinePressedEventHandler();
 
 	[Signal]
-	public delegate void BuildPressedEventHandler(int buildingType);
+	public delegate void BuildPressedEventHandler(int tileType);
 
 	[Signal]
 	public delegate void FarmPressedEventHandler();
@@ -25,6 +26,26 @@ public partial class ToolBarControl : Control
 	{
 		_buildMenu = GetNode<ItemList>("BuildMenu");
 	}
+
+    private TileType GetTileType(int index)
+    {
+        switch (index)
+        {
+            case 0:
+                return TileType.WALL;
+            case 1:
+                return TileType.THREE_CONNECT_WALL;
+            case 2:
+                return TileType.CORNER_WALL;
+            case 3:
+                return TileType.FOUR_CONNECT_WALL;
+            case 4:
+                return TileType.STORAGE;
+            default:
+                GD.Print($"");
+                return TileType.NONE;
+        }
+    }
 
     private void OnSelectButtonPressed()
     {
@@ -45,7 +66,8 @@ public partial class ToolBarControl : Control
 
     private void OnBuildMenuItemSelected(int index)
     {
-        EmitSignal(SignalName.BuildPressed, index + 1);
+        var tileType = GetTileType(index);
+        EmitSignal(SignalName.BuildPressed, (int)tileType);
     }
 
     private void OnFarmButtonPressed()

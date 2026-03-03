@@ -42,6 +42,35 @@ namespace Quasar.scenes.work
             return _paths[_nextId++];
         }
 
+        public Path ShortestPath(Vector2 startPos, List<Vector2> toPosList)
+        {
+            Path shortestPath = null;
+            int minPathCount = int.MaxValue;
+
+            foreach (var toPos in toPosList)
+            {
+                if (startPos.IsEqualApprox(toPos))
+                {
+                    return new(-1, []);
+                }
+
+                var path = FindPath(startPos, toPos);
+
+                if (path != null && path.Points.Count <  minPathCount)
+                {
+                    if (shortestPath != null)
+                    {
+                        RemovePath(shortestPath.Id);
+                    }
+
+                    shortestPath = path;
+                    minPathCount = path.Points.Count;
+                }
+            }
+
+            return shortestPath;
+        }
+
         public Path FindPath(Vector2 startPos, Vector2 endPos)
         {
             var start = _pathingTileMapLayer.LocalToMap(startPos);
@@ -56,9 +85,14 @@ namespace Quasar.scenes.work
                 pointQueue.Enqueue(point);
             }
 
-            _paths.Add(_nextId, new(_nextId, pointQueue));
+            if (pointQueue.Count > 0)
+            {
+                _paths.Add(_nextId, new(_nextId, pointQueue));
 
-            return _paths[_nextId++];
+                return _paths[_nextId++];
+            }
+
+            return null;
         }
 
         public void ShowPath(int id)

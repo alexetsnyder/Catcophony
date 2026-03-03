@@ -5,7 +5,6 @@ using Quasar.scenes.common.interfaces;
 using Quasar.system;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Quasar.scenes.work
 {
@@ -101,10 +100,11 @@ namespace Quasar.scenes.work
             {
                 if (workDict.Count > 0)
                 {
-                    var path = ShortestPath([.. workDict.Values.Select(w => w)], cat, out Work work);
+                    var shortestPath = ShortestPath([.. workDict.Values], cat, out Work work);
+
                     if (work != null)
                     {
-                        return new(work, path);
+                        return new(work, shortestPath);
                     }
                 }
             }
@@ -120,27 +120,31 @@ namespace Quasar.scenes.work
 
             foreach (var pWork in workList)
             {
-                foreach (var adjPos in _world.GetAdjacentTiles(pWork.WorldPos, true))
+                var adjPosList = _world.GetAdjacentTiles(pWork.WorldPos, true);
+
+                var path = _pathingSystem.ShortestPath(cat.Position, adjPosList);
+
+                if (path == null)
                 {
-                    if (cat.Position.IsEqualApprox(adjPos))
+                    continue; 
+                }
+
+                if (path.Id == -1)
+                {
+                    work = pWork;
+                    return path;
+                }
+
+                if (path.Points.Count < minPathCount)
+                {
+                    if (shortestPath != null)
                     {
-                        work = pWork;
-                        return _pathingSystem.CreateEmptyPath();
+                        _pathingSystem.RemovePath(shortestPath.Id);
                     }
 
-                    var path = _pathingSystem.FindPath(cat.Position, adjPos);
-
-                    if (path.Points.Count == 0)
-                    {
-                        continue;
-                    }
-
-                    if (path.Points.Count < minPathCount)
-                    {
-                        work = pWork;
-                        minPathCount = path.Points.Count;
-                        shortestPath = path;
-                    }
+                    work = pWork;
+                    shortestPath = path;
+                    minPathCount = path.Points.Count;
                 }
             }
 

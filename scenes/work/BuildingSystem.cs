@@ -54,6 +54,7 @@ namespace Quasar.scenes.work
 
         public void Clear()
         {
+            _buildingPreviewTileMapLayer.Clear();
             _current = TileType.NONE;
             _atlasCoords.Clear();
             _atlasIndex = 0;

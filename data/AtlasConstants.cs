@@ -17,6 +17,10 @@ namespace Quasar.data
             { TileType.FOUR_CONNECT_WALL, [ new(14, 12) ] },
             { TileType.STORAGE, [ new(12, 14) ] },
 
+            { TileType.STONE, [ new(9, 15) ] },
+            { TileType.WOOD, [ new(13, 3) ] },
+            { TileType.TREE, [ new(15, 4) ] },
+
             { TileType.GRASS, [ new(10, 15), new(12, 2), new(0, 6), new(7, 2) ] },
             { TileType.DIRT, [ new(7, 15) ] },
             { TileType.WATER, [ new(7, 15) ] },
@@ -46,6 +50,12 @@ namespace Quasar.data
             { TileType.THREE_CONNECT_WALL, [ ColorConstants.GREY ] },
             { TileType.FOUR_CONNECT_WALL, [ ColorConstants.GREY ] },
             { TileType.STORAGE, [ ColorConstants.GREY ] },
+
+            { TileType.STONE, [ ColorConstants.GREY ] },
+            { TileType.WOOD, [ ColorConstants.BIRCH_WOOD, ColorConstants.OAK_WOOD, ColorConstants.SPRUCE_WOOD,
+                               ColorConstants.DARK_OAK_WOOD, ColorConstants.JUNGLE_WOOD] },
+            { TileType.TREE, [ ColorConstants.BIRCH_WOOD, ColorConstants.OAK_WOOD, ColorConstants.SPRUCE_WOOD,
+                               ColorConstants.DARK_OAK_WOOD, ColorConstants.JUNGLE_WOOD] },
 
             { TileType.GRASS, [ ColorConstants.RED, ColorConstants.GREEN, ColorConstants.GRASS_GREEN, 
                                 ColorConstants.YELLOW, ColorConstants.ORANGE, ColorConstants.AMBER ] },

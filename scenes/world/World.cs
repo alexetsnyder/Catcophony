@@ -235,7 +235,24 @@ namespace Quasar.scenes.world
                 return true;
             }
 
-            return (worldCell.TileType == TileType.SOLID || worldCell.TileType == TileType.NATURAL_WALL || worldCell.TileType == TileType.WALL);
+            return (worldCell.TileType == TileType.SOLID || 
+                    worldCell.TileType == TileType.NATURAL_WALL || 
+                    worldCell.TileType == TileType.WALL ||
+                    worldCell.TileType == TileType.CORNER_WALL ||
+                    worldCell.TileType == TileType.THREE_CONNECT_WALL ||
+                    worldCell.TileType == TileType.FOUR_CONNECT_WALL ||
+                    worldCell.TileType == TileType.TREE);
+        }
+
+        public bool IsMineable(Vector2I coords)
+        {
+            var worldCell = GetWorldCell(coords);
+            if (worldCell == null)
+            {
+                return false;
+            }
+
+            return (worldCell.TileType == TileType.SOLID || worldCell.TileType == TileType.NATURAL_WALL);
         }
 
         public bool IsWater(Vector2I coords)
@@ -257,10 +274,7 @@ namespace Quasar.scenes.world
                 return true;
             }
 
-            return (worldCell.TileType == TileType.SOLID ||
-                    worldCell.TileType == TileType.NATURAL_WALL ||
-                    worldCell.TileType == TileType.WALL ||
-                    worldCell.TileType == TileType.WATER);
+            return (IsSolid(coords) || IsWater(coords));
         }
 
         public bool IsInBounds(Vector2I coords)
@@ -334,6 +348,27 @@ namespace Quasar.scenes.world
             }
 
             CheckForEdges();
+            GenerateTrees();
+        }
+
+        private void GenerateTrees()
+        {
+            var tileSize = _worldTileMapLayer.TileSize;
+            var points = Random.PoissonDiskSampling(_rng, 200.0f, 30, Cols * tileSize.X, Rows * tileSize.Y);
+
+            foreach (var point in points)
+            {
+                var coords = _worldTileMapLayer.LocalToMap(point);
+
+                if (!IsImpassable(coords))
+                {
+                    var tileType = TileType.TREE;
+                    var atlasCoords = GetAtlasCoords(tileType);
+                    var color = GetCellColor(tileType);
+
+                    _worldCellArray[coords.X, coords.Y] = new(tileType, atlasCoords, color);
+                }
+            }
         }
 
         private void CheckForEdges()
@@ -346,10 +381,11 @@ namespace Quasar.scenes.world
 
                     if (IsEdge(coords))
                     {
-                        var atlasCoords = GetAtlasCoords(TileType.NATURAL_WALL);
-                        var color = GetCellColor(TileType.NATURAL_WALL);
+                        var tileType = TileType.NATURAL_WALL;
+                        var atlasCoords = GetAtlasCoords(tileType);
+                        var color = GetCellColor(tileType);
 
-                        _worldCellArray[i, j] = new(TileType.NATURAL_WALL, atlasCoords, color);
+                        _worldCellArray[i, j] = new(tileType, atlasCoords, color);
                     }
                 }
             }

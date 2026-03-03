@@ -12,6 +12,10 @@ namespace Quasar.data.enums
         FOUR_CONNECT_WALL,
         STORAGE,
 
+        STONE,
+        WOOD,
+        TREE,
+
         GRASS,
         DIRT,
         WATER, 

@@ -210,7 +210,7 @@ namespace Quasar.scenes.work
             switch (SelectionState)
             {
                 case SelectionState.MINING:
-                    filter = (c) => _world.IsSolid(c) && _selectedTileMapLayer.GetCellSourceId(c) == -1;
+                    filter = (c) => _world.IsMineable(c) && _selectedTileMapLayer.GetCellSourceId(c) == -1;
                     break;
                 case SelectionState.BUILDING:
                 case SelectionState.FARMING:

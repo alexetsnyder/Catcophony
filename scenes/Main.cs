@@ -361,8 +361,12 @@ namespace Quasar.scenes
                 }
 
                 var path = _pathingSystem.FindPath(_selectedCat.Position, localPos);
-                _pathingSystem.ShowPath(path.Id);
-                _selectedCat.SetPath(path);
+
+                if (path != null)
+                {
+                    _pathingSystem.ShowPath(path.Id);
+                    _selectedCat.SetPath(path);
+                }  
             } 
         }
 

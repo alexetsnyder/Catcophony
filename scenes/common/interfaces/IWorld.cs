@@ -17,6 +17,8 @@ namespace Quasar.scenes.common.interfaces
 
         public bool IsWater(Vector2I coords);
 
+        public bool IsMineable(Vector2I coords);
+
         public List<Vector2I> GetAllPoints();
 
         public List<Vector2> GetAdjacentTiles(Vector2 localPos, bool includeDiagonals = false);

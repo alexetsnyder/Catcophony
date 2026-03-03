@@ -36,6 +36,16 @@ namespace Quasar.data
 
         public static Color WARNING_RED { get => new("#D0342C"); }
 
+        public static Color BIRCH_WOOD { get => new("#A69D6F"); }
+
+        public static Color OAK_WOOD { get => new("#91754D"); }
+
+        public static Color SPRUCE_WOOD { get => new("#63492B"); }
+
+        public static Color DARK_OAK_WOOD { get => new("#362310"); }
+
+        public static Color JUNGLE_WOOD { get => new("#8E684F"); }
+
         public static string GetColorStrReflection(Color color)
         {
             var type = typeof(ColorConstants);

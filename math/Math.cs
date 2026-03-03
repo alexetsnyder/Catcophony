@@ -26,6 +26,11 @@ namespace Quasar.math
             return 1 / (1 + MathF.Pow(MathF.E, (d * 12 / dMax - 6)));
         }
 
+        public static float Distance(Vector2 v1, Vector2 v2)
+        {
+            return Distance(v1.X, v1.Y, v2.X, v2.Y);
+        }
+
         public static float Distance(Vector2I v1, Vector2I v2)
         {
             return Distance(v1.X, v1.Y, v2.X, v2.Y);

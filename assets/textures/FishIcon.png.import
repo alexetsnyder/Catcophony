@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2jsk5fx4ih24"
-path="res://.godot/imported/PickAxe.png-7146c37c1bf2ce7dd730797ba4618eca.ctex"
+uid="uid://co2yspy2e0jbv"
+path="res://.godot/imported/FishIcon.png-c860cad0cf82302390714bba4d47e9b5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/PickAxe.png"
-dest_files=["res://.godot/imported/PickAxe.png-7146c37c1bf2ce7dd730797ba4618eca.ctex"]
+source_file="res://assets/textures/FishIcon.png"
+dest_files=["res://.godot/imported/FishIcon.png-c860cad0cf82302390714bba4d47e9b5.ctex"]
 
 [params]
 

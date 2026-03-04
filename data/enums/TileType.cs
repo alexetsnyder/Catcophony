@@ -29,6 +29,9 @@ namespace Quasar.data.enums
         BUILD,
         TILL,
         FISH,
+        CUT,
+        HAUL,
+        GATHER,
         CANCEL,
         SELECTION,
     }

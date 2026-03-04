@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bcw53ty62uig7"]
 
-[ext_resource type="Texture2D" uid="uid://d2jsk5fx4ih24" path="res://assets/textures/PickAxe.png" id="1_a25xm"]
+[ext_resource type="Texture2D" uid="uid://d2jsk5fx4ih24" path="res://assets/textures/PickAxeIcon.png" id="1_a25xm"]
 [ext_resource type="Script" uid="uid://bvusg0slgvcpx" path="res://scenes/gui/ToolBarControl.cs" id="1_g5gns"]
 [ext_resource type="ButtonGroup" uid="uid://dy3bmshci2j1u" path="res://data/resources/tool_bar_button_group.tres" id="2_akbxs"]
 [ext_resource type="StyleBox" uid="uid://b74aqrwp6mih1" path="res://data/resources/tool_bar_button_pressed.tres" id="2_c0fro"]
@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://bnpbq5ghbj0w2" path="res://assets/textures/X.png" id="6_5j5p6"]
 [ext_resource type="Texture2D" uid="uid://d4dhx8rp7sywu" path="res://assets/textures/BuildIcon.png" id="7_r1sxl"]
 [ext_resource type="Texture2D" uid="uid://cdql2irvx48uo" path="res://assets/textures/FarmIcon.png" id="8_6ogpc"]
-[ext_resource type="Texture2D" uid="uid://co2yspy2e0jbv" path="res://assets/textures/Fish.png" id="9_6ogpc"]
+[ext_resource type="Texture2D" uid="uid://co2yspy2e0jbv" path="res://assets/textures/FishIcon.png" id="9_6ogpc"]
 [ext_resource type="Texture2D" uid="uid://da81fqa30562p" path="res://assets/textures/Haowan_Curses_1440x450.png" id="11_utjv6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_utjv6"]

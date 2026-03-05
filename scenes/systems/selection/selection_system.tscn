@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cpp3jevx3bead"]
 
-[ext_resource type="Script" uid="uid://il2qhy0tbniy" path="res://scenes/work/SelectionSystem.cs" id="1_c1cf4"]
+[ext_resource type="Script" uid="uid://il2qhy0tbniy" path="res://scenes/systems/selection/SelectionSystem.cs" id="1_c1cf4"]
 [ext_resource type="Script" uid="uid://di86uya3cyg7d" path="res://scenes/common/custom/MultiColorTileMapLayer.cs" id="1_haes3"]
 
 [node name="SelectionSystem" type="Node2D" unique_id=1554002201]

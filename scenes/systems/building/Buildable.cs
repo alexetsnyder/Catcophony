@@ -1,7 +1,7 @@
 using Godot;
 using Quasar.data.enums;
 
-namespace Quasar.scenes.work
+namespace Quasar.scenes.systems.building
 {
     public partial class Buildable(TileType tileType, Vector2I atlasCoords, Color color) : Resource
     {

@@ -1,7 +1,8 @@
 using Godot;
 using Quasar.scenes.common.interfaces;
+using Quasar.scenes.systems.pathing;
+using Quasar.scenes.systems.work;
 using Quasar.scenes.time;
-using Quasar.scenes.work;
 using System.Collections.Generic;
 
 namespace Quasar.scenes.cats

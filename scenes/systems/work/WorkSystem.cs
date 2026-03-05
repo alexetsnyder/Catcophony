@@ -2,11 +2,13 @@ using Godot;
 using Quasar.data.enums;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
+using Quasar.scenes.systems.building;
+using Quasar.scenes.systems.pathing;
 using Quasar.system;
 using System;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.work
+namespace Quasar.scenes.systems.work
 {
     [GlobalClass]
     public partial class WorkSystem : Node

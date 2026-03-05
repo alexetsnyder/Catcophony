@@ -1,7 +1,8 @@
 using Godot;
 using Quasar.data.enums;
+using Quasar.scenes.systems.building;
 
-namespace Quasar.scenes.work
+namespace Quasar.scenes.systems.work
 {
     public partial class Work(int workId, WorkType workType, Vector2 worldPos, Buildable buildable = null) : Resource
     {

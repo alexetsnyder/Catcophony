@@ -3,8 +3,7 @@ using Quasar.scenes.common.interfaces;
 using Quasar.system;
 using System.Collections.Generic;
 
-
-namespace Quasar.scenes.work
+namespace Quasar.scenes.systems.pathing
 {
     public partial class PathingSystem : Node2D, IPathingSystem
     {

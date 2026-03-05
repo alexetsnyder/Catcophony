@@ -4,7 +4,7 @@ using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using Quasar.system;
 
-namespace Quasar.scenes.work
+namespace Quasar.scenes.systems.selection
 {
     public partial class SelectionSystem : Node2D
     {

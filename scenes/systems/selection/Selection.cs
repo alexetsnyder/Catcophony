@@ -3,7 +3,7 @@ using Quasar.data.enums;
 using System;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.work
+namespace Quasar.scenes.systems.selection
 {
     public partial class Selection(SelectionState selectionState, List<Vector2> points) : Resource
     {

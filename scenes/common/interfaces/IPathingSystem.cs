@@ -1,5 +1,5 @@
 using Godot;
-using Quasar.scenes.work;
+using Quasar.scenes.systems.pathing;
 using System.Collections.Generic;
 
 namespace Quasar.scenes.common.interfaces

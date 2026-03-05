@@ -4,7 +4,7 @@ using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.work
+namespace Quasar.scenes.systems.building
 {
     public partial class BuildingSystem : Node2D
     {

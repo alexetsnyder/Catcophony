@@ -1,4 +1,5 @@
 using Godot;
+using Quasar.scenes.systems.building;
 using System.Collections.Generic;
 
 namespace Quasar.scenes.common.interfaces
@@ -28,5 +29,9 @@ namespace Quasar.scenes.common.interfaces
         public List<Vector2I> GetAllPoints();
 
         public List<Vector2> GetAdjacentTiles(Vector2 localPos, bool includeDiagonals = false);
+
+        public void Mine(Vector2 localPos);
+
+        public void Build(Vector2 localPos, Buildable buildable);
     }
 }

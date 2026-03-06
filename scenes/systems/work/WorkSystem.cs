@@ -2,9 +2,8 @@ using Godot;
 using Quasar.data.enums;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.building;
-using Quasar.scenes.systems.items;
 using Quasar.scenes.systems.pathing;
+using Quasar.scenes.systems.work.commands;
 using Quasar.system;
 using System;
 using System.Collections.Generic;
@@ -21,6 +20,9 @@ namespace Quasar.scenes.systems.work
         [Export]
         public Node WorldNode { get; set; }
 
+        [Export]
+        public CommandFactory CommandFactory { get; set; }
+
         private IPathingSystem _pathingSystem;
 
         private IWorld _world;
@@ -35,34 +37,39 @@ namespace Quasar.scenes.systems.work
             GlobalSystem.Instance.LoadInterface<IWorld>(WorldNode, out _world);
         }
 
-        public Work GetWork(Vector2 worldPos)
+        public Work GetWork(int workId)
         {
-            var workTuple = FindWorkFromPos(worldPos);
-            if (workTuple != null)
+            foreach (var workDict in _allWork.Values)
             {
-                return _allWork[workTuple.Item1][workTuple.Item2];
+                if (workDict.TryGetValue(workId, out var work))
+                {
+                    return work;
+                }
             }
 
             return null;
         }
-
-        public void CreateWork(WorkType workType, List<Vector2> worldPosList, bool isAssigned = false, Buildable buildable = null, Item item = null)
+        
+        public void CreateWork(WorkType workType, Vector2 localPos)
         {
             _allWork.TryAdd(workType, []);
-            
-            foreach (var worldPos in worldPosList)
+
+            Work work = null;
+
+            switch (workType)
             {
-                _allWork[workType].Add(_nextId, new(_nextId++, workType, worldPos, isAssigned, buildable, item));
+                case WorkType.MINING:
+                    work = new(_nextId, localPos, workType, [ CommandFactory.CreateMiningCommand(localPos) ]);
+                    break;
+                case WorkType.BUILDING:
+                    work = new(_nextId, localPos, workType, [ CommandFactory.CreateBuildingCommand(localPos) ]);
+                    break;
             }
-        }
 
-        public Work CreateWork(WorkType workType, Vector2 worldPos, bool isAssigned = false, Buildable buildable = null, Item item = null)
-        {
-            _allWork.TryAdd(workType, []);
-
-            _allWork[workType].Add(_nextId, new(_nextId, workType, worldPos, isAssigned, buildable, item));
-
-            return _allWork[workType][_nextId++];
+            if (work != null)
+            {
+                _allWork[workType].Add(_nextId++, work);
+            }
         }
 
         public void RemoveWork(Work work)
@@ -70,11 +77,11 @@ namespace Quasar.scenes.systems.work
             _allWork[work.WorkType].Remove(work.WorkId);
         }
 
-        public void RemoveWork(List<Vector2> worldPosList)
+        public void RemoveWork(List<Vector2> localPosList)
         {
             List<Tuple<WorkType, int>> removeList = [];
 
-            foreach (var worldPos in worldPosList)
+            foreach (var worldPos in localPosList)
             {
                 var work = FindWorkFromPos(worldPos);
                 if (work != null)
@@ -89,13 +96,13 @@ namespace Quasar.scenes.systems.work
             }
         }
 
-        private Tuple<WorkType, int> FindWorkFromPos(Vector2 worldPos)
+        private Tuple<WorkType, int> FindWorkFromPos(Vector2 localPos)
         {
             foreach (var workDict in _allWork.Values)
             {
                 foreach (var work in workDict.Values)
                 {
-                    if (work.WorldPos == worldPos)
+                    if (work.LocalPos == localPos)
                     {
                         return new(work.WorkType, work.WorkId);
                     }
@@ -134,7 +141,7 @@ namespace Quasar.scenes.systems.work
 
             foreach (var pWork in workList)
             {
-                var adjPosList = _world.GetAdjacentTiles(pWork.WorldPos, true);
+                var adjPosList = _world.GetAdjacentTiles(pWork.LocalPos, true);
 
                 var path = _pathingSystem.ShortestPath(cat.Position, adjPosList);
 

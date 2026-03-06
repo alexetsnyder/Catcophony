@@ -33,6 +33,8 @@ namespace Quasar.scenes.cats
 
         public bool IsWorking { get; private set; } = false;
 
+        public int WorkId { get; set; }
+
         public float Width { get => _catSprite.GetRect().Size.X;  }
 
         public float Height { get => _catSprite.GetRect().Size.Y; }
@@ -86,9 +88,10 @@ namespace Quasar.scenes.cats
 
         public void SetWork(Work work, Path path)
         {
+            WorkId = work.WorkId;
             SetPath(path);
             IsWorking = true;
-            CatData.WorkPos = work.WorldPos;
+            CatData.WorkPos = work.LocalPos;
             _workProgress.Value = 0;
             _workProgress.Visible = true;
         }

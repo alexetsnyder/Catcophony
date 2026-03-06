@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Quasar.scenes.systems.building
 {
-    public partial class BuildingSystem : Node2D
+    public partial class BuildingSystem : Node2D, IBuildingSystem
     {
         public Buildable Current 
         { 

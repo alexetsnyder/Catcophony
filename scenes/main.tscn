@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://bkup6f2wl4k50" path="res://scenes/gui/basic_label_display.tscn" id="8_tipki"]
 [ext_resource type="PackedScene" uid="uid://bty07ys7ewke" path="res://scenes/systems/building/building_system.tscn" id="8_ya4ey"]
 [ext_resource type="PackedScene" uid="uid://bcw53ty62uig7" path="res://scenes/gui/tool_bar_control.tscn" id="9_85g3d"]
+[ext_resource type="Script" uid="uid://c3jqhc2yy0sqe" path="res://scenes/systems/work/commands/CommandFactory.cs" id="9_trceg"]
 
 [node name="Main" type="Node2D" unique_id=25718441]
 script = ExtResource("1_o5qli")
@@ -24,10 +25,20 @@ offset_bottom = 3536.0
 mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
-[node name="WorkSystem" type="Node" parent="." unique_id=826126942 node_paths=PackedStringArray("PathingSystemNode", "WorldNode")]
+[node name="CommandFactory" type="Node" parent="." unique_id=276563073 node_paths=PackedStringArray("WorldNode", "PathingSystemNode", "ItemSystemNode", "BuildingSystemNode")]
+script = ExtResource("9_trceg")
+WorldNode = NodePath("../World")
+PathingSystemNode = NodePath("../PathingSystem")
+ItemSystemNode = NodePath("../ItemSystem")
+BuildingSystemNode = NodePath("../BuildingSystem")
+metadata/_custom_type_script = "uid://c3jqhc2yy0sqe"
+
+[node name="WorkSystem" type="Node" parent="." unique_id=826126942 node_paths=PackedStringArray("PathingSystemNode", "WorldNode", "ItemSystemNode", "CommandFactory")]
 script = ExtResource("2_choun")
 PathingSystemNode = NodePath("../PathingSystem")
 WorldNode = NodePath("../World")
+ItemSystemNode = NodePath("../ItemSystem")
+CommandFactory = NodePath("../CommandFactory")
 metadata/_custom_type_script = "uid://c11836ohje6pr"
 
 [node name="Map" parent="." unique_id=692249368 instance=ExtResource("3_jyhfs")]

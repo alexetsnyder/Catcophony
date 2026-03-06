@@ -1,4 +1,5 @@
 using Godot;
+using Quasar.data.enums;
 using Quasar.scenes.systems.building;
 using System.Collections.Generic;
 
@@ -9,6 +10,10 @@ namespace Quasar.scenes.common.interfaces
         public int Rows { get; }
 
         public int Cols { get; }
+
+        public TileType GetTileType(Vector2 localPos);
+
+        public Color? GetTileColor(Vector2 localPos);
 
         public bool IsInBounds(Vector2I coords);
 
@@ -33,5 +38,13 @@ namespace Quasar.scenes.common.interfaces
         public void Mine(Vector2 localPos);
 
         public void Build(Vector2 localPos, Buildable buildable);
+
+        public void Cut(Vector2 localPos);
+
+        public void Till(Vector2 localPos);
+
+        public void Gather(Vector2 localPos);
+
+        public void Fish(Vector2 localPos);
     }
 }

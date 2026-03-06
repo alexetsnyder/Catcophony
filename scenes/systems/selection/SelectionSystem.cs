@@ -234,16 +234,16 @@ namespace Quasar.scenes.systems.selection
                     break;
                 case SelectionState.BUILDING:
                 case SelectionState.FARMING:
-                    filter = (c) => !_world.IsImpassable(c) && _selectedTileMapLayer.GetCellSourceId(c) == -1; ;
+                    filter = (c) => !_world.IsImpassable(c) && _selectedTileMapLayer.GetCellSourceId(c) == -1;
                     break;
                 case SelectionState.GATHERING:
                     filter = (c) => _world.IsGatherable(c) && _selectedTileMapLayer.GetCellSourceId(c) == -1;
                     break;
                 case SelectionState.FISHING:
-                    filter = (c) => _world.IsWater(c) && _selectedTileMapLayer.GetCellSourceId(c) == -1; ;
+                    filter = (c) => _world.IsWater(c) && _selectedTileMapLayer.GetCellSourceId(c) == -1;
                     break;
                 case SelectionState.CANCEL:
-                    filter = (c) => _selectedTileMapLayer.GetCellSourceId(c) != -1; ;
+                    filter = (c) => _selectedTileMapLayer.GetCellSourceId(c) != -1;
                     break;
                 default:
                     GD.Print("Incorrect SelectionState in SetSelectedArea");

@@ -138,11 +138,6 @@ namespace Quasar.math
                     }
                 }
 
-                if (connectedArea.Count > 0)
-                {
-                    GD.Print($"Area Count: {connectedArea.Count}");
-                }
-
                 if (connectedArea.Count > maxConnectedArea.Count)
                 {
                     maxConnectedArea = connectedArea;

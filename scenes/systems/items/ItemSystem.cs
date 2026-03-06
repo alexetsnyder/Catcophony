@@ -20,11 +20,14 @@ namespace Quasar.scenes.systems.items
             _itemTileMapLayer = GetNode<IMultiColorTileMapLayer>("ItemTileMapLayer");
         }
 
-        public void CreateItem(TileType tileType, Vector2 localPos)
+        public void CreateItem(TileType tileType, Vector2 localPos, Color? color = null)
         {
             var coords = _itemTileMapLayer.LocalToMap(localPos);
             var atlasCoords = GetAtlasCoords(tileType);
-            var color = GetColor(tileType);
+            if (color == null)
+            {
+                color = GetColor(tileType);
+            }
 
             _items.TryAdd(coords, []);
             _items[coords].Add(new(_nextId++, tileType, localPos));

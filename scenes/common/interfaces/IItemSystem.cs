@@ -7,7 +7,7 @@ namespace Quasar.scenes.common.interfaces
 {
     public interface IItemSystem
     {
-        public void CreateItem(TileType tileType, Vector2 localPos);
+        public void CreateItem(TileType tileType, Vector2 localPos, Color? color = null);
 
         public void RemoveItem(Item item);
 

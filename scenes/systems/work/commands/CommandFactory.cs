@@ -52,6 +52,14 @@ namespace Quasar.scenes.systems.work.commands
                     return new BuildingCommand(_world, _pathingSystem, _selectionSystem, localPos, _buildingSystem.Current);
                 case WorkType.HAULING:
                     return new HaulingCommand(_itemSystem, _selectionSystem, localPos);
+                case WorkType.CUTTING:
+                    return new CuttingCommand(_world, _itemSystem, _pathingSystem, _selectionSystem, localPos);
+                case WorkType.FARMING:
+                    return new FarmingCommand(_world, _pathingSystem, _selectionSystem, localPos);
+                case WorkType.GATHERING:
+                    return new GatheringCommand(_world, _selectionSystem, localPos);
+                case WorkType.FISHING:
+                    return new FishingCommand(_world, _selectionSystem, localPos);
                 default:
                     GD.Print($"Could not create command for WorkType {workType} at {localPos}.");
                     return null;

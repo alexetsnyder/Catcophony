@@ -79,17 +79,24 @@ namespace Quasar.scenes.world
             _gridTileMapLayer.Visible = ShowGrid;
         }
 
-        public string GetTileTypeStr(Vector2 localPos)
+        public TileType GetTileType(Vector2 localPos)
         {
             var coords = _worldTileMapLayer.LocalToMap(localPos);
             var worldCell = GetWorldCell(coords);
 
             if (worldCell == null)
             {
-                return "NONE";
+                return TileType.NONE;
             }
 
-            return worldCell.TileType.ToString();
+            return worldCell.TileType;
+        }
+
+        public string GetTileTypeStr(Vector2 localPos)
+        {
+            var tileType = GetTileType(localPos);
+
+            return tileType.ToString();
         }
 
         public string GetTileColorStr(Vector2 localPos)
@@ -212,6 +219,16 @@ namespace Quasar.scenes.world
             }
         }
 
+        public void Cut(Vector2 localPos)
+        {
+            var coords = _worldTileMapLayer.LocalToMap(localPos);
+
+            if (IsTree(coords))
+            {
+                UpdateWorldTile(TileType.DIRT, coords);
+            }
+        }
+
         public void Till(Vector2 localPos)
         {
             var coords = _worldTileMapLayer.LocalToMap(localPos);
@@ -219,6 +236,16 @@ namespace Quasar.scenes.world
             if (!IsImpassable(coords))
             {
                 UpdateWorldTile(TileType.TILLED, coords);
+            }
+        }
+
+        public void Gather(Vector2 localPos)
+        {
+            var coords = _worldTileMapLayer.LocalToMap(localPos);
+
+            if (IsGatherable(coords))
+            {
+
             }
         }
 
@@ -306,7 +333,7 @@ namespace Quasar.scenes.world
         }
 
         public bool HasItemsToHaul(Vector2I coords)
-        {
+        {  
             return _itemSystem.GetItems(_worldTileMapLayer.MapToLocal(coords)).Count > 0;
         }
 

@@ -60,6 +60,8 @@ namespace Quasar.scenes
             new("Pepper", "Longhair Cat", "Wary", 100, WorkType.FARMING),
             new("New Year", "Russian Blue Cat", "Curious", 100, WorkType.FISHING),
             new("Maslow", "Orange", "Timid", 100, WorkType.HAULING),
+            new("Millo", "Orange", "Adventurous", 100, WorkType.CUTTING),
+            new("Inky", "Black", "Affectionate", 100, WorkType.GATHERING),
         ];
 
         public override void _Ready()

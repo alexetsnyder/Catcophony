@@ -50,6 +50,8 @@ namespace Quasar.scenes.systems.work.commands
                     return new MiningCommand(_world, _itemSystem, _pathingSystem, _selectionSystem, localPos, TileType.STONE);
                 case WorkType.BUILDING:
                     return new BuildingCommand(_world, _pathingSystem, _selectionSystem, localPos, _buildingSystem.Current);
+                case WorkType.HAULING:
+                    return new HaulingCommand(_itemSystem, _selectionSystem, localPos);
                 default:
                     GD.Print($"Could not create command for WorkType {workType} at {localPos}.");
                     return null;

@@ -1,5 +1,6 @@
 using Godot;
 using Quasar.data.enums;
+using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
 
 namespace Quasar.scenes.systems.work.commands
@@ -19,7 +20,7 @@ namespace Quasar.scenes.systems.work.commands
 
         private readonly Vector2 _localPos = localPos;
 
-        public void Execute()
+        public void Execute(Cat cat = null)
         {
             _world.Mine(_localPos);
 

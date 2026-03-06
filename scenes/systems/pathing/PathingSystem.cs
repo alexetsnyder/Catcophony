@@ -41,6 +41,49 @@ namespace Quasar.scenes.systems.pathing
             return _paths[_nextId++];
         }
 
+        public Vector2? ShortestPointWithAdjacent(Vector2 fromPos, List<Vector2> toPosList)
+        {
+            Vector2? minPoint = null;
+            int minPathCount = int.MaxValue;
+
+            foreach (var toPos in toPosList)
+            {
+                if (fromPos.IsEqualApprox(toPos))
+                {
+                    return toPos;
+                }
+
+                if (_world.IsImpassable(_pathingTileMapLayer.LocalToMap(toPos)))
+                {
+                    foreach (var adjPos in _world.GetAdjacentTiles(toPos))
+                    {
+                        if (fromPos.IsEqualApprox(adjPos))
+                        {
+                            return toPos;
+                        }
+
+                        var path = FindPath(fromPos, adjPos);
+                        if (path != null && path.Points.Count < minPathCount)
+                        {
+                            minPathCount = path.Points.Count;
+                            minPoint = toPos;
+                        }
+                    }
+                }
+                else
+                {
+                    var path = FindPath(fromPos, toPos);
+                    if (path != null && path.Points.Count < minPathCount)
+                    {
+                        minPathCount = path.Points.Count;
+                        minPoint = toPos;
+                    }
+                }
+            }
+
+            return minPoint;
+        }
+
         public Path ShortestPath(Vector2 startPos, List<Vector2> toPosList)
         {
             Path shortestPath = null;

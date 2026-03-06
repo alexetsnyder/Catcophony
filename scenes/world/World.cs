@@ -178,28 +178,6 @@ namespace Quasar.scenes.world
             return storagePosList;
         }
 
-        public void Work(WorkType workType, Vector2 localPos, Buildable buildable)
-        {
-            switch(workType)
-            {
-                case WorkType.MINING:
-                    Mine(localPos);
-                    break;
-                case WorkType.BUILDING:
-                    Build(localPos, buildable);
-                    break;
-                case WorkType.FARMING:
-                    Till(localPos);
-                    break;
-                case WorkType.FISHING:
-                    Fish(localPos);
-                    break;
-                default:
-                    GD.Print("Work not Implimented Yet in World.Work");
-                    break;
-            }
-        }
-
         public void Mine(Vector2 localPos)
         {
             var coords = _worldTileMapLayer.LocalToMap(localPos);
@@ -207,8 +185,6 @@ namespace Quasar.scenes.world
             if (IsSolid(coords))
             {
                 UpdateWorldTile(TileType.DIRT, coords);
-
-                _itemSystem.CreateItem(TileType.STONE, localPos);
 
                 foreach (var adjCell in GetAdjacentCells(coords, true))
                 {
@@ -270,6 +246,7 @@ namespace Quasar.scenes.world
                     worldCell.TileType == TileType.CORNER_WALL ||
                     worldCell.TileType == TileType.THREE_CONNECT_WALL ||
                     worldCell.TileType == TileType.FOUR_CONNECT_WALL ||
+                    worldCell.TileType == TileType.STORAGE ||
                     worldCell.TileType == TileType.TREE);
         }
 
@@ -330,7 +307,7 @@ namespace Quasar.scenes.world
 
         public bool HasItemsToHaul(Vector2I coords)
         {
-            return true;
+            return _itemSystem.GetItems(_worldTileMapLayer.MapToLocal(coords)).Count > 0;
         }
 
         public bool IsInBounds(Vector2I coords)
@@ -555,11 +532,6 @@ namespace Quasar.scenes.world
         private Color GetCellColor(TileType tileType)
         {
             return Random.RandomChoice<Color>(_rng, AtlasConstants.Colors[tileType]);
-        }
-
-        private Vector2I GetAtlasCoords(BuildingType buildingType)
-        {
-            return AtlasConstants.GetAtlasCoords(TileType.WALL, (int)buildingType - 1);
         }
 
         #endregion

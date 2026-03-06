@@ -67,9 +67,16 @@ namespace Quasar.scenes.systems.items
                 SetCell(originalCoords);
             }
 
+            _items[originalCoords].Remove(item);
+
+            item.Position = localPos;
+
             var coords = _itemTileMapLayer.LocalToMap(localPos);
             var atlasCoords = GetAtlasCoords(item.TileType);
             var color = GetColor(item.TileType);
+
+            _items.TryAdd(coords, []);
+            _items[coords].Add(item);
 
             SetCell(coords, atlasCoords, color);
         }

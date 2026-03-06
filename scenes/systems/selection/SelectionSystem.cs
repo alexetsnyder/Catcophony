@@ -89,6 +89,14 @@ namespace Quasar.scenes.systems.selection
             }
         }
 
+        public void Deselect(Selection selection)
+        {
+            foreach (var point in selection.Points)
+            {
+                Deselect(point);
+            }
+        }
+
         public void Deselect(Vector2 localPos)
         {
             var coords = _selectedTileMapLayer.LocalToMap(localPos);

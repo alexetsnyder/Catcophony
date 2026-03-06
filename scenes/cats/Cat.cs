@@ -1,9 +1,11 @@
 using Godot;
 using Quasar.scenes.common.interfaces;
+using Quasar.scenes.systems.items;
 using Quasar.scenes.systems.pathing;
 using Quasar.scenes.systems.work;
 using Quasar.scenes.time;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Quasar.scenes.cats
 {
@@ -37,8 +39,9 @@ namespace Quasar.scenes.cats
 
         public bool IsWorking { get; private set; } = false;
 
-        //public int WorkId { get; set; }
-        private Queue<Work> _workQueue = [];
+        public Item Item { get; set; } = null;
+
+        private readonly Queue<Work> _workQueue = [];
 
         public float Width { get => _catSprite.GetRect().Size.X;  }
 
@@ -91,12 +94,16 @@ namespace Quasar.scenes.cats
             CatData = data;
         }
 
-        public void SetWork(Work work, Path path)
+        public void SetWork(List<Work> workList, Path path)
         {
-            _workQueue.Enqueue(work);
+            foreach (var work in workList)
+            {
+                _workQueue.Enqueue(work);
+            }
+            
             SetPath(path);
             IsWorking = true;
-            CatData.WorkPos = work.LocalPos;
+            CatData.WorkPos = workList.First().LocalPos;
             _workProgress.Value = 0;
             _workProgress.Visible = true;
         }
@@ -170,7 +177,6 @@ namespace Quasar.scenes.cats
             if (ElapsedWorkTime >= WorkTicks)
             {
                 CompleteWork();
-                //EmitSignal(SignalName.CatWork, this, CatData.WorkPos.Value);
                 ElapsedWorkTime %= WorkTicks;
             }
         }
@@ -181,6 +187,7 @@ namespace Quasar.scenes.cats
             var path = PathingSystem.ShortestPath(Position, World.GetAdjacentTiles(work.LocalPos, true));
 
             SetPath(path);
+            PathingSystem.ShowPath(path.Id);
             CatData.WorkPos = work.LocalPos;
 
             _workProgress.Value = 0;

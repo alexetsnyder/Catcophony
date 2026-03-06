@@ -1,4 +1,5 @@
 using Godot;
+using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
 using Quasar.scenes.systems.building;
 
@@ -16,7 +17,7 @@ namespace Quasar.scenes.systems.work.commands
 
         private readonly Vector2 _localPos = localPos;
 
-        public void Execute()
+        public void Execute(Cat cat = null)
         {
             _world.Build(_localPos, _buildable);
 

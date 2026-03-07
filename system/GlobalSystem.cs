@@ -25,6 +25,19 @@ namespace Quasar.system
             }
         }
 
+        public T InstantiateScene<T>(string path) where T : class
+        {
+            var sceneResource = ResourceLoader.Load<PackedScene>(path);
+            if (sceneResource == null)
+            {
+                return default;
+            }
+            else
+            {
+                return sceneResource.Instantiate<T>();
+            }
+        }
+
         public void Quit(int exitCode = 0, string errorMessage = "")
         {
             if (errorMessage != "")

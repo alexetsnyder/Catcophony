@@ -83,14 +83,14 @@ namespace Quasar.scenes
             _tileColorDisplay = GetNode<BasicLabelDisplay>("DebugGUI/TileColorDisplay");
             _toolBarControl = GetNode<ToolBarControl>("GUI/ToolBar");
 
-            _characterDisplay = InstantiateScene<CharacterDisplay>("res://scenes/gui/character_display.tscn");
+            _characterDisplay = GlobalSystem.Instance.InstantiateScene<CharacterDisplay>("res://scenes/gui/character_display.tscn");
             if (_characterDisplay != null)
             {
                 _gui.AddChild(_characterDisplay);
                 _characterDisplay.Visible = false;
             }
 
-            _inventoryControl = InstantiateScene<InventoryControl>("res://scenes/gui/items/inventory_control.tscn");
+            _inventoryControl = GlobalSystem.Instance.InstantiateScene<InventoryControl>("res://scenes/gui/items/inventory_control.tscn");
             if (_inventoryControl != null)
             {
                 _gui.AddChild(_inventoryControl);
@@ -227,7 +227,7 @@ namespace Quasar.scenes
             {
                 for (int i = 0; i < n; i++)
                 {
-                    var cat = InstantiateScene<Cat>("res://scenes/cats/cat.tscn");
+                    var cat = GlobalSystem.Instance.InstantiateScene<Cat>("res://scenes/cats/cat.tscn");
                     if (cat != null)
                     {
                         AddChild(cat);
@@ -256,19 +256,6 @@ namespace Quasar.scenes
             cat.MovedOne += OnCatMovedOne;
             cat.PathComplete += OnCatPathComplete;
             cat.CatWork += OnCatWork;
-        }
-
-        private static T InstantiateScene<T>(string path)  where T : class    
-        {
-            var sceneResource = ResourceLoader.Load<PackedScene>(path);
-            if (sceneResource == null)
-            {
-                return default;
-            }
-            else 
-            {
-                return sceneResource.Instantiate<T>();
-            }
         }
 
         private void CheckForWork()

@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://bas2h8h4wsjgi"]
 
 [ext_resource type="Script" uid="uid://iktaob75t335" path="res://scenes/gui/items/InventoryControl.cs" id="1_7hg4f"]
-[ext_resource type="Texture2D" uid="uid://da81fqa30562p" path="res://assets/textures/Haowan_Curses_1440x450.png" id="2_5iwy6"]
 
 [node name="InventoryControl" type="Control" unique_id=1183350327]
 layout_mode = 3
@@ -11,11 +10,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7hg4f")
-AtlasTexture = ExtResource("2_5iwy6")
 
-[node name="InventoryItemList" type="ItemList" parent="." unique_id=1187778000]
+[node name="GridContainer" type="GridContainer" parent="." unique_id=1164207149]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-auto_width = true
-auto_height = true
+offset_right = 42.0
+offset_bottom = 36.0
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 4

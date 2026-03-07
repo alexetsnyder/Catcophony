@@ -1,41 +1,30 @@
 using Godot;
-using Quasar.data;
 using Quasar.scenes.systems.items;
+using Quasar.system;
+using System.Collections.Generic;
 
 namespace Quasar.scenes.gui.items
 {
     public partial class InventoryControl : Control
     {
-        [Export]
-        public Texture2D AtlasTexture { get; set; }
+        private GridContainer _grid;
 
-        private ItemList _inventoryItemList;
+        private List<InventorySlot> _inventorySlots = [];
 
         public override void _Ready()
         {
-            _inventoryItemList = GetNode<ItemList>("InventoryItemList");
-
-            _inventoryItemList.Clear();
+            _grid = GetNode<GridContainer>("GridContainer");
         }
 
         public void Add(Item item)
         {
-            var atlasTexture = CreateAtlasTexture(item);
+            var slot = GlobalSystem.Instance.InstantiateScene<InventorySlot>("res://scenes/gui/items/inventory_slot.tscn");
+            if (slot != null)
+            {
+                _grid.AddChild(slot);
 
-            _inventoryItemList.AddItem(item.TileType.ToString(), atlasTexture);
-        }
-
-        public AtlasTexture CreateAtlasTexture(Item item)
-        {
-            AtlasTexture atlasTexture = new();
-
-            atlasTexture.Atlas = this.AtlasTexture;
-
-            var atlasCoords = AtlasConstants.GetAtlasCoords(item.TileType);
-
-            atlasTexture.Region = new(atlasCoords.X * 18.0f, atlasCoords.Y * 18.0f, 18.0f, 18.0f);
-
-            return atlasTexture;
+                slot.Add(item);
+            }
         }
     }
 }

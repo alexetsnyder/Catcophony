@@ -1,4 +1,4 @@
-Goals:
+Actions:
 
 Mining: 
 Pre: Tile Solid, hasProfession, IsAdj

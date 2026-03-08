@@ -1,27 +1,27 @@
 Actions:
 
 Mining: 
-Pre: Tile Solid, hasProfession, IsAdj
+Pre: workExists, Tile Solid, hasProfession, IsAdj
 Effect: Tile Dirt, Tile Not Solid, Drop Stone
 
 Cutting: 
-Pre: Tile Tree, hasProfession, IsAdj
+Pre: workExists, Tile Tree, hasProfession, IsAdj
 Effect: Tile Dirt, Tile Not Solid, Drop Wood
 
 Farming:
-Pre: Tile Not Impassable, hasProfession, IsAdj
+Pre: workExists, Tile Not Impassable, hasProfession, IsAdj
 Effect: Tile Tilled
 
 Fishing:
-Pre: Tile Water, hasProfession, IsAdj
+Pre: workExists, Tile Water, hasProfession, IsAdj
 Effect: None
 
 Gathering:
-Pre: Tile Grass, IsAdj
+Pre: workExists, Tile Grass, IsAdj
 Effect: None 
 
 Hauling:
-Pre: tileHasItem, IsAdj
+Pre: workExists, tileHasItem, IsAdj
 Effect: RemoveItem
 
 Storing:
@@ -31,3 +31,11 @@ Effect: StoreItem
 Moving:
 Pre: hasPath
 Effect: isAdj
+
+Goals:
+
+Work:
+Change Tile.
+
+Rest:
+Move to Center.

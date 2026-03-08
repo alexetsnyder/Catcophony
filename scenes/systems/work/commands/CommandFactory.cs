@@ -55,7 +55,7 @@ namespace Quasar.scenes.systems.work.commands
                 case WorkType.CUTTING:
                     return new CuttingCommand(_world, _itemSystem, _pathingSystem, _selectionSystem, localPos);
                 case WorkType.FARMING:
-                    return new FarmingCommand(_world, _pathingSystem, _selectionSystem, localPos);
+                    return new FarmingCommand(_world, _selectionSystem, localPos);
                 case WorkType.GATHERING:
                     return new GatheringCommand(_world, _selectionSystem, localPos);
                 case WorkType.FISHING:

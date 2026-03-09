@@ -12,7 +12,7 @@ using System.Linq;
 namespace Quasar.scenes.systems.work
 {
     [GlobalClass]
-    public partial class WorkSystem : Node
+    public partial class WorkSystem : Node, IWorkSystem
     {
         [Export]
         public Node PathingSystemNode { get; set; }
@@ -156,6 +156,12 @@ namespace Quasar.scenes.systems.work
             }
 
             return null;
+        }
+
+        public List<Work> GetWork(WorkType workType)
+        {
+            _allWork.TryGetValue(workType, out Dictionary<int, Work> workDict);
+            return [.. workDict.Select(kv => kv.Value)];
         }
 
         private Path ShortestPath(List<Work> workList, Cat cat, out Work work)

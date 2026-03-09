@@ -24,6 +24,11 @@ namespace Quasar.scenes.systems.items
             _itemTileMapLayer = GetNode<IMultiColorTileMapLayer>("ItemTileMapLayer");
         }
 
+        public Dictionary<Vector2I, List<Item>> GetAllItems()
+        {
+            return _items;
+        }
+
         public void CreateItem(TileType tileType, Vector2 localPos, Color? color = null)
         {
             var coords = _itemTileMapLayer.LocalToMap(localPos);

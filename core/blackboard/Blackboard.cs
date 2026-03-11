@@ -14,6 +14,16 @@ namespace Quasar.core.blackboard
 
         private readonly Dictionary<FastName, Vector2> _vector2Values = [];
 
+        public Blackboard() { }
+        
+        public Blackboard(Blackboard blackboard)
+        {
+            _intValues = new(blackboard._intValues);
+            _floatValues = new(blackboard._floatValues);
+            _boolValues = new(blackboard._boolValues);
+            _vector2Values = new(blackboard._vector2Values);
+        }
+
         public void Set(FastName key, int value)
         {
             _intValues[key] = value;

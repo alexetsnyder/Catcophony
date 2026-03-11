@@ -47,5 +47,10 @@ namespace Quasar.core.goap
                 blackboard.Set(Constants.Names.HasPath, true);
             }
         }
+
+        public Blackboard GetBlackboard()
+        {
+            return blackboard; 
+        }
     }
 }

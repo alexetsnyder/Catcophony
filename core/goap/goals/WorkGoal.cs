@@ -1,11 +1,12 @@
 using Quasar.core.blackboard;
 using Quasar.core.common;
+using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using System.Collections.Generic;
 
 namespace Quasar.core.goap.goals
 {
-    public partial class WorkGoal
+    public partial class WorkGoal : IGoal
     {
         private readonly Dictionary<FastName, bool> _goals = new()
         {

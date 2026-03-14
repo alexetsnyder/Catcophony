@@ -14,6 +14,8 @@ namespace Quasar.core.blackboard
 
         private readonly Dictionary<FastName, Vector2> _vector2Values = [];
 
+        private readonly Dictionary<FastName, Vector2?> _nullableVector2Values = [];
+
         public Blackboard() { }
         
         public Blackboard(Blackboard blackboard)
@@ -22,6 +24,7 @@ namespace Quasar.core.blackboard
             _floatValues = new(blackboard._floatValues);
             _boolValues = new(blackboard._boolValues);
             _vector2Values = new(blackboard._vector2Values);
+            _nullableVector2Values = new(blackboard._nullableVector2Values);
         }
 
         public void Set(FastName key, int value)
@@ -44,6 +47,11 @@ namespace Quasar.core.blackboard
             _vector2Values[key] = value;
         }
 
+        public void Set(FastName key, Vector2? value)
+        {
+            _nullableVector2Values[key] = value;
+        }
+
         public bool TryGetInt(FastName key, out int value)
         {
             return TryGet(key, _intValues, out value);
@@ -62,6 +70,11 @@ namespace Quasar.core.blackboard
         public bool TryGetVector2(FastName key, out Vector2 value)
         {
             return TryGet(key, _vector2Values, out value);
+        }
+
+        public bool TryGetNullableVector2(FastName key, out Vector2? value)
+        {
+            return TryGet(key, _nullableVector2Values, out value);
         }
 
         private bool TryGet<T>(FastName key, Dictionary<FastName, T> values, out T value)

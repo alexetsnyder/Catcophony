@@ -28,15 +28,9 @@ namespace Quasar.core.goap
             new WorkGoal(),
         ];
 
-        List<IAction> _availableActions = 
-        [
-            new Mine(),
-            new MoveTo(),
-        ];
-
-        public Planner(Cat cat, IWorkSystem workSystem)
+        public Planner(Cat cat, IWorkSystem workSystem, IPathingSystem pathingSystem)
         {
-            _worldState = new(cat, workSystem);
+            _worldState = new(cat, workSystem, pathingSystem);
         }
 
         public Queue<IAction> Plan()
@@ -77,23 +71,19 @@ namespace Quasar.core.goap
 
             var currentNode = root;
 
-            var goals = _goals[0].Goals();
-            Stack<KeyValuePair<FastName, bool>> preconds = [];
-
-            foreach (var goal in goals)
-            {
-                preconds.Push(goal);
-            }
+            var goal = _goals[0];
+            Stack<IGoal> preconds = [];
+            preconds.Push(goal);
 
             while (preconds.Count > 0)
             {
-                var goal = preconds.Pop();
+                var newGoal = preconds.Pop();
 
                 bool IsGoalSatisied = false;
 
-                foreach (var action in _availableActions)
+                foreach (var action in _worldState.AvailableActions)
                 {
-                    if (action.SatisfyGoal(goal))
+                    if (action.SatisfyGoal(newGoal))
                     {
                         IsGoalSatisied = true;
 
@@ -109,11 +99,13 @@ namespace Quasar.core.goap
 
                         currentNode = leaf;
 
-                        foreach (var precond in action.GetPreconds())
+                        if (!action.SatisfyPreconditions(_worldState.GetBlackboard()))
                         {
-                            if (!Satisfy(precond, _worldState))
+                            var preconditons = action.GetUnsatisfiedPreconditions(_worldState.GetBlackboard());
+
+                            foreach (var precondition in  preconditons)
                             {
-                                preconds.Push(precond);
+                                preconds.Push(precondition);
                             }
                         }
 
@@ -141,21 +133,6 @@ namespace Quasar.core.goap
                 plan.Enqueue(leaf.Action);
                 leaf = leaf.Parent;
             }
-        }
-
-        private bool Satisfy(KeyValuePair<FastName, bool> kvp, WorldState worldState) 
-        {
-            var blackboard = worldState.GetBlackboard();
-
-            if (blackboard.TryGetBool(kvp.Key, out var value))
-            {
-                if (kvp.Value == value)
-                {
-                    return true; 
-                }
-            }
-
-            return false;
         }
     }
 }

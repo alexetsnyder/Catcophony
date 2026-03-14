@@ -1,13 +1,16 @@
 using Quasar.core.blackboard;
 using Quasar.core.naming;
-using System.Collections.Generic;
 
 namespace Quasar.core.goap.interfaces
 {
     public interface IGoal
     {
-        public Dictionary<FastName, bool> Goals();
+        public FastName Key { get; }
 
-        //public bool Satisfy(Blackboard blackboard);
+        public bool Value { get; }
+
+        public bool Satisify(IGoal goal);
+
+        public bool Satisify(Blackboard blackboard);
     }
 }

@@ -274,14 +274,14 @@ namespace Quasar.scenes
             {
                 if (cat.CatData.WorkType == WorkType.MINING)
                 {
-                    _planner = new(cat, _workSystem);
+                    _planner = new(cat, _workSystem, _pathingSystem);
                     var plan = _planner.Plan();
                     if (plan.Count > 0)
                     {
                         while (plan.Count > 0)
                         {
                             var action = plan.Dequeue();
-                            GD.Print($"Action: {action.Name}");
+                            GD.Print($"Action: {action}");
                         }
                     }
                 }

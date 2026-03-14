@@ -59,7 +59,9 @@ namespace Quasar.scenes.systems.work
             var command = CommandFactory.BuildCommand(workType, localPos);
             if (command != null)
             {
-                work = new(_nextId, workType, localPos, command);
+                var adjPosList = _world.GetAdjacentTiles(localPos).Where(a => !_world.IsImpassable(a));
+
+                work = new(_nextId, workType, localPos, command, adjPosList.Any() ? [.. adjPosList] : null);
             }
 
             if (work != null)
@@ -123,6 +125,21 @@ namespace Quasar.scenes.systems.work
             }
 
             return null;
+        }
+
+        public List<Work> CheckForWork(WorkType workType)
+        {
+            List<Work> workList = [];
+
+            if (_allWork.TryGetValue(workType, out var workDict))
+            {
+                foreach (var work in workDict.Values)
+                {
+                    workList.Add(work);
+                }
+            }
+
+            return workList;
         }
 
         public Tuple<List<Work>, Path> CheckForWork(Cat cat, bool assign = true)

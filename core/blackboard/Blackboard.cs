@@ -1,5 +1,7 @@
 using Godot;
 using Quasar.core.naming;
+using Quasar.scenes.systems.pathing;
+using Quasar.scenes.systems.work;
 using System.Collections.Generic;
 
 namespace Quasar.core.blackboard
@@ -14,7 +16,11 @@ namespace Quasar.core.blackboard
 
         private readonly Dictionary<FastName, Vector2> _vector2Values = [];
 
-        private readonly Dictionary<FastName, Vector2?> _nullableVector2Values = [];
+        private readonly Dictionary<FastName, Work> _workValues = [];
+
+        private readonly Dictionary<FastName, Path> _pathValues = [];
+
+        private readonly Dictionary<FastName, List<Work>> _workListValues = [];
 
         public Blackboard() { }
         
@@ -24,7 +30,8 @@ namespace Quasar.core.blackboard
             _floatValues = new(blackboard._floatValues);
             _boolValues = new(blackboard._boolValues);
             _vector2Values = new(blackboard._vector2Values);
-            _nullableVector2Values = new(blackboard._nullableVector2Values);
+            _pathValues = new(blackboard._pathValues);
+            _workListValues = new(blackboard._workListValues);
         }
 
         public void Set(FastName key, int value)
@@ -47,9 +54,19 @@ namespace Quasar.core.blackboard
             _vector2Values[key] = value;
         }
 
-        public void Set(FastName key, Vector2? value)
+        public void Set(FastName key, Work value)
         {
-            _nullableVector2Values[key] = value;
+            _workValues[key] = value;
+        }
+
+        public void Set(FastName key, Path value)
+        {
+            _pathValues[key] = value;
+        }
+
+        public void Set(FastName key, List<Work> value)
+        {
+            _workListValues[key] = value;
         }
 
         public bool TryGetInt(FastName key, out int value)
@@ -72,9 +89,19 @@ namespace Quasar.core.blackboard
             return TryGet(key, _vector2Values, out value);
         }
 
-        public bool TryGetNullableVector2(FastName key, out Vector2? value)
+        public bool TryGetWork(FastName key, out Work value)
         {
-            return TryGet(key, _nullableVector2Values, out value);
+            return TryGet(key, _workValues, out value);
+        }
+
+        public bool TryGetPath(FastName key, out Path value)
+        {
+            return TryGet(key, _pathValues,  out value);
+        }
+
+        public bool TryGetWorkList(FastName key, out List<Work> value)
+        {
+            return TryGet(key, _workListValues, out value);
         }
 
         private bool TryGet<T>(FastName key, Dictionary<FastName, T> values, out T value)

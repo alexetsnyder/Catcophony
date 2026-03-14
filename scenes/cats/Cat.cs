@@ -108,6 +108,19 @@ namespace Quasar.scenes.cats
             _workProgress.Visible = true;
         }
 
+        public void SetWork(List<Work> workList)
+        {
+            foreach (var work in workList)
+            {
+                _workQueue.Enqueue(work);
+            }
+
+            IsWorking = true;
+            CatData.WorkPos = workList.First().LocalPos;
+            _workProgress.Value = 0;
+            _workProgress.Visible = true;
+        }
+
         public void CompleteWork()
         {
             _workProgress.Visible = false;
@@ -135,6 +148,11 @@ namespace Quasar.scenes.cats
             foreach (var v in path.Points)
             {
                 _movePathQueue.Enqueue(v);
+            }
+
+            if (_movePathQueue.Count > 0)
+            {
+                PathingSystem.ShowPath(path.Id);
             }
         }
 

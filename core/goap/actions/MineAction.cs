@@ -1,10 +1,11 @@
 using Quasar.core.blackboard;
+using Quasar.core.common;
 using Quasar.core.goap.goals;
 using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using Quasar.data.enums;
+using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.work;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,24 +17,16 @@ namespace Quasar.core.goap.actions
 
         public int Cost { get => 1; }
 
-        public ICommand Command { get => _work.Command; }
-
         private readonly Dictionary<FastName, IGoal> _preconditions = [];
 
         private readonly Dictionary<FastName, IGoal> _effects = [];
 
-        private IWorkSystem _workSystem;
-
-        private Work _work;
-
         public MineAction(WorkType workType, IWorkSystem workSystem)
         {
-            _workSystem = workSystem;
-
             WorkGoal workGoal = new();
             _effects.Add(workGoal.Key, workGoal);
 
-            AdjToGoal adjToGoal = new(workType, workSystem);
+            AdjToGoal adjToGoal = new();
             MineWorkGoal mineWorkGoal = new(workType, workSystem);
             _preconditions.Add(adjToGoal.Key, adjToGoal);
             _preconditions.Add(mineWorkGoal.Key, mineWorkGoal);
@@ -65,6 +58,14 @@ namespace Quasar.core.goap.actions
             }
 
             return true;
+        }
+
+        public void Execute(Cat cat, Blackboard blackboard)
+        {
+            if (blackboard.TryGetWork(Constants.Names.SelectedWork, out var work))
+            {
+                cat.SetWork([ work ]);
+            }
         }
     }
 }

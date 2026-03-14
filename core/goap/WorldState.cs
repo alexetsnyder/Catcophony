@@ -34,6 +34,12 @@ namespace Quasar.core.goap
 
             _blackboard.Set(Constants.Names.Position, _cat.Position);
 
+            foreach (var workType in _availableWorkTypes)
+            {
+                var workList = _workSystem.CheckForWork(workType);
+                _blackboard.Set(new(workType.ToString()), workList);
+            }
+
             MoveToAction moveToAction = new(WorkType.MINING, _workSystem, _pathingSystem);
             AvailableActions.Add(moveToAction);
 

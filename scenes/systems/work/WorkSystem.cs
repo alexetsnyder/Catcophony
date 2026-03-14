@@ -73,6 +73,18 @@ namespace Quasar.scenes.systems.work
             return -1;
         }
 
+        public void UpdateWork()
+        {
+            foreach (var workDict in _allWork.Values)
+            {
+                foreach (var work in workDict.Values)
+                {
+                    var adjPosList = _world.GetAdjacentTiles(work.LocalPos).Where(a => !_world.IsImpassable(a));
+                    work.AdjPos = adjPosList.Any() ? [.. adjPosList] : null;
+                }
+            }
+        }
+
         public void LinkWork(int workId1, int workId2)
         {
             var work1 = GetWork(workId1);

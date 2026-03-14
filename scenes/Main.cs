@@ -62,6 +62,8 @@ namespace Quasar.scenes
 
         private Planner _planner;
 
+        private Plan _currentPlan;
+
         private readonly List<CatData> _catDataList = [
             new("Fern", "Black Shorthair Cat", "Playful", 100, WorkType.MINING),
             new("Fig", "Black Shorthair Cat", "Sad", 100, WorkType.BUILDING),
@@ -272,28 +274,29 @@ namespace Quasar.scenes
         {
             foreach (var cat in _cats)
             {
-                if (cat.CatData.WorkType == WorkType.MINING)
+                if (cat.CanWork() && !cat.IsMoving() && cat.CatData.WorkType == WorkType.MINING)
                 {
-                    _planner = new(cat, _workSystem, _pathingSystem);
-                    var plan = _planner.Plan();
-                    if (plan.Count > 0)
+                    if (_currentPlan == null || _currentPlan.Actions.Count == 0)
                     {
-                        while (plan.Count > 0)
-                        {
-                            var action = plan.Dequeue();
-                            GD.Print($"Action: {action}");
-                        }
+                        _planner = new(cat, _workSystem, _pathingSystem);
+                        _currentPlan = _planner.Plan();
+                    }
+                    
+                    if (_currentPlan.Actions.Count > 0)
+                    {
+                        var action = _currentPlan.Actions.Dequeue();
+                        action.Execute(cat, _currentPlan.Blackboard);
                     }
                 }
 
-                if (cat.CanWork() && !cat.IsMoving())
-                {
-                    var workTuple = _workSystem.CheckForWork(cat);
-                    if (workTuple != null)
-                    {
-                        StartWork(cat, workTuple.Item1, workTuple.Item2);
-                    }
-                }
+                //if (cat.CanWork() && !cat.IsMoving())
+                //{
+                //    var workTuple = _workSystem.CheckForWork(cat);
+                //    if (workTuple != null)
+                //    {
+                //        StartWork(cat, workTuple.Item1, workTuple.Item2);
+                //    }
+                //}
             }
         }
 
@@ -484,6 +487,8 @@ namespace Quasar.scenes
                 work.Command.Execute(cat);
 
                 _workSystem.RemoveWork(work);
+
+                _workSystem.UpdateWork();
             }
         }
     }

@@ -4,11 +4,12 @@ using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
+using Quasar.scenes.systems.work;
 using System.Linq;
 
 namespace Quasar.core.goap.goals
 {
-    public partial class AdjToGoal(WorkType workType = WorkType.NONE, IWorkSystem workSystem = null) : IGoal
+    public partial class AdjToGoal : IGoal
     {
         public FastName Key => _key;
 
@@ -18,10 +19,6 @@ namespace Quasar.core.goap.goals
 
         private readonly bool _value = true;
 
-        private readonly WorkType _workType = workType;
-
-        private readonly IWorkSystem _workSystem = workSystem;
-
         public bool Satisify(IGoal goal)
         {
             return (Key == goal.Key && Value == goal.Value);
@@ -29,21 +26,34 @@ namespace Quasar.core.goap.goals
 
         public bool Satisify(Blackboard blackboard)
         {
-            if (_workType == WorkType.NONE || _workSystem == null)
-            {
-                return false;
-            }
-
             if (blackboard.TryGetVector2(Constants.Names.Position, out var agentPos))
             {
-                var workList = _workSystem.CheckForWork(_workType);
-                if (workList.Count > 0)
+                if (blackboard.TryGetWork(Constants.Names.SelectedWork, out var selectedWork))
                 {
-                    foreach (var adjPos in workList.SelectMany(w => w.AdjPos ?? []))
+                    foreach (var adjPos in selectedWork.AdjPos)
                     {
                         if (adjPos.IsEqualApprox(agentPos))
                         {
                             return true;
+                        }
+                    }
+                }
+
+                if (blackboard.TryGetWorkList(new(WorkType.MINING.ToString()), out var workList))
+                {
+                    if (workList.Count > 0)
+                    {
+                        foreach (var work in workList.ToDictionary(w => w, w => w.AdjPos ?? []))
+                        {
+                            foreach (var adjPos in work.Value)
+                            {
+                                if (adjPos.IsEqualApprox(agentPos))
+                                {
+                                    blackboard.Set(Constants.Names.SelectedWork, work.Key);
+                                    return true;
+                                }
+                            }
+
                         }
                     }
                 }

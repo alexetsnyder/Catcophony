@@ -1,9 +1,12 @@
 using Quasar.core.blackboard;
+using Quasar.core.common;
 using Quasar.core.goap.goals;
 using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using Quasar.data.enums;
+using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
+using Quasar.scenes.systems.work.commands;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -38,7 +41,7 @@ namespace Quasar.core.goap.actions
             AdjToGoal adjToGoal = new();
             _effects.Add(adjToGoal.Key, adjToGoal);
 
-            HasPathGoal hasPathGoal = new(_workType, _workSystem, _pathingSystem);
+            HasPathGoal hasPathGoal = new(_workType, _pathingSystem);
             _preconditions.Add(hasPathGoal.Key, hasPathGoal);
         }
 
@@ -68,6 +71,15 @@ namespace Quasar.core.goap.actions
             }
 
             return true;
+        }
+
+        public void Execute(Cat cat, Blackboard blackboard)
+        {
+            if (blackboard.TryGetPath(Constants.Names.SelectedPath, out var path))
+            {
+                var command = new MoveToCommand(path);
+                command.Execute(cat);
+            }
         }
     }
 }

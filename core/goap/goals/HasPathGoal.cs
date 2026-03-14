@@ -4,12 +4,11 @@ using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.pathing;
 using System.Linq;
 
 namespace Quasar.core.goap.goals
 {
-    public partial class HasPathGoal(WorkType workType, IWorkSystem workSystem, IPathingSystem pathingSystem) : IGoal
+    public partial class HasPathGoal(WorkType workType, IPathingSystem pathingSystem) : IGoal
     {
         public FastName Key => _key;
 
@@ -21,11 +20,7 @@ namespace Quasar.core.goap.goals
 
         private readonly WorkType _workType = workType;
 
-        private readonly IWorkSystem _workSystem = workSystem;
-
         private readonly IPathingSystem _pathingSystem = pathingSystem;
-
-        private Path _path;
 
         public bool Satisify(IGoal goal)
         {
@@ -36,24 +31,56 @@ namespace Quasar.core.goap.goals
         {
             if (blackboard.TryGetVector2(Constants.Names.Position, out var agentPos))
             {
-                var workList = _workSystem.CheckForWork(_workType);
-                if (workList.Count > 0)
+                if (blackboard.TryGetPath(Constants.Names.SelectedPath, out var selectedPath))
                 {
-                    foreach (var adjPos in workList.SelectMany(w => w.AdjPos ?? []))
+                    return true;
+                }
+
+                if (blackboard.TryGetWork(Constants.Names.SelectedWork, out var selectedWork))
+                {
+                    foreach (var adjPos in selectedWork.AdjPos)
                     {
-                        if (agentPos.IsEqualApprox(adjPos))
+                        if (adjPos.IsEqualApprox(agentPos))
                         {
-                            _path = _pathingSystem.CreateEmptyPath();
+                            blackboard.Set(Constants.Names.SelectedPath, _pathingSystem.CreateEmptyPath());
                             return true;
                         }
 
-                        _path = _pathingSystem.FindPath(agentPos, adjPos);
-                        if (_path != null)
+                        var path = _pathingSystem.FindPath(agentPos, adjPos);
+                        if (path != null)
                         {
+                            blackboard.Set(Constants.Names.SelectedPath, path);
                             return true;
                         }
                     }
                 }
+
+                if (blackboard.TryGetWorkList(new(_workType.ToString()), out var workList))
+                {
+                    if (workList.Count > 0)
+                    {
+                        foreach (var work in workList.ToDictionary(w => w, w => w.AdjPos ?? []))
+                        {
+                            foreach (var adjPos in work.Value)
+                            {
+                                if (agentPos.IsEqualApprox(adjPos))
+                                {
+                                    blackboard.Set(Constants.Names.SelectedWork, work.Key);
+                                    blackboard.Set(Constants.Names.SelectedPath, _pathingSystem.CreateEmptyPath());
+                                    return true;
+                                }
+
+                                var path = _pathingSystem.FindPath(agentPos, adjPos);
+                                if (path != null)
+                                {
+                                    blackboard.Set(Constants.Names.SelectedWork, work.Key);
+                                    blackboard.Set(Constants.Names.SelectedPath, path);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                } 
             }
 
             return false;

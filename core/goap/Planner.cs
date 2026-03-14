@@ -1,7 +1,6 @@
-using Quasar.core.goap.actions;
+using Quasar.core.blackboard;
 using Quasar.core.goap.goals;
 using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
 using System.Collections.Generic;
@@ -13,6 +12,8 @@ namespace Quasar.core.goap
         public Leaf Parent { get; set; }
 
         public int CumulativeCost { get; set; }
+
+        public Blackboard Blackboard { get; set; }
 
         public IAction Action { get; set; }
 
@@ -33,17 +34,18 @@ namespace Quasar.core.goap
             _worldState = new(cat, workSystem, pathingSystem);
         }
 
-        public Queue<IAction> Plan()
+        public Plan Plan()
         {
             if (_worldState == null)
             {
-                return [];
+                return null;
             }
 
             Leaf root = new()
             {
                 Parent = null,
                 CumulativeCost = 0,
+                Blackboard = new(_worldState.GetBlackboard()),
                 Action = null,
                 IsSuccess = false,
             };
@@ -52,6 +54,7 @@ namespace Quasar.core.goap
 
             Queue<IAction> minCostPlan = [];
             int minCost = int.MaxValue;
+            Blackboard blackboard = null;
 
             foreach (var leaf in leaves)
             {
@@ -59,10 +62,11 @@ namespace Quasar.core.goap
                 {
                     RebuildPlan(leaf, minCostPlan);
                     minCost = leaf.CumulativeCost;
+                    blackboard = leaf.Blackboard;
                 }    
             }
 
-            return minCostPlan;
+            return new(blackboard, minCostPlan);
         }
 
         private List<Leaf> BuildPlan(Leaf root)
@@ -91,6 +95,7 @@ namespace Quasar.core.goap
                         {
                             Parent = currentNode,
                             CumulativeCost = currentNode.CumulativeCost + action.Cost,
+                            Blackboard = new(currentNode.Blackboard),
                             Action = action,
                             IsSuccess = false,
                         };
@@ -99,9 +104,9 @@ namespace Quasar.core.goap
 
                         currentNode = leaf;
 
-                        if (!action.SatisfyPreconditions(_worldState.GetBlackboard()))
+                        if (!action.SatisfyPreconditions(leaf.Blackboard))
                         {
-                            var preconditons = action.GetUnsatisfiedPreconditions(_worldState.GetBlackboard());
+                            var preconditons = action.GetUnsatisfiedPreconditions(leaf.Blackboard);
 
                             foreach (var precondition in  preconditons)
                             {

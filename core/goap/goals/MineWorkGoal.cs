@@ -28,9 +28,12 @@ namespace Quasar.core.goap.goals
 
         public bool Satisify(Blackboard blackboard)
         {
-            var workList = _workSystem.CheckForWork(_workType);
-
-            return workList.Count > 0;
+            if (blackboard.TryGetWorkList(new(_workType.ToString()), out var workList))
+            {
+                return workList.Count > 0;
+            }
+            
+            return false;
         }
     }
 }

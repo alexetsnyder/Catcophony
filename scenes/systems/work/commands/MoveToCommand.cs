@@ -10,7 +10,7 @@ namespace Quasar.scenes.systems.work.commands
 
         public void Execute(Cat cat = null)
         {
-            if (cat == null)
+            if (cat != null)
             {
                 cat.SetPath(_path);
             }

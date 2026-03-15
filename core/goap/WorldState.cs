@@ -13,7 +13,7 @@ namespace Quasar.core.goap
     {
         private readonly Blackboard _blackboard = new();
 
-        private readonly Cat _cat;
+        private readonly IAgent _agent;
 
         private readonly IWorkSystem _workSystem;
 
@@ -22,17 +22,19 @@ namespace Quasar.core.goap
         private readonly List<WorkType> _availableWorkTypes =
         [
             WorkType.MINING,
+            WorkType.BUILDING,
         ];
 
         public readonly List<IAction> AvailableActions = [];
 
-        public WorldState(Cat cat, IWorkSystem workSystem, IPathingSystem pathingSystem) 
+        public WorldState(IAgent agent, IWorkSystem workSystem, IPathingSystem pathingSystem) 
         { 
-            _cat = cat;
+            _agent = agent;
             _workSystem = workSystem;
             _pathingSystem = pathingSystem;
 
-            _blackboard.Set(Constants.Names.Position, _cat.Position);
+            _blackboard.Set(Constants.Names.Position, _agent.Position);
+            _blackboard.Set(Constants.Names.WorkType, (int)_agent.WorkType);
 
             foreach (var workType in _availableWorkTypes)
             {
@@ -40,11 +42,14 @@ namespace Quasar.core.goap
                 _blackboard.Set(new(workType.ToString()), workList);
             }
 
-            MoveToAction moveToAction = new(pathingSystem);
+            MoveToAction moveToAction = new(_pathingSystem);
             AvailableActions.Add(moveToAction);
 
             MineAction mineAction = new();
             AvailableActions.Add(mineAction);
+
+            BuildAction buildAction = new();
+            AvailableActions.Add(buildAction);
         }
 
         public Blackboard GetBlackboard()

@@ -2,6 +2,7 @@ using Godot;
 using Quasar.core.blackboard;
 using Quasar.core.common;
 using Quasar.core.goap;
+using Quasar.core.goap.goals;
 using Quasar.data;
 using Quasar.data.enums;
 using Quasar.scenes.camera;
@@ -103,6 +104,8 @@ namespace Quasar.scenes
                 _gui.AddChild(_inventoryControl);
                 _inventoryControl.Visible = false;
             }
+
+            _planner = new(_workSystem, _pathingSystem);
 
             CreateCats();
 
@@ -239,8 +242,7 @@ namespace Quasar.scenes
                     {
                         AddChild(cat);
 
-                        cat.World = _world;
-                        cat.PathingSystem = _pathingSystem;
+                        cat.SetDeps(_world, _pathingSystem);
 
                         var catPos = spawnPoints[i];
                         cat.Position = catPos;
@@ -274,12 +276,11 @@ namespace Quasar.scenes
         {
             foreach (var cat in _cats)
             {
-                if (cat.CanWork() && !cat.IsMoving() && cat.CatData.WorkType == WorkType.MINING)
+                if (cat.CanWork() && !cat.IsMoving() && cat.WorkType == WorkType.BUILDING)
                 {
                     if (_currentPlan == null || _currentPlan.Actions.Count == 0)
                     {
-                        _planner = new(cat, _workSystem, _pathingSystem);
-                        _currentPlan = _planner.Plan();
+                        _currentPlan = _planner.Plan(cat, new WorkGoal());
                     }
                     
                     if (_currentPlan.Actions.Count > 0)
@@ -288,22 +289,7 @@ namespace Quasar.scenes
                         action.Execute(cat, _currentPlan.Blackboard);
                     }
                 }
-
-                //if (cat.CanWork() && !cat.IsMoving())
-                //{
-                //    var workTuple = _workSystem.CheckForWork(cat);
-                //    if (workTuple != null)
-                //    {
-                //        StartWork(cat, workTuple.Item1, workTuple.Item2);
-                //    }
-                //}
             }
-        }
-
-        private void StartWork(Cat cat, List<Work> workList, Path path)
-        {
-            _pathingSystem.ShowPath(path.Id);
-            cat.SetWork(workList, path);
         }
 
         private void RemoveWork(List<Vector2> worldPosList)

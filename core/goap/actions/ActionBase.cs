@@ -13,18 +13,18 @@ namespace Quasar.core.goap.actions
 
         public abstract int Cost { get; }
 
-        protected readonly Dictionary<FastName, IGoal> _preconditions = [];
+        protected readonly List<IGoal> _preconditions = [];
 
-        protected readonly Dictionary<FastName, IGoal> _effects = [];
+        protected readonly List<IGoal> _effects = [];
 
         public List<IGoal> GetUnsatisfiedPreconditions(Blackboard blackboard)
         {
-            return [.. _preconditions.Select(kvp => kvp.Value).Where(g => !g.Satisify(blackboard))];
+            return [.. _preconditions.Where(g => !g.Satisify(blackboard))];
         }
 
         public bool SatisfyGoal(IGoal goal)
         {
-            if (_effects.TryGetValue(goal.Key, out IGoal effect))
+            foreach (var effect in _effects)
             {
                 return effect.Satisify(goal);
             }
@@ -34,7 +34,7 @@ namespace Quasar.core.goap.actions
 
         public bool SatisfyPreconditions(Blackboard blackboard)
         {
-            foreach (var cond in _preconditions.Values)
+            foreach (var cond in _preconditions)
             {
                 if (!cond.Satisify(blackboard))
                 {

@@ -23,10 +23,10 @@ namespace Quasar.core.goap.actions
             _pathingSystem = pathingSystem;
 
             AdjToGoal adjToGoal = new();
-            _effects.Add(adjToGoal.Key, adjToGoal);
+            _effects.Add(adjToGoal);
 
             HasPathGoal hasPathGoal = new(_pathingSystem);
-            _preconditions.Add(hasPathGoal.Key, hasPathGoal);
+            _preconditions.Add(hasPathGoal);
         }
 
         public override void Execute(Cat cat, Blackboard blackboard)

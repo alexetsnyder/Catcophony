@@ -6,25 +6,25 @@ using Quasar.scenes.cats;
 
 namespace Quasar.core.goap.actions
 {
-    public partial class MineAction : ActionBase
+    public partial class BuildAction : ActionBase
     {
         public override FastName Name { get => _name; }
 
         public override int Cost { get => 1; }
 
-        private readonly FastName _name = new("MineAction");
+        private readonly FastName _name = new("BuildAction");
 
-        public MineAction()
+        public BuildAction()
         {
             WorkGoal workGoal = new();
             _effects.Add(workGoal);
 
             AdjToGoal adjToGoal = new();
-            MineWorkGoal mineWorkGoal = new();
+            BuildWorkGoal buildWorkGoal = new();
             HasProfGoal hasProfGoal = new();
-            _preconditions.Add(mineWorkGoal);
+            _preconditions.Add(buildWorkGoal);
             _preconditions.Add(hasProfGoal);
-            _preconditions.Add(adjToGoal);
+            _preconditions.Add(adjToGoal);  
         }
 
         public override void Execute(Cat cat, Blackboard blackboard)

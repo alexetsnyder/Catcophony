@@ -1,4 +1,6 @@
 using Godot;
+using Quasar.core.goap.interfaces;
+using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using Quasar.scenes.systems.items;
 using Quasar.scenes.systems.pathing;
@@ -9,7 +11,7 @@ using System.Linq;
 
 namespace Quasar.scenes.cats
 {
-    public partial class Cat : Node2D, IGameObject
+    public partial class Cat : Node2D, IGameObject, IAgent
     {
         [Export]
         public int Speed { get; set; } = 10;
@@ -29,13 +31,11 @@ namespace Quasar.scenes.cats
         [Signal]
         public delegate void CatWorkEventHandler(Cat cat, Work work);
 
-        public IWorld World { get; set; }
-
-        public IPathingSystem PathingSystem { get; set; }
-
         public int Id { get; set; }
 
         public CatData CatData { get; private set; }
+
+        public WorkType WorkType { get => CatData.WorkType; }
 
         public bool IsWorking { get; private set; } = false;
 
@@ -46,6 +46,10 @@ namespace Quasar.scenes.cats
         public float Width { get => _catSprite.GetRect().Size.X;  }
 
         public float Height { get => _catSprite.GetRect().Size.Y; }
+
+        private IWorld _world { get; set; }
+
+        private IPathingSystem _pathingSystem { get; set; }
 
         private TextureProgressBar _workProgress;
 
@@ -94,6 +98,12 @@ namespace Quasar.scenes.cats
             CatData = data;
         }
 
+        public void SetDeps(IWorld world, IPathingSystem pathingSystem)
+        {
+            _world = world;
+            _pathingSystem = pathingSystem;
+        }
+
         public void SetWork(List<Work> workList, Path path)
         {
             foreach (var work in workList)
@@ -106,6 +116,11 @@ namespace Quasar.scenes.cats
             CatData.WorkPos = workList.First().LocalPos;
             _workProgress.Value = 0;
             _workProgress.Visible = true;
+        }
+
+        public void SetWork(Work work)
+        {
+            SetWork([ work ]);
         }
 
         public void SetWork(List<Work> workList)
@@ -152,7 +167,7 @@ namespace Quasar.scenes.cats
 
             if (_movePathQueue.Count > 0)
             {
-                PathingSystem.ShowPath(path.Id);
+                _pathingSystem.ShowPath(path.Id);
             }
         }
 
@@ -202,10 +217,10 @@ namespace Quasar.scenes.cats
         private void StartNextWork()
         {
             var work = _workQueue.Peek();
-            var path = PathingSystem.ShortestPath(Position, World.GetAdjacentTiles(work.LocalPos, true));
+            var path = _pathingSystem.ShortestPath(Position, _world.GetAdjacentTiles(work.LocalPos, true));
 
             SetPath(path);
-            PathingSystem.ShowPath(path.Id);
+            _pathingSystem.ShowPath(path.Id);
             CatData.WorkPos = work.LocalPos;
 
             _workProgress.Value = 0;

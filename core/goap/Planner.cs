@@ -1,7 +1,5 @@
 using Quasar.core.blackboard;
-using Quasar.core.goap.goals;
 using Quasar.core.goap.interfaces;
-using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
 using System.Collections.Generic;
 
@@ -22,24 +20,21 @@ namespace Quasar.core.goap
 
     public partial class Planner
     {
-        private readonly WorldState _worldState = null;
+        private WorldState _worldState = null;
 
-        List<IGoal> _goals =
-        [
-            new WorkGoal(),
-        ];
+        private readonly IWorkSystem _workSystem;
 
-        public Planner(Cat cat, IWorkSystem workSystem, IPathingSystem pathingSystem)
+        private readonly IPathingSystem _pathingSystem;
+
+        public Planner(IWorkSystem workSystem, IPathingSystem pathingSystem)
         {
-            _worldState = new(cat, workSystem, pathingSystem);
+            _workSystem = workSystem;
+            _pathingSystem = pathingSystem;
         }
 
-        public Plan Plan()
+        public Plan Plan(IAgent agent, IGoal goal)
         {
-            if (_worldState == null)
-            {
-                return null;
-            }
+            _worldState = new(agent, _workSystem, _pathingSystem);
 
             Leaf root = new()
             {
@@ -50,7 +45,8 @@ namespace Quasar.core.goap
                 IsSuccess = false,
             };
 
-            List<Leaf> leaves = BuildPlan(root);
+            List<Leaf> leaves = [];
+            BuildPlanRec(root, leaves, goal);
 
             Queue<IAction> minCostPlan = [];
             int minCost = int.MaxValue;
@@ -69,66 +65,39 @@ namespace Quasar.core.goap
             return new(blackboard, minCostPlan);
         }
 
-        private List<Leaf> BuildPlan(Leaf root)
+        private void BuildPlanRec(Leaf current, List<Leaf> leaves, IGoal goal)
         {
-            List<Leaf> plan = [];
-
-            var currentNode = root;
-
-            var goal = _goals[0];
-            Stack<IGoal> preconds = [];
-            preconds.Push(goal);
-
-            while (preconds.Count > 0)
+            foreach (var action in _worldState.AvailableActions)
             {
-                var newGoal = preconds.Pop();
-
-                bool IsGoalSatisied = false;
-
-                foreach (var action in _worldState.AvailableActions)
+                if (action.SatisfyGoal(goal))
                 {
-                    if (action.SatisfyGoal(newGoal))
+                    Leaf leaf = new()
                     {
-                        IsGoalSatisied = true;
+                        Parent = current,
+                        CumulativeCost = current.CumulativeCost + action.Cost,
+                        Blackboard = new(current.Blackboard),
+                        Action = action,
+                        IsSuccess = false,
+                    };
 
-                        Leaf leaf = new()
+                    leaves.Add(leaf);
+
+                    if (!action.SatisfyPreconditions(leaf.Blackboard))
+                    {
+                        var preconditons = action.GetUnsatisfiedPreconditions(leaf.Blackboard);
+                        preconditons.Reverse();
+
+                        foreach (var precondition in preconditons)
                         {
-                            Parent = currentNode,
-                            CumulativeCost = currentNode.CumulativeCost + action.Cost,
-                            Blackboard = new(currentNode.Blackboard),
-                            Action = action,
-                            IsSuccess = false,
-                        };
-
-                        plan.Add(leaf);
-
-                        currentNode = leaf;
-
-                        if (!action.SatisfyPreconditions(leaf.Blackboard))
-                        {
-                            var preconditons = action.GetUnsatisfiedPreconditions(leaf.Blackboard);
-
-                            foreach (var precondition in  preconditons)
-                            {
-                                preconds.Push(precondition);
-                            }
-                        }
-
-                        if (preconds.Count == 0)
-                        {
-                            leaf.IsSuccess = true;
-                            currentNode = root;
+                            BuildPlanRec(leaf, leaves, precondition);
                         }
                     }
-                }
-
-                if (!IsGoalSatisied)
-                {
-                    currentNode = root;
+                    else
+                    {
+                        leaf.IsSuccess = true;
+                    }
                 }
             }
-
-            return plan;
         }
 
         private void RebuildPlan(Leaf leaf, Queue<IAction> plan)

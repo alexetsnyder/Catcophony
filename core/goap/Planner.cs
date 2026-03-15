@@ -16,21 +16,17 @@ namespace Quasar.core.goap
         public IAction Action { get; set; }
 
         public bool IsSuccess { get; set; }
+
+        public bool IsEnd { get; set; }
     }
 
-    public partial class Planner
+    public partial class Planner(IWorkSystem workSystem, IPathingSystem pathingSystem) : IPlanner
     {
         private WorldState _worldState = null;
 
-        private readonly IWorkSystem _workSystem;
+        private readonly IWorkSystem _workSystem = workSystem;
 
-        private readonly IPathingSystem _pathingSystem;
-
-        public Planner(IWorkSystem workSystem, IPathingSystem pathingSystem)
-        {
-            _workSystem = workSystem;
-            _pathingSystem = pathingSystem;
-        }
+        private readonly IPathingSystem _pathingSystem = pathingSystem;
 
         public Plan Plan(IAgent agent, IGoal goal)
         {
@@ -43,6 +39,7 @@ namespace Quasar.core.goap
                 Blackboard = new(_worldState.GetBlackboard()),
                 Action = null,
                 IsSuccess = false,
+                IsEnd = false,
             };
 
             List<Leaf> leaves = [];
@@ -54,23 +51,27 @@ namespace Quasar.core.goap
 
             foreach (var leaf in leaves)
             {
-                if (leaf.IsSuccess && leaf.CumulativeCost < minCost)
+                if (leaf.IsEnd && leaf.IsSuccess && leaf.CumulativeCost < minCost)
                 {
-                    RebuildPlan(leaf, minCostPlan);
+                    AssemblePlan(leaf, minCostPlan);
                     minCost = leaf.CumulativeCost;
                     blackboard = leaf.Blackboard;
-                }    
+                }
             }
 
             return new(blackboard, minCostPlan);
         }
 
-        private void BuildPlanRec(Leaf current, List<Leaf> leaves, IGoal goal)
+        private bool BuildPlanRec(Leaf current, List<Leaf> leaves, IGoal goal)
         {
+            bool succes = false;
+
             foreach (var action in _worldState.AvailableActions)
             {
                 if (action.SatisfyGoal(goal))
                 {
+                    succes = true;
+
                     Leaf leaf = new()
                     {
                         Parent = current,
@@ -78,6 +79,7 @@ namespace Quasar.core.goap
                         Blackboard = new(current.Blackboard),
                         Action = action,
                         IsSuccess = false,
+                        IsEnd = false,
                     };
 
                     leaves.Add(leaf);
@@ -85,22 +87,29 @@ namespace Quasar.core.goap
                     if (!action.SatisfyPreconditions(leaf.Blackboard))
                     {
                         var preconditons = action.GetUnsatisfiedPreconditions(leaf.Blackboard);
-                        preconditons.Reverse();
 
                         foreach (var precondition in preconditons)
                         {
-                            BuildPlanRec(leaf, leaves, precondition);
+                            if (!BuildPlanRec(leaf, leaves, precondition))
+                            {
+                                succes = false;
+                                break;
+                            }
                         }
                     }
                     else
                     {
-                        leaf.IsSuccess = true;
+                        leaf.IsEnd = true;
                     }
+
+                    leaf.IsSuccess = succes;
                 }
             }
+
+            return succes;
         }
 
-        private void RebuildPlan(Leaf leaf, Queue<IAction> plan)
+        private static void AssemblePlan(Leaf leaf, Queue<IAction> plan)
         {
             while (leaf.Parent != null)
             {

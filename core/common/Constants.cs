@@ -1,5 +1,4 @@
 using Quasar.core.naming;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Quasar.core.common
 {
@@ -10,7 +9,7 @@ namespace Quasar.core.common
             public static readonly FastName Self = new("Self");
             public static readonly FastName Position = new("Self.Postion");
             public static readonly FastName WorkType = new("Self.WorkType");
-            public static readonly FastName SelectedWorkType = new("Self.WorkType");
+            public static readonly FastName SelectedWorkType = new("Self.SelectedWorkType");
             public static readonly FastName SelectedWork = new("Self.SelectedWork");
             public static readonly FastName SelectedPath = new("Self.SelectedPath");
         }

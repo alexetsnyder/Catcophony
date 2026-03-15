@@ -1,8 +1,5 @@
 using Godot;
-using Quasar.core.blackboard;
-using Quasar.core.common;
 using Quasar.core.goap;
-using Quasar.core.goap.goals;
 using Quasar.data;
 using Quasar.data.enums;
 using Quasar.scenes.camera;
@@ -61,10 +58,6 @@ namespace Quasar.scenes
 
         private Cat _selectedCat = null;
 
-        private Planner _planner;
-
-        private Plan _currentPlan;
-
         private readonly List<CatData> _catDataList = [
             new("Fern", "Black Shorthair Cat", "Playful", 100, WorkType.MINING),
             new("Fig", "Black Shorthair Cat", "Sad", 100, WorkType.BUILDING),
@@ -105,8 +98,6 @@ namespace Quasar.scenes
                 _inventoryControl.Visible = false;
             }
 
-            _planner = new(_workSystem, _pathingSystem);
-
             CreateCats();
 
             _map.SetProcessUnhandledInput(false);
@@ -121,8 +112,6 @@ namespace Quasar.scenes
         {
             SetTyleTypeLabel();
             SetTyleColorLabel();
-
-            CheckForWork();
         }
 
         public override void _Input(InputEvent @event)
@@ -242,7 +231,8 @@ namespace Quasar.scenes
                     {
                         AddChild(cat);
 
-                        cat.SetDeps(_world, _pathingSystem);
+                        var newPlanner = new Planner(_workSystem, _pathingSystem);
+                        cat.SetDeps(_world, _pathingSystem, newPlanner);
 
                         var catPos = spawnPoints[i];
                         cat.Position = catPos;
@@ -270,26 +260,6 @@ namespace Quasar.scenes
         private void PlaceCat(Vector2 newPos, Vector2? lastPos = null)
         {
             _world.PlaceItem(newPos, lastPos);
-        }
-
-        private void CheckForWork()
-        {
-            foreach (var cat in _cats)
-            {
-                if (cat.CanWork() && !cat.IsMoving() && cat.WorkType == WorkType.BUILDING)
-                {
-                    if (_currentPlan == null || _currentPlan.Actions.Count == 0)
-                    {
-                        _currentPlan = _planner.Plan(cat, new WorkGoal());
-                    }
-                    
-                    if (_currentPlan.Actions.Count > 0)
-                    {
-                        var action = _currentPlan.Actions.Dequeue();
-                        action.Execute(cat, _currentPlan.Blackboard);
-                    }
-                }
-            }
         }
 
         private void RemoveWork(List<Vector2> worldPosList)

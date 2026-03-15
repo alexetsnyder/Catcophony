@@ -3,7 +3,6 @@ using Quasar.core.common;
 using Quasar.core.goap.actions;
 using Quasar.core.goap.interfaces;
 using Quasar.data.enums;
-using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
 using System.Collections.Generic;
 

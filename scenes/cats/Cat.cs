@@ -1,4 +1,6 @@
 using Godot;
+using Quasar.core.goap;
+using Quasar.core.goap.goals;
 using Quasar.core.goap.interfaces;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
@@ -13,11 +15,17 @@ namespace Quasar.scenes.cats
 {
     public partial class Cat : Node2D, IGameObject, IAgent
     {
+        #region Exports
+
         [Export]
         public int Speed { get; set; } = 10;
 
         [Export]
         public int WorkTicks { get; set; } = 10;
+
+        #endregion
+
+        #region Signals
 
         [Signal]
         public delegate void CatClickedOnEventHandler(Cat cat);
@@ -31,6 +39,8 @@ namespace Quasar.scenes.cats
         [Signal]
         public delegate void CatWorkEventHandler(Cat cat, Work work);
 
+        #endregion
+
         public int Id { get; set; }
 
         public CatData CatData { get; private set; }
@@ -41,15 +51,15 @@ namespace Quasar.scenes.cats
 
         public Item Item { get; set; } = null;
 
-        private readonly Queue<Work> _workQueue = [];
-
-        public float Width { get => _catSprite.GetRect().Size.X;  }
+        public float Width { get => _catSprite.GetRect().Size.X; }
 
         public float Height { get => _catSprite.GetRect().Size.Y; }
 
-        private IWorld _world { get; set; }
+        private readonly Queue<Work> _workQueue = [];
 
-        private IPathingSystem _pathingSystem { get; set; }
+        private IWorld _world;
+
+        private IPathingSystem _pathingSystem;
 
         private TextureProgressBar _workProgress;
 
@@ -66,6 +76,12 @@ namespace Quasar.scenes.cats
         private Vector2 _nextPos = new();
 
         private double ElapsedWorkTime = 0.0;
+
+        private IGoal _goal = new WorkGoal();
+
+        private IPlanner _planner;
+
+        private Plan _currentPlan;
 
         public override void _Ready()
         {
@@ -91,6 +107,19 @@ namespace Quasar.scenes.cats
             {
                 Work(TimeSystem.Instance.TicksPerSecond * delta);
             }
+            else
+            {
+                if (_currentPlan == null || _currentPlan.Actions.Count == 0)
+                {
+                    _currentPlan = _planner.Plan(this, _goal);
+                }
+
+                if (_currentPlan != null && _currentPlan.Actions.Count > 0)
+                {
+                    var action = _currentPlan.Actions.Dequeue();
+                    action.Execute(this, _currentPlan.Blackboard);
+                }
+            }
         }
 
         public void SetCatData(CatData data)
@@ -98,24 +127,11 @@ namespace Quasar.scenes.cats
             CatData = data;
         }
 
-        public void SetDeps(IWorld world, IPathingSystem pathingSystem)
+        public void SetDeps(IWorld world, IPathingSystem pathingSystem, IPlanner planner)
         {
             _world = world;
             _pathingSystem = pathingSystem;
-        }
-
-        public void SetWork(List<Work> workList, Path path)
-        {
-            foreach (var work in workList)
-            {
-                _workQueue.Enqueue(work);
-            }
-            
-            SetPath(path);
-            IsWorking = true;
-            CatData.WorkPos = workList.First().LocalPos;
-            _workProgress.Value = 0;
-            _workProgress.Visible = true;
+            _planner = planner;
         }
 
         public void SetWork(Work work)

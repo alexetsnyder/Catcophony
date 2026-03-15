@@ -40,10 +40,10 @@ namespace Quasar.core.goap
                 _blackboard.Set(new(workType.ToString()), workList);
             }
 
-            MoveToAction moveToAction = new(WorkType.MINING, _workSystem, _pathingSystem);
+            MoveToAction moveToAction = new(pathingSystem);
             AvailableActions.Add(moveToAction);
 
-            MineAction mineAction = new(WorkType.MINING, _workSystem);
+            MineAction mineAction = new();
             AvailableActions.Add(mineAction);
         }
 

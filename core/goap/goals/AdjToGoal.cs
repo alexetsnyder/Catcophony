@@ -1,28 +1,19 @@
 using Quasar.core.blackboard;
 using Quasar.core.common;
-using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
 using Quasar.data.enums;
 using System.Linq;
 
 namespace Quasar.core.goap.goals
 {
-    public partial class AdjToGoal : IGoal
+    public partial class AdjToGoal : GoalBase
     {
-        public FastName Key => _key;
-
-        public bool Value => _value;
-
-        private readonly FastName _key = new("AdjTo");
-
-        private readonly bool _value = true;
-
-        public bool Satisify(IGoal goal)
+        public AdjToGoal()
         {
-            return (Key == goal.Key && Value == goal.Value);
+            _key = new("AdjTo");
+            _value = true;
         }
 
-        public bool Satisify(Blackboard blackboard)
+        public override bool Satisify(Blackboard blackboard)
         {
             if (blackboard.TryGetVector2(Constants.Names.Position, out var agentPos))
             {

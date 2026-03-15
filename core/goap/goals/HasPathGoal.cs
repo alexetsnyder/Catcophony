@@ -1,31 +1,24 @@
 using Quasar.core.blackboard;
 using Quasar.core.common;
-using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using System.Linq;
 
 namespace Quasar.core.goap.goals
 {
-    public partial class HasPathGoal(IPathingSystem pathingSystem) : IGoal
+    public partial class HasPathGoal : GoalBase
     {
-        public FastName Key => _key;
+        private readonly IPathingSystem _pathingSystem;
 
-        public bool Value => _value;
-
-        private readonly FastName _key = new("HasPath");
-
-        private readonly bool _value = true;
-
-        private readonly IPathingSystem _pathingSystem = pathingSystem;
-
-        public bool Satisify(IGoal goal)
+        public HasPathGoal(IPathingSystem pathingSystem)
         {
-            return (Key == goal.Key && Value == goal.Value);
+            _key = new("HasPath");
+            _value = true;
+
+            _pathingSystem = pathingSystem;
         }
 
-        public bool Satisify(Blackboard blackboard)
+        public override bool Satisify(Blackboard blackboard)
         {
             if (blackboard.TryGetVector2(Constants.Names.Position, out var agentPos))
             {

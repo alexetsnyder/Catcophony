@@ -1,34 +1,24 @@
 using Quasar.core.blackboard;
 using Quasar.core.common;
 using Quasar.core.goap.goals;
-using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
-using Quasar.data.enums;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
 using Quasar.scenes.systems.work.commands;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Quasar.core.goap.actions
 {
-    public partial class MoveToAction : IAction
+    public partial class MoveToAction : ActionBase
     {
-        public readonly static FastName Name = new("MoveToAction");
+        public override FastName Name { get => _name; }
 
-        public int Cost { get => 2; }
+        public override int Cost { get => 2; }
 
-        public ICommand Command { get => null; }
-
-        public readonly FastName AdjPosName;
-
-        private readonly Dictionary<FastName, IGoal> _preconditions = [];
-
-        private readonly Dictionary<FastName, IGoal> _effects = [];
+        private readonly FastName _name = new("MoveToAction");
 
         private readonly IPathingSystem _pathingSystem;
 
-        public MoveToAction(WorkType workType, IWorkSystem workSystem, IPathingSystem pathingSystem)
+        public MoveToAction(IPathingSystem pathingSystem)
         {
             _pathingSystem = pathingSystem;
 
@@ -39,35 +29,7 @@ namespace Quasar.core.goap.actions
             _preconditions.Add(hasPathGoal.Key, hasPathGoal);
         }
 
-        public List<IGoal> GetUnsatisfiedPreconditions(Blackboard blackboard)
-        {
-            return [.. _preconditions.Select(kvp => kvp.Value).Where(g => !g.Satisify(blackboard))];
-        }
-
-        public bool SatisfyGoal(IGoal goal)
-        {
-            if (_effects.TryGetValue(goal.Key, out IGoal effect))
-            {
-                return effect.Satisify(goal);
-            }
-
-            return false;
-        }
-
-        public bool SatisfyPreconditions(Blackboard blackboard)
-        {
-            foreach(var cond in _preconditions.Values)
-            {
-                if (!cond.Satisify(blackboard))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        public void Execute(Cat cat, Blackboard blackboard)
+        public override void Execute(Cat cat, Blackboard blackboard)
         {
             if (blackboard.TryGetPath(Constants.Names.SelectedPath, out var path))
             {

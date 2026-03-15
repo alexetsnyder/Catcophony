@@ -1,4 +1,5 @@
 using Quasar.core.blackboard;
+using Quasar.core.naming;
 using Quasar.scenes.cats;
 using System.Collections.Generic;
 using System.Windows.Input;
@@ -7,6 +8,8 @@ namespace Quasar.core.goap.interfaces
 {
     public interface IAction
     {
+        public FastName Name { get; }
+
         public int Cost { get; }
 
         public List<IGoal> GetUnsatisfiedPreconditions(Blackboard blackboard);

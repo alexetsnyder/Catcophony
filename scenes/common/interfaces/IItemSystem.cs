@@ -13,6 +13,8 @@ namespace Quasar.scenes.common.interfaces
 
         public void RemoveItem(Item item);
 
+        public List<Item> GetInventoryItems(int catId);
+
         public List<Item> GetItems(Vector2 localPos);
 
         public void PickUpItem(int id, Item item);

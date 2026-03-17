@@ -1,5 +1,6 @@
 using Godot;
 using Quasar.core.naming;
+using Quasar.scenes.systems.items;
 using Quasar.scenes.systems.pathing;
 using Quasar.scenes.systems.work;
 using System.Collections.Generic;
@@ -20,6 +21,8 @@ namespace Quasar.core.blackboard
 
         private readonly Dictionary<FastName, Path> _pathValues = [];
 
+        private readonly Dictionary<FastName, Item> _itemValues = [];
+
         private readonly Dictionary<FastName, List<Work>> _workListValues = [];
 
         public Blackboard() { }
@@ -31,6 +34,7 @@ namespace Quasar.core.blackboard
             _boolValues = new(blackboard._boolValues);
             _vector2Values = new(blackboard._vector2Values);
             _pathValues = new(blackboard._pathValues);
+            _itemValues = new(blackboard._itemValues);
             _workListValues = new(blackboard._workListValues);
         }
 
@@ -62,6 +66,11 @@ namespace Quasar.core.blackboard
         public void Set(FastName key, Path value)
         {
             _pathValues[key] = value;
+        }
+
+        public void Set(FastName key, Item value)
+        {
+            _itemValues[key] = value;
         }
 
         public void Set(FastName key, List<Work> value)
@@ -97,6 +106,11 @@ namespace Quasar.core.blackboard
         public bool TryGetPath(FastName key, out Path value)
         {
             return TryGet(key, _pathValues,  out value);
+        }
+
+        public bool TryGetItem(FastName key, out Item value)
+        {
+            return TryGet(key, _itemValues, out value);
         }
 
         public bool TryGetWorkList(FastName key, out List<Work> value)

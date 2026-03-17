@@ -231,7 +231,7 @@ namespace Quasar.scenes
                     {
                         AddChild(cat);
 
-                        var newPlanner = new Planner(_workSystem, _pathingSystem);
+                        var newPlanner = new Planner(_workSystem, _pathingSystem, _itemSystem);
                         cat.SetDeps(_world, _pathingSystem, newPlanner);
 
                         var catPos = spawnPoints[i];
@@ -327,8 +327,8 @@ namespace Quasar.scenes
             switch (selection.WorkType)
             {
                 case WorkType.HAULING:
-                    //CreateHaulingWork(selection);
-                    //break;
+                    CreateHaulingWork(selection);
+                    break;
                 case WorkType.MINING:
                 case WorkType.CUTTING:       
                 case WorkType.BUILDING:
@@ -359,8 +359,8 @@ namespace Quasar.scenes
                         var closestStoragePos = _pathingSystem.ShortestPointWithAdjacent(point, allStorage);
                         if (closestStoragePos != null)
                         {
-                            int workId1 = _workSystem.CreateWork(WorkType.HAULING, point);
-                            int workId2 = _workSystem.CreateWork(WorkType.HAULING, closestStoragePos.Value);
+                            _workSystem.CreateWork(WorkType.HAULING, closestStoragePos.Value);
+                            _workSystem.CreateWork(WorkType.GET_ITEM, point);
                             //_workSystem.LinkWork(workId1, workId2);
                         }
                         else

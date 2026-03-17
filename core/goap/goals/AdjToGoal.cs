@@ -17,22 +17,32 @@ namespace Quasar.core.goap.goals
         {
             if (blackboard.TryGetVector2(Constants.Names.Position, out var agentPos))
             {
-                if (blackboard.TryGetWork(Constants.Names.SelectedWork, out var selectedWork))
+                //if (blackboard.TryGetWork(Constants.Names.SelectedWork, out var selectedWork))
+                //{
+                //    foreach (var adjPos in selectedWork.AdjPos)
+                //    {
+                //        if (adjPos.IsEqualApprox(agentPos))
+                //        {
+                //            return true;
+                //        }
+                //    }
+                //}
+                if (blackboard.TryGetInt(Constants.Names.CurrentWorkType, out var currentWorkTypeInt))
                 {
-                    foreach (var adjPos in selectedWork.AdjPos)
+                    var currentWorkType = (WorkType)currentWorkTypeInt;
+
+                    if (blackboard.TryGetWork(new(currentWorkType.ToString()), out var currentWork))
                     {
-                        if (adjPos.IsEqualApprox(agentPos))
+                        foreach (var adjPos in currentWork.AdjPos)
                         {
-                            return true;
+                            if (adjPos.IsEqualApprox(agentPos))
+                            {
+                                return true;
+                            }
                         }
                     }
-                }
 
-                if (blackboard.TryGetInt(Constants.Names.SelectedWorkType, out var workTypeInt))
-                {
-                    var workType = (WorkType)workTypeInt;
-
-                    if (blackboard.TryGetWorkList(new(workType.ToString()), out var workList))
+                    if (blackboard.TryGetWorkList(new(currentWorkType.ToString()), out var workList))
                     {
                         if (workList.Count > 0)
                         {
@@ -42,7 +52,7 @@ namespace Quasar.core.goap.goals
                                 {
                                     if (adjPos.IsEqualApprox(agentPos))
                                     {
-                                        blackboard.Set(Constants.Names.SelectedWork, work.Key);
+                                        blackboard.Set(new(currentWorkType.ToString()), work.Key);
                                         return true;
                                     }
                                 }

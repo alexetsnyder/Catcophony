@@ -1,5 +1,6 @@
 using Quasar.core.blackboard;
 using Quasar.core.common;
+using Quasar.core.naming;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using System.Linq;
@@ -22,35 +23,33 @@ namespace Quasar.core.goap.goals
         {
             if (blackboard.TryGetVector2(Constants.Names.Position, out var agentPos))
             {
-                if (blackboard.TryGetPath(Constants.Names.SelectedPath, out var selectedPath))
+                if (blackboard.TryGetInt(Constants.Names.CurrentWorkType, out var currentWorkTypeInt))
                 {
-                    return true;
-                }
+                    var currentWorkTypeFastName = new FastName(((WorkType)currentWorkTypeInt).ToString());
 
-                if (blackboard.TryGetWork(Constants.Names.SelectedWork, out var selectedWork))
-                {
-                    foreach (var adjPos in selectedWork.AdjPos)
+                    if (blackboard.TryGetPath(currentWorkTypeFastName, out var selectedPath))
                     {
-                        if (adjPos.IsEqualApprox(agentPos))
+                        return true;
+                    }
+                    else if (blackboard.TryGetWork(currentWorkTypeFastName, out var currentWork))
+                    {
+                        foreach (var adjPos in currentWork.AdjPos)
                         {
-                            blackboard.Set(Constants.Names.SelectedPath, _pathingSystem.CreateEmptyPath());
-                            return true;
-                        }
+                            if (adjPos.IsEqualApprox(agentPos))
+                            {
+                                blackboard.Set(currentWorkTypeFastName, _pathingSystem.CreateEmptyPath());
+                                return true;
+                            }
 
-                        var path = _pathingSystem.FindPath(agentPos, adjPos);
-                        if (path != null)
-                        {
-                            blackboard.Set(Constants.Names.SelectedPath, path);
-                            return true;
+                            var path = _pathingSystem.FindPath(agentPos, adjPos);
+                            if (path != null)
+                            {
+                                blackboard.Set(currentWorkTypeFastName, path);
+                                return true;
+                            }
                         }
                     }
-                }
-
-                if (blackboard.TryGetInt(Constants.Names.SelectedWorkType, out var workTypeInt))
-                {
-                    var workType = (WorkType)workTypeInt;
-
-                    if (blackboard.TryGetWorkList(new(workType.ToString()), out var workList))
+                    else if (blackboard.TryGetWorkList(currentWorkTypeFastName, out var workList))
                     {
                         if (workList.Count > 0)
                         {
@@ -60,16 +59,16 @@ namespace Quasar.core.goap.goals
                                 {
                                     if (agentPos.IsEqualApprox(adjPos))
                                     {
-                                        blackboard.Set(Constants.Names.SelectedWork, work.Key);
-                                        blackboard.Set(Constants.Names.SelectedPath, _pathingSystem.CreateEmptyPath());
+                                        blackboard.Set(currentWorkTypeFastName, work.Key);
+                                        blackboard.Set(currentWorkTypeFastName, _pathingSystem.CreateEmptyPath());
                                         return true;
                                     }
 
                                     var path = _pathingSystem.FindPath(agentPos, adjPos);
                                     if (path != null)
                                     {
-                                        blackboard.Set(Constants.Names.SelectedWork, work.Key);
-                                        blackboard.Set(Constants.Names.SelectedPath, path);
+                                        blackboard.Set(currentWorkTypeFastName, work.Key);
+                                        blackboard.Set(currentWorkTypeFastName, path);
                                         return true;
                                     }
                                 }
@@ -77,6 +76,7 @@ namespace Quasar.core.goap.goals
                         }
                     }
                 }
+ 
             }
 
             return false;

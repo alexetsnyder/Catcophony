@@ -5,6 +5,7 @@ using Quasar.core.goap.interfaces;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Quasar.core.goap
 {
@@ -18,6 +19,8 @@ namespace Quasar.core.goap
 
         private readonly IPathingSystem _pathingSystem;
 
+        private IItemSystem _itemSystem;
+
         private readonly List<WorkType> _availableWorkTypes =
         [
             WorkType.MINING,
@@ -26,15 +29,22 @@ namespace Quasar.core.goap
 
         public readonly List<IAction> AvailableActions = [];
 
-        public WorldState(IAgent agent, IWorkSystem workSystem, IPathingSystem pathingSystem) 
+        public WorldState(IAgent agent, IWorkSystem workSystem, IPathingSystem pathingSystem, IItemSystem itemSystem) 
         { 
             _agent = agent;
             _workSystem = workSystem;
             _pathingSystem = pathingSystem;
+            _itemSystem = itemSystem;
 
             _blackboard.Set(Constants.Names.Position, _agent.Position);
-            _blackboard.Set(Constants.Names.WorkType, (int)_agent.WorkType);
+            _blackboard.Set(Constants.Names.AgentWorkType, (int)_agent.WorkType);
+            var item = _itemSystem.GetInventoryItems(_agent.Id).FirstOrDefault();
 
+            if (item != null)
+            {
+                _blackboard.Set(Constants.Names.Item, item);
+            }
+            
             foreach (var workType in _availableWorkTypes)
             {
                 var workList = _workSystem.CheckForWork(workType);

@@ -2,6 +2,7 @@ using Quasar.core.blackboard;
 using Quasar.core.common;
 using Quasar.core.goap.goals;
 using Quasar.core.naming;
+using Quasar.data.enums;
 using Quasar.scenes.cats;
 
 namespace Quasar.core.goap.actions
@@ -19,9 +20,9 @@ namespace Quasar.core.goap.actions
             WorkGoal workGoal = new();
             _effects.Add(workGoal);
 
-            AdjToGoal adjToGoal = new();
             BuildWorkGoal buildWorkGoal = new();
             HasProfGoal hasProfGoal = new();
+            AdjToGoal adjToGoal = new();
             _preconditions.Add(buildWorkGoal);
             _preconditions.Add(hasProfGoal);
             _preconditions.Add(adjToGoal);  
@@ -29,7 +30,7 @@ namespace Quasar.core.goap.actions
 
         public override void Execute(Cat cat, Blackboard blackboard)
         {
-            if (blackboard.TryGetWork(Constants.Names.SelectedWork, out var work))
+            if (blackboard.TryGetWork(new(WorkType.BUILDING.ToString()), out var work))
             {
                 cat.SetWork([ work ]);
             }

@@ -14,11 +14,11 @@ namespace Quasar.core.goap.goals
 
         public override bool Satisify(Blackboard blackboard)
         {
-            if (blackboard.TryGetInt(Constants.Names.SelectedWorkType, out var selectedWorkTypeInt))
+            if (blackboard.TryGetInt(Constants.Names.CurrentWorkType, out var selectedWorkTypeInt))
             {
                 var selectedWorkType = (WorkType)selectedWorkTypeInt;
 
-                if (blackboard.TryGetInt(Constants.Names.WorkType, out var agentWorkTypeInt))
+                if (blackboard.TryGetInt(Constants.Names.AgentWorkType, out var agentWorkTypeInt))
                 {
                     var agentWorkType = (WorkType)agentWorkTypeInt;
 

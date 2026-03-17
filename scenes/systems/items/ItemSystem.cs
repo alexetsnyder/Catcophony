@@ -13,7 +13,7 @@ namespace Quasar.scenes.systems.items
 
         private readonly Dictionary<Vector2I, List<Item>> _items = [];
 
-        private readonly Dictionary<int, List<Item>> _moving = [];
+        private readonly Dictionary<int, List<Item>> _inventory = [];
 
         private readonly Dictionary<int, List<Item>> _storage = [];
 
@@ -58,6 +58,16 @@ namespace Quasar.scenes.systems.items
             TryClearCell(coords);
         }
 
+        public List<Item> GetInventoryItems(int catId)
+        {
+            if (_inventory.TryGetValue(catId, out var items))
+            {
+                return items;
+            }
+
+            return [];
+        }
+
         public List<Item> GetItems(Vector2 localPos)
         {
             var coords = _itemTileMapLayer.LocalToMap(localPos);
@@ -84,8 +94,8 @@ namespace Quasar.scenes.systems.items
         {
             var coords = _itemTileMapLayer.LocalToMap(item.Position);
 
-            _moving.TryAdd(id, []);
-            _moving[id].Add(item);
+            _inventory.TryAdd(id, []);
+            _inventory[id].Add(item);
 
             RemoveItem(item);
         }
@@ -102,7 +112,7 @@ namespace Quasar.scenes.systems.items
             TryAddStorage(storageId);
 
             _storage[storageId].Add(item);
-            _moving[agentId].Remove(item);
+            _inventory[agentId].Remove(item);
         }
 
         public void PlaceItem(int id, Item item, Vector2 localPos)
@@ -116,7 +126,7 @@ namespace Quasar.scenes.systems.items
             _items.TryAdd(coords, []);
             _items[coords].Add(item);
 
-            _moving[id].Remove(item);
+            _inventory[id].Remove(item);
 
             SetCell(coords, atlasCoords, color);
         }

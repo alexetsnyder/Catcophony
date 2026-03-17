@@ -1,6 +1,7 @@
 using Quasar.core.blackboard;
 using Quasar.core.goap.interfaces;
 using Quasar.scenes.common.interfaces;
+using Quasar.scenes.systems.items;
 using System.Collections.Generic;
 
 namespace Quasar.core.goap
@@ -20,7 +21,7 @@ namespace Quasar.core.goap
         public bool IsEnd { get; set; }
     }
 
-    public partial class Planner(IWorkSystem workSystem, IPathingSystem pathingSystem) : IPlanner
+    public partial class Planner(IWorkSystem workSystem, IPathingSystem pathingSystem, IItemSystem itemSystem) : IPlanner
     {
         private WorldState _worldState = null;
 
@@ -28,9 +29,11 @@ namespace Quasar.core.goap
 
         private readonly IPathingSystem _pathingSystem = pathingSystem;
 
+        private readonly IItemSystem _itemSystem = itemSystem;
+
         public Plan Plan(IAgent agent, IGoal goal)
         {
-            _worldState = new(agent, _workSystem, _pathingSystem);
+            _worldState = new(agent, _workSystem, _pathingSystem, _itemSystem);
 
             Leaf root = new()
             {

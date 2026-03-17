@@ -4,26 +4,26 @@ using Quasar.data.enums;
 
 namespace Quasar.core.goap.goals
 {
-    public partial class MineWorkGoal : GoalBase
+    public partial class HaulWorkGoal : GoalBase
     {
-        public MineWorkGoal()
+        public HaulWorkGoal()
         {
-            _key = new("MineWork");
+            _key = new("HaulWork");
             _value = true;
         }
 
         public override bool Satisify(Blackboard blackboard)
         {
-            if (blackboard.TryGetWorkList(new(WorkType.MINING.ToString()), out var workList))
+            if (blackboard.TryGetWorkList(new(WorkType.HAULING.ToString()), out var workList))
             {
                 if (workList.Count > 0)
                 {
-                    blackboard.Set(Constants.Names.CurrentWorkType, (int)WorkType.MINING);
+                    blackboard.Set(Constants.Names.CurrentWorkType, (int)WorkType.HAULING);
 
                     return true;
                 }
             }
-            
+
             return false;
         }
     }

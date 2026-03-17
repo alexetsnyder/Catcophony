@@ -2,6 +2,7 @@ using Quasar.core.blackboard;
 using Quasar.core.common;
 using Quasar.core.goap.goals;
 using Quasar.core.naming;
+using Quasar.data.enums;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
 using Quasar.scenes.systems.work.commands;
@@ -31,11 +32,17 @@ namespace Quasar.core.goap.actions
 
         public override void Execute(Cat cat, Blackboard blackboard)
         {
-            if (blackboard.TryGetPath(Constants.Names.SelectedPath, out var path))
+            if (blackboard.TryGetInt(Constants.Names.CurrentWorkType, out var currentWorkTypeInt))
             {
-                var command = new MoveToCommand(path);
-                command.Execute(cat);
+                FastName currentWorkTypeFastName = new(((WorkType)(currentWorkTypeInt)).ToString());
+
+                if (blackboard.TryGetPath(currentWorkTypeFastName, out var path))
+                {
+                    var command = new MoveToCommand(path);
+                    command.Execute(cat);
+                }
             }
+                
         }
     }
 }

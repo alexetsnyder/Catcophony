@@ -18,7 +18,7 @@ namespace Quasar.core.goap.goals
             {
                 if (workList.Count > 0)
                 {
-                    blackboard.Set(Constants.Names.SelectedWorkType, (int)WorkType.BUILDING);
+                    blackboard.Set(Constants.Names.CurrentWorkType, (int)WorkType.BUILDING);
 
                     return true;
                 }

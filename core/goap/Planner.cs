@@ -5,7 +5,6 @@ using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Quasar.core.goap
 {
@@ -20,8 +19,6 @@ namespace Quasar.core.goap
         public IAction Action { get; set; }
 
         public bool IsSuccess { get; set; }
-
-        public bool IsEnd { get; set; }
     }
 
     public partial class Planner(IWorkSystem workSystem, IPathingSystem pathingSystem, IItemSystem itemSystem) : IPlanner
@@ -45,7 +42,6 @@ namespace Quasar.core.goap
                 Blackboard = new(),
                 Action = null,
                 IsSuccess = false,
-                IsEnd = false,
             };
 
             int index = 0;
@@ -59,7 +55,10 @@ namespace Quasar.core.goap
             }
 
             List<Leaf> leaves = [];
-            if (BuildPlanRec(root, leaves, goal, nextActionId: 0, isEnd: true))
+            Stack<IGoal> goals = [];
+            goals.Push(goal);
+
+            if (BuildPlanRec(root, leaves, goals, nextActionId: 0))
             {
                 Queue<IAction> minCostPlan = [];
                 int minCost = int.MaxValue;
@@ -67,7 +66,7 @@ namespace Quasar.core.goap
 
                 foreach (var leaf in leaves)
                 {
-                    if (leaf.IsEnd && leaf.IsSuccess && leaf.CumulativeCost < minCost)
+                    if (leaf.IsSuccess && leaf.CumulativeCost < minCost)
                     {
                         AssemblePlan(leaf, minCostPlan);
                         minCost = leaf.CumulativeCost;
@@ -81,64 +80,71 @@ namespace Quasar.core.goap
             return null;
         }
 
-        private bool BuildPlanRec(Leaf current, List<Leaf> leaves, IGoal goal, int nextActionId, bool isEnd)
+        private bool BuildPlanRec(Leaf current, List<Leaf> leaves, Stack<IGoal> goals, int nextActionId)
         {
             bool success = false;
 
-            foreach (WorldState.Actions actionType in Enum.GetValues(typeof(WorldState.Actions)))
+            while (goals.Count > 0)
             {
-                if (actionType == WorldState.Actions.NONE)
+                var goal = goals.Pop();
+                foreach (WorldState.Actions actionType in Enum.GetValues(typeof(WorldState.Actions)))
                 {
-                    continue;
-                }
-
-                bool actionSuccess = false;
-
-                var action = _worldState.BuildAction(actionType);
-                
-                if (action.SatisfyGoal(goal))
-                {
-                    actionSuccess = true;
-
-                    action.SetId(nextActionId++);
-
-                    Leaf leaf = new()
+                    if (actionType == WorldState.Actions.NONE)
                     {
-                        Parent = current,
-                        CumulativeCost = current.CumulativeCost + action.Cost,
-                        Blackboard = new(current.Blackboard),
-                        Action = action,
-                        IsSuccess = false,
-                        IsEnd = false,
-                    };
+                        continue;
+                    }
 
-                    leaves.Add(leaf);
+                    var action = _worldState.BuildAction(actionType);
 
-                    if (!action.SatisfyPreconditions(_worldState, leaf.Blackboard))
+                    if (action.SatisfyGoal(goal))
                     {
-                        var preconditions = action.GetUnsatisfiedPreconditions(_worldState, leaf.Blackboard);
+                        action.SetId(nextActionId++);
 
-                        for (int i = 0; i < preconditions.Count; i++)
+                        Leaf leaf = new()
                         {
-                            var precondition = preconditions[i];
-                            if (!BuildPlanRec(leaf, leaves, precondition, nextActionId, isEnd && (i + 1) == preconditions.Count))
+                            Parent = current,
+                            CumulativeCost = current.CumulativeCost + action.Cost,
+                            Blackboard = new(current.Blackboard),
+                            Action = action,
+                            IsSuccess = false,
+                        };
+
+                        leaves.Add(leaf);
+
+
+                        Stack<IGoal> newGoals = new(goals);                        
+
+                        if (action.SatisfyPreconditions(_worldState, leaf.Blackboard))
+                        {
+                            if (goals.Count == 0)
                             {
-                                actionSuccess = false;
-                                break;
+                                leaf.IsSuccess = true;
+                                success = true;
                             }
                         }
-                    }
-                    else
-                    {
-                        if (isEnd)
+                        else
                         {
-                            leaf.IsEnd = true;
-                            leaf.IsSuccess = true;
-                        }  
+                            var preconditions = action.GetUnsatisfiedPreconditions(_worldState, leaf.Blackboard);
+
+                            preconditions.Reverse();
+
+                            foreach (var precondition in preconditions)
+                            {
+                                newGoals.Push(precondition);
+                            }
+                        }
+
+                        if (!success && newGoals.Count > 0)
+                        {
+                            success = BuildPlanRec(leaf, leaves, newGoals, nextActionId);
+                        }
                     }
                 }
 
-                success = success || actionSuccess;
+                if (!success)
+                {
+                    return false;
+                }
             }
 
             return success;

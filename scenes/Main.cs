@@ -382,6 +382,14 @@ namespace Quasar.scenes
             {
                 _workSystem.CreateWork(selection.WorkType, point);
             }
+
+            //foreach (var cat in _cats)
+            //{
+            //    if (cat.CanWork() && !cat.IsMoving() && cat.WorkType == WorkType.BUILDING)
+            //    {
+            //        cat.Plan();
+            //    }
+            //}
         }
 
         private void OnTileSelected(Vector2 localPos)

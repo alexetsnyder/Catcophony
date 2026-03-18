@@ -109,16 +109,21 @@ namespace Quasar.scenes.cats
             }
             else
             {
-                if (_currentPlan == null || _currentPlan.Actions.Count == 0)
-                {
-                    _currentPlan = _planner.Plan(this, _goal);
-                }
+                Plan();
 
                 if (_currentPlan != null && _currentPlan.Actions.Count > 0)
                 {
                     var action = _currentPlan.Actions.Dequeue();
                     action.Execute(this, _currentPlan.Blackboard);
                 }
+            }
+        }
+
+        public void Plan()
+        {
+            if (_currentPlan == null || _currentPlan.Actions.Count == 0)
+            {
+                _currentPlan = _planner.Plan(this, _goal);
             }
         }
 

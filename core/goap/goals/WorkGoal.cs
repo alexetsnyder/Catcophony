@@ -6,7 +6,7 @@ namespace Quasar.core.goap.goals
     {
         public WorkGoal() 
         {
-            _key = new("HasWork");
+            _key = new("HasWorked");
             _value = true;
         }
 

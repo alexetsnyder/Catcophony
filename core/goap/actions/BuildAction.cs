@@ -1,5 +1,6 @@
 using Quasar.core.goap.goals;
 using Quasar.core.naming;
+using Quasar.data.enums;
 
 namespace Quasar.core.goap.actions
 {
@@ -16,10 +17,10 @@ namespace Quasar.core.goap.actions
             WorkGoal workGoal = new();
             _effects.Add(workGoal);
 
-            BuildWorkGoal buildWorkGoal = new();
+            HasWorkGoal hasWorkGoal = new(WorkType.BUILDING);
             HasProfGoal hasProfGoal = new();
             AdjToGoal adjToGoal = new();
-            _preconditions.Add(buildWorkGoal);
+            _preconditions.Add(hasWorkGoal);
             _preconditions.Add(hasProfGoal);
             _preconditions.Add(adjToGoal);  
         }

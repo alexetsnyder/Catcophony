@@ -1,25 +1,31 @@
 using Quasar.core.blackboard;
+using Quasar.core.naming;
 using Quasar.data.enums;
 
 namespace Quasar.core.goap.goals
 {
-    public partial class HaulWorkGoal : GoalBase
+    public partial class HasWorkGoal : GoalBase
     {
-        public HaulWorkGoal()
+        private WorkType _workType;
+
+        public HasWorkGoal(WorkType workType)
         {
-            _key = new("HaulWork");
+            _key = new("HasWork");
             _value = true;
+
+            _workType = workType;
         }
 
         public override bool Satisify(WorldState worldState, Blackboard<int> blackboard)
         {
             var worldStateBlackboard = worldState.GetBlackboard();
+            FastName workTypeFastName = new(_workType.ToString());
 
-            if (worldStateBlackboard.TryGetWorkList(new(WorkType.HAULING.ToString()), out var workList))
+            if (worldStateBlackboard.TryGetWorkList(workTypeFastName, out var workList))
             {
                 if (workList.Count > 0)
                 {
-                    blackboard.Set(ActionId, (int)WorkType.HAULING);
+                    blackboard.Set(ActionId, (int)_workType  );
 
                     return true;
                 }

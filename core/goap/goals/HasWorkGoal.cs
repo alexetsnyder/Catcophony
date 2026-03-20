@@ -1,4 +1,5 @@
 using Quasar.core.blackboard;
+using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using Quasar.data.enums;
 
@@ -6,17 +7,18 @@ namespace Quasar.core.goap.goals
 {
     public partial class HasWorkGoal : GoalBase
     {
-        private WorkType _workType;
+        private readonly WorkType _workType;
 
-        public HasWorkGoal(WorkType workType)
+        public HasWorkGoal(WorkType workType, IAction parent)
         {
             _key = new("HasWork");
             _value = true;
 
             _workType = workType;
+            _parentAction = parent;
         }
 
-        public override bool Satisify(WorldState worldState, Blackboard<int> blackboard)
+        public override bool Satisify(WorldState worldState, Blackboard<FastName> blackboard)
         {
             var worldStateBlackboard = worldState.GetBlackboard();
             FastName workTypeFastName = new(_workType.ToString());
@@ -25,7 +27,7 @@ namespace Quasar.core.goap.goals
             {
                 if (workList.Count > 0)
                 {
-                    blackboard.Set(ActionId, (int)_workType  );
+                    blackboard.Set(Constants.Names.WorkType, (int)_workType);
 
                     return true;
                 }

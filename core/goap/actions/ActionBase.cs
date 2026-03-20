@@ -3,7 +3,6 @@ using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.work;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,13 +14,24 @@ namespace Quasar.core.goap.actions
 
         public abstract FastName Name { get; }
 
+        public virtual bool SkipAssign { get => false; }
+
         public abstract int Cost { get; }
 
-        public virtual bool SkipAssign { get => false; }
+        protected Blackboard<FastName> _blackboard;
+
+        protected IAction _parent;
+
+        protected IAction _child;
 
         protected readonly List<IGoal> _preconditions = [];
 
         protected readonly List<IGoal> _effects = [];
+
+        public Blackboard<FastName> GetBlackboard()
+        {
+            return _blackboard;
+        }
 
         public void SetId(int id)
         {
@@ -33,9 +43,33 @@ namespace Quasar.core.goap.actions
             }
         }
 
-        public List<IGoal> GetUnsatisfiedPreconditions(WorldState worldState, Blackboard<int> blackboard)
+        public void SetPreconditions(List<IGoal> preconditions)
         {
-            return [.. _preconditions.Where(g => !g.Satisify(worldState, blackboard))];
+            _preconditions.AddRange(preconditions);
+        }
+
+        public void SetEffects(List<IGoal> effects)
+        {
+            effects.AddRange(effects);
+        }
+
+        public virtual void LinkParent(IAction parent)
+        {
+            _parent = parent;
+            if (_parent != null)
+            {
+                _parent.LinkChild(this);
+            }    
+        }
+
+        public void LinkChild(IAction child)
+        {
+            _child = child;
+        }
+
+        public List<IGoal> GetUnsatisfiedPreconditions(WorldState worldState)
+        {
+            return [.. _preconditions.Where(g => !g.Satisify(worldState, _blackboard))];
         }
 
         public bool SatisfyGoal(IGoal goal)
@@ -48,11 +82,11 @@ namespace Quasar.core.goap.actions
             return false;
         }
 
-        public bool SatisfyPreconditions(WorldState worldState, Blackboard<int> blackboard)
+        public bool SatisfyPreconditions(WorldState worldState)
         {
             foreach (var cond in _preconditions)
             {
-                if (!cond.Satisify(worldState, blackboard))
+                if (!cond.Satisify(worldState, _blackboard))
                 {
                     return false;
                 }
@@ -61,12 +95,10 @@ namespace Quasar.core.goap.actions
             return true;
         }
 
-        public bool Assign(IWorkSystem workSytem, Blackboard<int> blackboard)
+        public bool Assign(IWorkSystem workSytem)
         {
-            Work work = null;
-
-            if (blackboard.TryGetWork(Id, out work) ||
-                blackboard.TryGetWork(Id + 1, out work))
+            if (_blackboard.TryGetWork(Constants.Names.Work, out var work) || 
+                _child.GetBlackboard().TryGetWork(Constants.Names.Work, out work))
             {
                 return workSytem.AssignWork(work);
             }
@@ -74,13 +106,10 @@ namespace Quasar.core.goap.actions
             return false;
         }
 
-        public virtual void Execute(Cat cat, Blackboard<int> blackboard)
+        public virtual void Execute(Cat cat)
         {
-            if (blackboard.TryGetWork(Id, out var work))
-            {
-                cat.SetWork(work);
-            }
-            else if (blackboard.TryGetWork(Id + 1, out work))
+            if (_blackboard.TryGetWork(Constants.Names.Work, out var work) ||
+                _child.GetBlackboard().TryGetWork(Constants.Names.Work, out work))
             {
                 cat.SetWork(work);
             }

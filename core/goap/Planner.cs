@@ -12,8 +12,6 @@ namespace Quasar.core.goap
 
         public int CumulativeCost { get; set; }
 
-        public Blackboard<int> Blackboard { get; set; }
-
         public IAction Action { get; set; }
 
         public bool IsSuccess { get; set; }
@@ -37,7 +35,6 @@ namespace Quasar.core.goap
             {
                 Parent = null,
                 CumulativeCost = 0,
-                Blackboard = new(),
                 Action = null,
                 IsSuccess = false,
             };
@@ -63,10 +60,9 @@ namespace Quasar.core.goap
                 if (minLeaf != null)
                 {
                     Queue<IAction> minCostPlan = [];
-                    Blackboard<int> blackboard = minLeaf.Blackboard;
-                    if (AssemblePlan(minLeaf, minCostPlan, blackboard))
+                    if (AssemblePlan(minLeaf, minCostPlan))
                     {
-                        return new Plan(blackboard, minCostPlan);
+                        return new Plan(minCostPlan);
                     }
                 }
             }
@@ -93,12 +89,12 @@ namespace Quasar.core.goap
                     if (action.SatisfyGoal(goal))
                     {
                         action.SetId(nextActionId++);
+                        action.LinkParent(current.Action);
 
                         Leaf leaf = new()
                         {
                             Parent = current,
                             CumulativeCost = current.CumulativeCost + action.Cost,
-                            Blackboard = new(current.Blackboard),
                             Action = action,
                             IsSuccess = false,
                         };
@@ -108,7 +104,7 @@ namespace Quasar.core.goap
 
                         Stack<IGoal> newGoals = new(goals);                        
 
-                        if (action.SatisfyPreconditions(_worldState, leaf.Blackboard))
+                        if (action.SatisfyPreconditions(_worldState))
                         {
                             if (goals.Count == 0)
                             {
@@ -118,7 +114,7 @@ namespace Quasar.core.goap
                         }
                         else
                         {
-                            var preconditions = action.GetUnsatisfiedPreconditions(_worldState, leaf.Blackboard);
+                            var preconditions = action.GetUnsatisfiedPreconditions(_worldState);
 
                             preconditions.Reverse();
 
@@ -144,11 +140,11 @@ namespace Quasar.core.goap
             return success;
         }
 
-        private bool AssemblePlan(Leaf leaf, Queue<IAction> plan, Blackboard<int> blackboard)
+        private bool AssemblePlan(Leaf leaf, Queue<IAction> plan)
         {
             while (leaf.Parent != null)
             {
-                if (!leaf.Action.SkipAssign && !leaf.Action.Assign(_workSystem, blackboard))
+                if (!leaf.Action.SkipAssign && !leaf.Action.Assign(_workSystem))
                 {
                     return false;
                 }

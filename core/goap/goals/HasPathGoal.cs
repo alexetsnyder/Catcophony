@@ -1,9 +1,11 @@
+using Godot;
 using Quasar.core.blackboard;
-using Quasar.core.common;
+using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
-using System.Linq;
+using Quasar.scenes.systems.work;
+using System.Collections.Generic;
 
 namespace Quasar.core.goap.goals
 {
@@ -11,77 +13,73 @@ namespace Quasar.core.goap.goals
     {
         private readonly IPathingSystem _pathingSystem;
 
-        public HasPathGoal(IPathingSystem pathingSystem)
+        public HasPathGoal(IAction parent, IPathingSystem pathingSystem)
         {
             _key = new("HasPath");
             _value = true;
 
             _pathingSystem = pathingSystem;
+            _parentAction = parent;
         }
 
-        public override bool Satisify(WorldState worldState, Blackboard<int> blackboard)
+        public override bool Satisify(WorldState worldState, Blackboard<FastName> blackboard)
         {
             var worldStateBlackboard = worldState.GetBlackboard();
 
-            if (worldStateBlackboard.TryGetVector2(Constants.Names.Position, out var agentPos))
+            if (worldStateBlackboard.TryGetVector2(Constants.Names.AgentPos, out var agentPos))
             {
-                if (blackboard.TryGetInt(ActionId - 1, out var currentWorkTypeInt))
+                if (blackboard.TryGetBool(Constants.Names.HasPath, out var hasPath))
                 {
-                    var currentWorkTypeFastName = new FastName(((WorkType)currentWorkTypeInt).ToString());
+                    return hasPath;
+                }
 
-                    if (blackboard.TryGetPath(ActionId - 1, out var selectedPath))
+                if (blackboard.TryGetWork(Constants.Names.Work, out var work))
+                {
+                    return HasPath(agentPos, work);
+                }
+
+                if (blackboard.TryGetInt(Constants.Names.WorkType, out var workTypeInt))
+                {
+                    var workType = (WorkType)workTypeInt;
+
+                    if (worldStateBlackboard.TryGetWorkList(new(workType.ToString()), out var workList))
                     {
-                        return true;
-                    }
-                    else if (blackboard.TryGetWork(ActionId - 1, out var currentWork))
-                    {
-                        foreach (var adjPos in currentWork.AdjPos)
-                        {
-                            if (adjPos.IsEqualApprox(agentPos))
-                            {
-                                blackboard.Set(ActionId, _pathingSystem.CreateEmptyPath());
-                                return true;
-                            }
-
-                            var path = _pathingSystem.FindPath(agentPos, adjPos);
-                            if (path != null)
-                            {
-                                blackboard.Set(ActionId, path);
-                                return true;
-                            }
-                        }
-                    }
-
-                    if (worldStateBlackboard.TryGetWorkList(currentWorkTypeFastName, out var workList))
-                    {
-                        if (workList.Count > 0)
-                        {
-                            foreach (var work in workList.ToDictionary(w => w, w => w.AdjPos ?? []))
-                            {
-                                foreach (var adjPos in work.Value)
-                                {
-                                    if (agentPos.IsEqualApprox(adjPos))
-                                    {
-                                        blackboard.Set(ActionId, work.Key);
-                                        blackboard.Set(ActionId, _pathingSystem.CreateEmptyPath());
-                                        return true;
-                                    }
-
-                                    var path = _pathingSystem.FindPath(agentPos, adjPos);
-                                    if (path != null)
-                                    {
-                                        blackboard.Set(ActionId, work.Key);
-                                        blackboard.Set(ActionId, path);
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
+                        return HasPath(agentPos, workList);
                     }
                 }
- 
             }
 
+            return false;
+        }
+
+        private bool HasPath(Vector2 fromPos, List<Work> workList)
+        {
+            var blackboard = _parentAction.GetBlackboard();
+
+            foreach (var work in workList)
+            {
+                if(HasPath(fromPos, work))
+                {
+                    blackboard.Set(Constants.Names.Work, work);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool HasPath(Vector2 fromPos, Work work)
+        {
+            if (work.AdjPos != null)
+            {
+                var path = _pathingSystem.ShortestPath(fromPos, work.AdjPos);
+
+                if (path != null)
+                {
+                    return true;
+                }
+            }
+            
             return false;
         }
     }

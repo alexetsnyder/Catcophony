@@ -1,6 +1,5 @@
 using Godot;
 using Quasar.core.blackboard;
-using Quasar.core.common;
 using Quasar.core.goap.actions;
 using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
@@ -21,7 +20,7 @@ namespace Quasar.core.goap
 
         private readonly IPathingSystem _pathingSystem;
 
-        private IItemSystem _itemSystem;
+        private readonly IItemSystem _itemSystem;
 
         private readonly List<WorkType> _availableWorkTypes =
         [
@@ -48,13 +47,13 @@ namespace Quasar.core.goap
             _pathingSystem = pathingSystem;
             _itemSystem = itemSystem;
 
-            _blackboard.Set(Constants.Names.Position, _agent.Position);
-            _blackboard.Set(Constants.Names.AgentWorkType, (int)_agent.WorkType);
+            _blackboard.Set(Constants.Names.AgentPos, _agent.Position);
+            _blackboard.Set(Constants.Names.AgentProf, (int)_agent.WorkType);
             var item = _itemSystem.GetInventoryItems(_agent.Id).FirstOrDefault();
 
             if (item != null)
             {
-                _blackboard.Set(Constants.Names.Item, item);
+                _blackboard.Set(Constants.Names.AgentItem, item);
             }
             
             foreach (var workType in _availableWorkTypes)

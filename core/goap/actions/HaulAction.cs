@@ -14,12 +14,14 @@ namespace Quasar.core.goap.actions
 
         public HaulAction()
         {
+            _blackboard = new();
+
             WorkGoal workGoal = new();
             _effects.Add(workGoal);
       
-            HasWorkGoal hasWorkGoal = new(WorkType.HAULING);
-            AdjToGoal adjToGoal = new();
-            HasItemGoal hasItemGoal = new();
+            HasWorkGoal hasWorkGoal = new(WorkType.HAULING, this);
+            FalseAdjToGoal adjToGoal = new(this);
+            HasItemGoal hasItemGoal = new(this);
             _preconditions.Add(hasWorkGoal);
             _preconditions.Add(adjToGoal);
             _preconditions.Add(hasItemGoal);

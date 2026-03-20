@@ -363,7 +363,6 @@ namespace Quasar.scenes
                         {
                             _workSystem.CreateWork(WorkType.HAULING, closestStoragePos.Value);
                             _workSystem.CreateWork(WorkType.GET_ITEM, point);
-                            //_workSystem.LinkWork(workId1, workId2);
                         }
                         else
                         {
@@ -376,6 +375,8 @@ namespace Quasar.scenes
             {
                 _selectionSystem.Deselect(selection);
             }
+
+            //PlanWork();
         }
 
         private void CreateWork(Selection selection)
@@ -385,13 +386,18 @@ namespace Quasar.scenes
                 _workSystem.CreateWork(selection.WorkType, point);
             }
 
-            //foreach (var cat in _cats)
-            //{
-            //    if (cat.CanWork() && !cat.IsMoving() && cat.WorkType == WorkType.BUILDING)
-            //    {
-            //        cat.Plan();
-            //    }
-            //}
+            //PlanWork();
+        }
+
+        private void PlanWork()
+        {
+            foreach (var cat in _cats)
+            {
+                if (cat.CanWork() && !cat.IsMoving())
+                {
+                    cat.Plan();
+                }
+            }
         }
 
         private void OnTileSelected(Vector2 localPos)

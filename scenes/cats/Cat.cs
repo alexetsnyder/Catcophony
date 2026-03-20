@@ -114,7 +114,7 @@ namespace Quasar.scenes.cats
                 if (_currentPlan != null && _currentPlan.Actions.Count > 0)
                 {
                     var action = _currentPlan.Actions.Dequeue();
-                    action.Execute(this, _currentPlan.Blackboard);
+                    action.Execute(this);
                 }
             }
         }

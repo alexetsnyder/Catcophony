@@ -14,11 +14,13 @@ namespace Quasar.core.goap.actions
 
         public GetItemAction()
         {
-            WorkGoal workGoal = new();
-            _effects.Add(workGoal);
+            _blackboard = new();
 
-            HasWorkGoal hasWorkGoal = new(WorkType.GET_ITEM);
-            AdjToGoal adjToGoal = new();
+            HasItemGoal hasItemGoal = new(this);
+            _effects.Add(hasItemGoal);
+
+            HasWorkGoal hasWorkGoal = new(WorkType.GET_ITEM, this);
+            AdjToGoal adjToGoal = new(this);
             _preconditions.Add(hasWorkGoal);
             _preconditions.Add(adjToGoal);
         }

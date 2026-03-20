@@ -1,5 +1,5 @@
-using Quasar.core.blackboard;
 using Quasar.core.goap.goals;
+using Quasar.core.goap.interfaces;
 using Quasar.core.naming;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
@@ -23,17 +23,25 @@ namespace Quasar.core.goap.actions
         {
             _pathingSystem = pathingSystem;
 
-            AdjToGoal adjToGoal = new();
+            AdjToGoal adjToGoal = new(this);
             _effects.Add(adjToGoal);
 
-            HasPathGoal hasPathGoal = new(_pathingSystem);
+            HasPathGoal hasPathGoal = new(this, _pathingSystem);
             _preconditions.Add(hasPathGoal);
         }
 
-        public override void Execute(Cat cat, Blackboard<int> blackboard)
+        public override void LinkParent(IAction parent)
         {
-            if (blackboard.TryGetPath(Id, out var path))
+            base.LinkParent(parent);
+            _blackboard = parent.GetBlackboard();
+        }
+
+        public override void Execute(Cat cat)
+        {
+            if (_blackboard.TryGetWork(Constants.Names.Work, out var work))
             {
+                var path = _pathingSystem.ShortestPath(cat.Position, work.AdjPos);
+
                 var command = new MoveToCommand(path);
                 command.Execute(cat);
             }   

@@ -15,6 +15,6 @@ namespace Quasar.core.goap.interfaces
 
         public bool Satisify(IGoal goal);
 
-        public bool Satisify(WorldState worldState, Blackboard<int> blackboard);
+        public bool Satisify(WorldState worldState, Blackboard<FastName> blackboard);
     }
 }

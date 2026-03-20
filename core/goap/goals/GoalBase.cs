@@ -16,6 +16,8 @@ namespace Quasar.core.goap.goals
 
         protected bool _value;
 
+        protected IAction _parentAction;
+
         public void SetActionId(int actionId)
         {
             ActionId = actionId;
@@ -26,6 +28,6 @@ namespace Quasar.core.goap.goals
             return(Key == goal.Key && Value == goal.Value);
         }
 
-        public abstract bool Satisify(WorldState worldState, Blackboard<int> blackboard);
+        public abstract bool Satisify(WorldState worldState, Blackboard<FastName> blackboard);
     }
 }

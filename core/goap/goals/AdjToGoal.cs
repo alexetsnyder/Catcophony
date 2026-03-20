@@ -1,5 +1,6 @@
 using Quasar.core.blackboard;
-using Quasar.core.common;
+using Quasar.core.goap.interfaces;
+using Quasar.core.naming;
 using Quasar.data.enums;
 using System.Linq;
 
@@ -7,25 +8,27 @@ namespace Quasar.core.goap.goals
 {
     public partial class AdjToGoal : GoalBase
     {
-        public AdjToGoal()
+        public AdjToGoal(IAction parent)
         {
             _key = new("AdjTo");
             _value = true;
+
+            _parentAction = parent;
         }
 
-        public override bool Satisify(WorldState worldState, Blackboard<int> blackboard)
+        public override bool Satisify(WorldState worldState, Blackboard<FastName> blackboard)
         {
             var worldStateBlackboard = worldState.GetBlackboard();
 
-            if (worldStateBlackboard.TryGetVector2(Constants.Names.Position, out var agentPos))
+            if (worldStateBlackboard.TryGetVector2(Constants.Names.AgentPos, out var agentPos))
             {
-                if (blackboard.TryGetInt(ActionId, out var currentWorkTypeInt))
+                if (blackboard.TryGetInt(Constants.Names.WorkType, out var workTypeInt))
                 {
-                    var currentWorkType = (WorkType)currentWorkTypeInt;
+                    var workType = (WorkType)workTypeInt;
 
-                    if (blackboard.TryGetWork(ActionId, out var currentWork))
+                    if (blackboard.TryGetWork(Constants.Names.Work, out var work))
                     {
-                        foreach (var adjPos in currentWork.AdjPos)
+                        foreach (var adjPos in work.AdjPos)
                         {
                             if (adjPos.IsEqualApprox(agentPos))
                             {
@@ -34,17 +37,17 @@ namespace Quasar.core.goap.goals
                         }
                     }
 
-                    if (worldStateBlackboard.TryGetWorkList(new(currentWorkType.ToString()), out var workList))
+                    if (worldStateBlackboard.TryGetWorkList(new(workType.ToString()), out var workList))
                     {
                         if (workList.Count > 0)
                         {
-                            foreach (var work in workList.ToDictionary(w => w, w => w.AdjPos ?? []))
+                            foreach (var workKVP in workList.ToDictionary(w => w, w => w.AdjPos ?? []))
                             {
-                                foreach (var adjPos in work.Value)
+                                foreach (var adjPos in workKVP.Value)
                                 {
                                     if (adjPos.IsEqualApprox(agentPos))
                                     {
-                                        blackboard.Set(ActionId, work.Key);
+                                        blackboard.Set(Constants.Names.Work, workKVP.Key);
                                         return true;
                                     }
                                 }

@@ -14,8 +14,6 @@ namespace Quasar.core.goap.actions
 
         public HaulAction()
         {
-            _blackboard = new();
-
             WorkGoal workGoal = new();
             _effects.Add(workGoal);
       

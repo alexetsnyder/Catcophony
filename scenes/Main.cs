@@ -64,7 +64,7 @@ namespace Quasar.scenes
             new("Pepper", "Longhair Cat", "Wary", 100, WorkType.FARMING),
             new("New Year", "Russian Blue Cat", "Curious", 100, WorkType.FISHING),
             new("Maslow", "Orange", "Timid", 100, WorkType.HAULING),
-            new("Millo", "Orange", "Adventurous", 100, WorkType.CUTTING),
+            new("Millo", "Orange", "Adventurous", 100, WorkType.WOOD_CUTTING),
             new("Inky", "Black", "Affectionate", 100, WorkType.GATHERING),
         ];
 
@@ -284,7 +284,7 @@ namespace Quasar.scenes
         private void OnToolBarCutPressed()
         {
             _buildingSystem.Clear();
-            _selectionSystem.WorkType = WorkType.CUTTING;
+            _selectionSystem.WorkType = WorkType.WOOD_CUTTING;
         }
 
         private void OnToolBarHaulPressed()
@@ -332,7 +332,7 @@ namespace Quasar.scenes
                     CreateHaulingWork(selection);
                     break;
                 case WorkType.MINING:
-                case WorkType.CUTTING:       
+                case WorkType.WOOD_CUTTING:       
                 case WorkType.BUILDING:
                 case WorkType.FARMING:
                 case WorkType.GATHERING:

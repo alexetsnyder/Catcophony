@@ -4,7 +4,7 @@ namespace Quasar.data.enums
     {
         NONE,
         MINING,
-        CUTTING,
+        WOOD_CUTTING,
         HAULING,
         GET_ITEM,
         BUILDING,

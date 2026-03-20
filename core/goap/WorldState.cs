@@ -28,13 +28,21 @@ namespace Quasar.core.goap
             WorkType.BUILDING,
             WorkType.HAULING,
             WorkType.GET_ITEM,
+            WorkType.WOOD_CUTTING,
+            WorkType.FARMING,
+            WorkType.GATHERING,
+            WorkType.FISHING,
         ];
 
         public enum Actions
         {
             NONE,
             MINE,
+            CUT,
             BUILD,
+            FARM,
+            GATHER, 
+            FISH,
             MOVE_TO,
             HAUL,
             GET_ITEM,
@@ -68,9 +76,13 @@ namespace Quasar.core.goap
             switch (action)
             {
                 case Actions.MINE:
-                    return new MineAction();
-                case Actions.BUILD: 
-                    return new BuildAction();
+                case Actions.CUT:
+                case Actions.BUILD:
+                case Actions.FARM:
+                case Actions.GATHER:
+                case Actions.FISH:
+                    var workType = GetWorkType(action);
+                    return new WorkAction(new(workType.ToString()), 1, workType);
                 case Actions.MOVE_TO:
                     return new MoveToAction(_pathingSystem);
                 case Actions.HAUL:
@@ -81,6 +93,20 @@ namespace Quasar.core.goap
                     GD.Print($"Action {action} not implimented in BuildAction method.");
                     return null;
             }
+        }
+
+        private WorkType GetWorkType(Actions action)
+        {
+            return action switch
+            {
+                Actions.MINE => WorkType.MINING,
+                Actions.CUT => WorkType.WOOD_CUTTING,
+                Actions.BUILD => WorkType.BUILDING,
+                Actions.FARM => WorkType.FARMING,
+                Actions.GATHER => WorkType.GATHERING,
+                Actions.FISH => WorkType.FISHING,
+                _ => WorkType.NONE,
+            };
         }
 
         public Blackboard<FastName> GetBlackboard()

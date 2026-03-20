@@ -18,7 +18,7 @@ namespace Quasar.core.goap.actions
 
         public abstract int Cost { get; }
 
-        protected Blackboard<FastName> _blackboard;
+        protected Blackboard<FastName> _blackboard = new();
 
         protected IAction _parent;
 

@@ -14,8 +14,6 @@ namespace Quasar.core.goap.actions
 
         public GetItemAction()
         {
-            _blackboard = new();
-
             HasItemGoal hasItemGoal = new(this);
             _effects.Add(hasItemGoal);
 

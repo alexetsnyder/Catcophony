@@ -81,7 +81,7 @@ namespace Quasar.scenes.systems.work
             var command = CommandFactory.BuildCommand(workType, localPos);
             if (command != null)
             {
-                var adjPosList = _world.GetAdjacentTiles(localPos).Where(a => !_world.IsImpassable(a));
+                var adjPosList = _world.GetAdjacentTiles(localPos, true).Where(a => !_world.IsImpassable(a));
 
                 work = new(_nextId, workType, localPos, command, adjPosList.Any() ? [.. adjPosList] : null);
             }
@@ -101,25 +101,11 @@ namespace Quasar.scenes.systems.work
             {
                 foreach (var work in workDict.Values)
                 {
-                    var adjPosList = _world.GetAdjacentTiles(work.LocalPos).Where(a => !_world.IsImpassable(a));
+                    var adjPosList = _world.GetAdjacentTiles(work.LocalPos, true).Where(a => !_world.IsImpassable(a));
                     work.AdjPos = adjPosList.Any() ? [.. adjPosList] : null;
                 }
             }
         }
-
-        //public void LinkWork(int workId1, int workId2)
-        //{
-        //    var work1 = GetWork(workId1);
-        //    var work2 = GetWork(workId2);
-
-        //    if (work1 != null && work2 != null)
-        //    {
-        //        work1.LinkedWorkId = workId2;
-        //        work2.LinkedWorkId = workId1;
-
-        //        work2.IsDependent = true;
-        //    }
-        //}
 
         public void RemoveWork(Work work)
         {
@@ -193,16 +179,6 @@ namespace Quasar.scenes.systems.work
                     {
                         work.IsAssigned = assign;
                         List<Work> workList = [work];
-
-                        //if (work.LinkedWorkId != -1)
-                        //{
-                        //    var linkedWork = GetWork(work.LinkedWorkId);
-                        //    if (linkedWork != null)
-                        //    {
-                        //        linkedWork.IsAssigned = assign;
-                        //        workList.Add(linkedWork);
-                        //    }
-                        //}
 
                         return new(workList, shortestPath);
                     }

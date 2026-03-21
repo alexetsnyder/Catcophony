@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Quasar.scenes.gui
+namespace Quasar.scenes.gui.debug
 {
     public partial class BasicLabelDisplay : MarginContainer
     {

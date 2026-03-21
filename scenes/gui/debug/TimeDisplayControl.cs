@@ -1,7 +1,7 @@
 using Godot;
 using Quasar.scenes.time;
 
-namespace Quasar.scenes.gui
+namespace Quasar.scenes.gui.debug
 {
     public partial class TimeDisplayControl : Control
     {

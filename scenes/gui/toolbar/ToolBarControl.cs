@@ -1,7 +1,7 @@
 using Godot;
 using Quasar.data.enums;
 
-namespace Quasar.scenes.gui
+namespace Quasar.scenes.gui.toolbar
 {
     public partial class ToolBarControl : Control
     {

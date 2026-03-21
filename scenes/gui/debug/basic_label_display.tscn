@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bkup6f2wl4k50"]
 
-[ext_resource type="Script" uid="uid://dhk3alc3vosmw" path="res://scenes/gui/BasicLabelDisplay.cs" id="1_3bk21"]
+[ext_resource type="Script" uid="uid://dhk3alc3vosmw" path="res://scenes/gui/debug/BasicLabelDisplay.cs" id="1_3bk21"]
 
 [node name="BasicLabelMargin" type="MarginContainer" unique_id=839488856]
 offset_right = 73.0

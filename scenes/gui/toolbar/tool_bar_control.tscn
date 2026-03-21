@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bcw53ty62uig7"]
 
 [ext_resource type="Texture2D" uid="uid://d2jsk5fx4ih24" path="res://assets/textures/PickAxeIcon.png" id="1_a25xm"]
-[ext_resource type="Script" uid="uid://bvusg0slgvcpx" path="res://scenes/gui/ToolBarControl.cs" id="1_g5gns"]
+[ext_resource type="Script" uid="uid://bvusg0slgvcpx" path="res://scenes/gui/toolbar/ToolBarControl.cs" id="1_g5gns"]
 [ext_resource type="ButtonGroup" uid="uid://dy3bmshci2j1u" path="res://data/resources/tool_bar_button_group.tres" id="2_akbxs"]
 [ext_resource type="StyleBox" uid="uid://b74aqrwp6mih1" path="res://data/resources/tool_bar_button_pressed.tres" id="2_c0fro"]
 [ext_resource type="Texture2D" uid="uid://b2my7kca52op1" path="res://assets/textures/Arrow.png" id="2_njpgj"]

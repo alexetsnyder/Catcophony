@@ -8,10 +8,10 @@
 [ext_resource type="PackedScene" uid="uid://yv7r6odtc5h" path="res://scenes/camera/map_camera_2d.tscn" id="3_sugp2"]
 [ext_resource type="PackedScene" uid="uid://crkmkjor1kvsn" path="res://scenes/systems/items/item_system.tscn" id="5_eb6dy"]
 [ext_resource type="PackedScene" uid="uid://dpl7bqssfeyxe" path="res://scenes/systems/pathing/pathing_system.tscn" id="6_85g3d"]
-[ext_resource type="PackedScene" uid="uid://cbcxdna41nw87" path="res://scenes/gui/time_display_control.tscn" id="7_o6xl0"]
-[ext_resource type="PackedScene" uid="uid://bkup6f2wl4k50" path="res://scenes/gui/basic_label_display.tscn" id="8_tipki"]
+[ext_resource type="PackedScene" uid="uid://cbcxdna41nw87" path="res://scenes/gui/debug/time_display_control.tscn" id="7_o6xl0"]
+[ext_resource type="PackedScene" uid="uid://bkup6f2wl4k50" path="res://scenes/gui/debug/basic_label_display.tscn" id="8_tipki"]
 [ext_resource type="PackedScene" uid="uid://bty07ys7ewke" path="res://scenes/systems/building/building_system.tscn" id="8_ya4ey"]
-[ext_resource type="PackedScene" uid="uid://bcw53ty62uig7" path="res://scenes/gui/tool_bar_control.tscn" id="9_85g3d"]
+[ext_resource type="PackedScene" uid="uid://bcw53ty62uig7" path="res://scenes/gui/toolbar/tool_bar_control.tscn" id="9_85g3d"]
 [ext_resource type="Script" uid="uid://c3jqhc2yy0sqe" path="res://scenes/systems/work/commands/CommandFactory.cs" id="9_trceg"]
 
 [node name="Main" type="Node2D" unique_id=25718441]

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cbcxdna41nw87"]
 
-[ext_resource type="Script" uid="uid://643cxd67rhwo" path="res://scenes/gui/TimeDisplayControl.cs" id="1_cg1dd"]
+[ext_resource type="Script" uid="uid://643cxd67rhwo" path="res://scenes/gui/debug/TimeDisplayControl.cs" id="1_cg1dd"]
 
 [node name="TimeDisplayControl" type="Control" unique_id=1343151648]
 layout_mode = 3

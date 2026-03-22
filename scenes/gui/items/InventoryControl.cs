@@ -23,6 +23,24 @@ namespace Quasar.scenes.gui.items
                 slot.Add(item);
             }
         }
+
+        private void OnInventoryButtonClosePressed()
+        {
+            Visible = false;
+            ClearItems();
+        }
+
+        private void ClearItems()
+        {
+            foreach (var child in _grid.GetChildren())
+            {
+                if (child is InventorySlot slot)
+                {
+                    _grid.RemoveChild(slot);
+                    slot.QueueFree();
+                }    
+            }
+        }
     }
 }
 

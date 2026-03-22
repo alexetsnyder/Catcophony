@@ -2,20 +2,19 @@
 
 [ext_resource type="Script" uid="uid://iktaob75t335" path="res://scenes/gui/items/InventoryControl.cs" id="1_7hg4f"]
 [ext_resource type="Texture2D" uid="uid://b75ptiqh6m04c" path="res://assets/textures/Inventory.png" id="2_5iwy6"]
+[ext_resource type="StyleBox" uid="uid://bf4vjqm2eq8lb" path="res://data/resources/normal_tool_bar_button_style.tres" id="3_vsiep"]
+[ext_resource type="Texture2D" uid="uid://bnpbq5ghbj0w2" path="res://assets/textures/X.png" id="4_qw1tt"]
 
 [node name="InventoryControl" type="Control" unique_id=1183350327]
-custom_minimum_size = Vector2(18, 18)
+custom_minimum_size = Vector2(122, 62)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -600.0
-offset_bottom = -320.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 122.0
+offset_bottom = 62.0
 script = ExtResource("1_7hg4f")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=2139527620]
+custom_minimum_size = Vector2(122, 62)
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -28,17 +27,53 @@ patch_margin_top = 6
 patch_margin_right = 6
 patch_margin_bottom = 6
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1735327111]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=850984282]
 layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="InventoryTopMargin" type="MarginContainer" parent="PanelContainer/VBoxContainer" unique_id=1993227881]
+layout_mode = 2
+theme_override_constants/margin_top = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/InventoryTopMargin" unique_id=1143277367]
+layout_mode = 2
+alignment = 1
+
+[node name="InventoryLabel" type="Label" parent="PanelContainer/VBoxContainer/InventoryTopMargin/HBoxContainer" unique_id=53155524]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Inventory "
+
+[node name="CloseButtonMargin" type="MarginContainer" parent="PanelContainer/VBoxContainer/InventoryTopMargin/HBoxContainer" unique_id=804518488]
+layout_mode = 2
+theme_override_constants/margin_right = -4
+
+[node name="InventoryCloseButton" type="Button" parent="PanelContainer/VBoxContainer/InventoryTopMargin/HBoxContainer/CloseButtonMargin" unique_id=451258623]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/icon_normal_color = Color(0.8156863, 0.20392157, 0.17254902, 1)
+theme_override_colors/icon_focus_color = Color(0.8156863, 0.20392157, 0.17254902, 1)
+theme_override_colors/icon_pressed_color = Color(0.8156863, 0.20392157, 0.17254902, 1)
+theme_override_colors/icon_hover_color = Color(0.8156863, 0.20392157, 0.17254902, 1)
+theme_override_styles/normal = ExtResource("3_vsiep")
+icon = ExtResource("4_qw1tt")
+icon_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer" unique_id=1735327111]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
 theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 4
+theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 13
 theme_override_constants/margin_bottom = 13
 
-[node name="InventoryGridContainer" type="GridContainer" parent="PanelContainer/MarginContainer" unique_id=1164207149]
+[node name="InventoryGridContainer" type="GridContainer" parent="PanelContainer/VBoxContainer/MarginContainer" unique_id=1164207149]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(18, 18)
 layout_mode = 2
 theme_override_constants/h_separation = 11
 theme_override_constants/v_separation = 11
 columns = 4
+
+[connection signal="pressed" from="PanelContainer/VBoxContainer/InventoryTopMargin/HBoxContainer/CloseButtonMargin/InventoryCloseButton" to="." method="OnInventoryButtonClosePressed"]

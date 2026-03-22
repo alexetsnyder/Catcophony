@@ -407,13 +407,14 @@ namespace Quasar.scenes
             if (_world.IsSolid(localPos) && _world.GetWorldCellId(localPos) != -1)
             {
                 var items = _itemSystem.GetStoredItems(_world.GetWorldCellId(localPos));
-                foreach (var item in items)
-                {
-                    _inventoryControl.Add(item);
-                }
-
+                
                 if (items.Count > 0)
                 {
+                    foreach (var item in items)
+                    {
+                        _inventoryControl.Add(item);
+                    }
+
                     _inventoryControl.Position = new(100.0f, 100.0f);
                     _inventoryControl.Visible = true;
                 }

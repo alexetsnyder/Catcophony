@@ -4,6 +4,7 @@ using Quasar.data.enums;
 using Quasar.math;
 using Quasar.scenes.common.interfaces;
 using Quasar.scenes.systems.building;
+using Quasar.scenes.systems.items;
 using Quasar.system;
 using System.Collections.Generic;
 using System.Linq;
@@ -123,7 +124,7 @@ namespace Quasar.scenes.world
                 return null;
             }
 
-            return worldCell.Color;
+            return worldCell.Material.Color;
         }
 
         /// <summary>
@@ -199,12 +200,16 @@ namespace Quasar.scenes.world
             return storagePosList;
         }
 
-        public void Mine(Vector2 localPos)
+        public ItemMaterial Mine(Vector2 localPos)
         {
             var coords = _worldTileMapLayer.LocalToMap(localPos);
+            ItemMaterial material = null;
 
             if (IsSolid(coords))
             {
+                var worldCell = GetWorldCell(coords);
+                material = GetItemMaterial(worldCell.Material);
+
                 UpdateWorldTile(TileType.DIRT, coords);
 
                 foreach (var adjCell in GetAdjacentCells(coords, true))
@@ -215,6 +220,8 @@ namespace Quasar.scenes.world
                     }
                 }
             }
+
+            return material;
         }
 
         public void Build(Vector2 localPos, Buildable buildable)
@@ -224,28 +231,32 @@ namespace Quasar.scenes.world
             if (!IsImpassable(coords))
             {
                 var tileType = buildable.TileType;
-                var atlasCoords = buildable.AtlasCoords;
-                var color = buildable.Color;
 
-                _worldCellArray[coords.X, coords.Y] = new(tileType, atlasCoords, color);
+                _worldCellArray[coords.X, coords.Y] = new(tileType, buildable.Material);
 
                 if (tileType == TileType.STORAGE)
                 {
                     _worldCellArray[coords.X, coords.Y].Id = _nextId++;
                 }
 
-                SetCell(_worldTileMapLayer, coords, atlasCoords, color);
+                SetCell(_worldTileMapLayer, coords, buildable.Material.AtlasCoords, buildable.Material.Color);
             }
         }
 
-        public void Cut(Vector2 localPos)
+        public ItemMaterial Cut(Vector2 localPos)
         {
             var coords = _worldTileMapLayer.LocalToMap(localPos);
+            ItemMaterial material = null;
 
             if (IsTree(coords))
             {
+                var worldCell = GetWorldCell(coords);
+                material = GetItemMaterial(worldCell.Material);
+
                 UpdateWorldTile(TileType.DIRT, coords);
             }
+
+            return material;
         }
 
         public void Till(Vector2 localPos)
@@ -345,7 +356,7 @@ namespace Quasar.scenes.world
             var worldCell = GetWorldCell(coords);
             if (worldCell == null)
             {
-                return true;
+                return false;
             }
 
             return (worldCell.TileType == TileType.TREE);
@@ -410,12 +421,11 @@ namespace Quasar.scenes.world
 
         private void UpdateWorldTile(TileType tileType, Vector2I coords)
         {
-            var atlasCoords = GetAtlasCoords(tileType);
-            var color = GetCellColor(tileType);
+            var material = GetMaterial(tileType);
 
-            _worldCellArray[coords.X, coords.Y] = new(tileType, atlasCoords, color);
+            _worldCellArray[coords.X, coords.Y] = new(tileType, material);
 
-            SetCell(_worldTileMapLayer, coords, atlasCoords, color);
+            SetCell(_worldTileMapLayer, coords, material.AtlasCoords, material.Color);
         }
 
         private void SetNaturalWall(Vector2I cellCoord)
@@ -431,9 +441,9 @@ namespace Quasar.scenes.world
                 {
                     var noiseVal = _heightNoise.GetNoise(j, i);
                     var tileType = GetTileType(noiseVal);
-                    var atlasCoords = GetAtlasCoords(tileType);
-                    var color = GetCellColor(tileType);
-                    _worldCellArray[i, j] = new(tileType, atlasCoords, color);
+                    var material = GetMaterial(tileType);
+
+                    _worldCellArray[i, j] = new(tileType, material);
                 }
             }
 
@@ -453,10 +463,9 @@ namespace Quasar.scenes.world
                 if (!IsImpassable(coords))
                 {
                     var tileType = TileType.TREE;
-                    var atlasCoords = GetAtlasCoords(tileType);
-                    var color = GetCellColor(tileType);
+                    var material = GetMaterial(tileType);
 
-                    _worldCellArray[coords.X, coords.Y] = new(tileType, atlasCoords, color);
+                    _worldCellArray[coords.X, coords.Y] = new(tileType, material);
                 }
             }
         }
@@ -472,10 +481,9 @@ namespace Quasar.scenes.world
                     if (IsEdge(coords))
                     {
                         var tileType = TileType.NATURAL_WALL;
-                        var atlasCoords = GetAtlasCoords(tileType);
-                        var color = GetCellColor(tileType);
+                        var material = GetMaterial(tileType);
 
-                        _worldCellArray[i, j] = new(tileType, atlasCoords, color);
+                        _worldCellArray[i, j] = new(tileType, material);
                     }
                 }
             }
@@ -526,7 +534,7 @@ namespace Quasar.scenes.world
                     var coords = new Vector2I(i, j);
                     var worldCell = _worldCellArray[i, j];
 
-                    SetCell(_worldTileMapLayer, coords, worldCell.AtlasCoords, worldCell.Color);
+                    SetCell(_worldTileMapLayer, coords, worldCell.Material.AtlasCoords, worldCell.Material.Color);
                     SetCell(_gridTileMapLayer, coords, new(0, 0), ColorConstants.GREY);
                 }
             }
@@ -551,7 +559,7 @@ namespace Quasar.scenes.world
 
             if (worldCell != null)
             {
-                SetCell(_worldTileMapLayer, cellCoord, worldCell.AtlasCoords, worldCell.Color);
+                SetCell(_worldTileMapLayer, cellCoord, worldCell.Material.AtlasCoords, worldCell.Material.Color);
             }  
         }
 
@@ -579,6 +587,36 @@ namespace Quasar.scenes.world
             {
                 return TileType.SOLID;
             }
+        }
+
+        private ItemMaterial GetItemMaterial(TileMaterial tileMaterial)
+        {
+            switch (tileMaterial.Type)
+            {
+                case TileType.NATURAL_WALL:
+                case TileType.SOLID:
+                    return GetItemMaterial(TileType.STONE, AtlasConstants.GetColor(TileType.STONE));
+                case TileType.TREE:
+                    return GetItemMaterial(TileType.WOOD, tileMaterial.Color);
+                default:
+                    GD.Print($"No item material defined for {tileMaterial.Type}.");
+                    return null;
+            }
+        }
+
+        private ItemMaterial GetItemMaterial(TileType type, Color color)
+        {
+            var atlasCoords = AtlasConstants.GetAtlasCoords(type);
+
+            return new ItemMaterial(type, atlasCoords, color);
+        }
+
+        private TileMaterial GetMaterial(TileType tileType)
+        {
+            var atlasCoords = GetAtlasCoords(tileType);
+            var color = GetCellColor(tileType);
+
+            return new TileMaterial(tileType, atlasCoords, color);
         }
 
         private Vector2I GetAtlasCoords(TileType tileType)

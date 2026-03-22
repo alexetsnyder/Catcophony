@@ -2,6 +2,7 @@ using Godot;
 using Quasar.data;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
+using Quasar.scenes.world;
 using System.Collections.Generic;
 
 namespace Quasar.scenes.systems.building
@@ -17,7 +18,7 @@ namespace Quasar.scenes.systems.building
                     return null;
                 }
 
-                return new(_current, _atlasCoords[_atlasIndex], AtlasConstants.GetColor(_current));
+                return new(_current, GetItemMaterial());
             }
         }
 
@@ -76,6 +77,14 @@ namespace Quasar.scenes.systems.building
             var color = AtlasConstants.GetColor(_current);
 
             _buildingPreviewTileMapLayer.SetCell(coords, atlasCoords, color);
+        }
+
+        private TileMaterial GetItemMaterial()
+        {
+            var atlasCoords = _atlasCoords[_atlasIndex];
+            var color = AtlasConstants.GetColor(_current);
+
+            return new TileMaterial(_current, atlasCoords, color);
         }
     }
 }

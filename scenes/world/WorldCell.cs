@@ -1,16 +1,13 @@
-using Godot;
 using Quasar.data.enums;
 
 namespace Quasar.scenes.world
 {
-    public partial class WorldCell(TileType tileType, Vector2I atlasCoords, Color color)
+    public partial class WorldCell(TileType tileType, TileMaterial material)
     {
         public int Id { get; set; } = -1;
 
         public TileType TileType { get; set; } = tileType;
 
-        public Vector2I AtlasCoords { get; set; } = atlasCoords;
-
-        public Color Color { get; set; } = color;
+        public TileMaterial Material { get; set; } = material;
     }
 }

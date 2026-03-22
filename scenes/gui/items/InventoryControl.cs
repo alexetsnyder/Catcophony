@@ -1,7 +1,6 @@
 using Godot;
 using Quasar.scenes.systems.items;
 using Quasar.system;
-using System.Collections.Generic;
 
 namespace Quasar.scenes.gui.items
 {

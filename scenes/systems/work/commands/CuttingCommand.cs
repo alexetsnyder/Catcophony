@@ -1,5 +1,4 @@
 using Godot;
-using Quasar.data;
 using Quasar.data.enums;
 using Quasar.scenes.cats;
 using Quasar.scenes.common.interfaces;
@@ -23,9 +22,9 @@ namespace Quasar.scenes.systems.work.commands
         {
             var color = _world.GetTileColor(_localPos);
 
-            _world.Cut(_localPos);
+            var material = _world.Cut(_localPos);
 
-            _itemSystem.CreateItem(TileType.WOOD, _localPos, color);
+            _itemSystem.CreateItem(TileType.WOOD, _localPos, material);
 
             _pathingSystem.SetPointSolid(_localPos, false);
 

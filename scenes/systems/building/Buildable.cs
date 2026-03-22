@@ -1,15 +1,14 @@
 using Godot;
 using Quasar.data.enums;
+using Quasar.scenes.world;
 
 namespace Quasar.scenes.systems.building
 {
-    public partial class Buildable(TileType tileType, Vector2I atlasCoords, Color color) : Resource
+    public partial class Buildable(TileType tileType, TileMaterial material) : Resource
     {
         public TileType TileType { get; set; } = tileType;
 
-        public Vector2I AtlasCoords { get; set; } = atlasCoords;
-
-        public Color Color { get; set; } = color;
+        public TileMaterial Material { get; set; } = material;
     }
 }
 

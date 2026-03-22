@@ -1,6 +1,7 @@
 using Godot;
 using Quasar.data.enums;
 using Quasar.scenes.systems.building;
+using Quasar.scenes.systems.items;
 using System.Collections.Generic;
 
 namespace Quasar.scenes.common.interfaces
@@ -39,11 +40,11 @@ namespace Quasar.scenes.common.interfaces
 
         public List<Vector2> GetAdjacentTiles(Vector2 localPos, bool includeDiagonals = false);
 
-        public void Mine(Vector2 localPos);
+        public ItemMaterial Mine(Vector2 localPos);
 
         public void Build(Vector2 localPos, Buildable buildable);
 
-        public void Cut(Vector2 localPos);
+        public ItemMaterial Cut(Vector2 localPos);
 
         public void Till(Vector2 localPos);
 

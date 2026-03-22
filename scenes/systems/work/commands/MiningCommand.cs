@@ -22,9 +22,9 @@ namespace Quasar.scenes.systems.work.commands
 
         public void Execute(Cat cat = null)
         {
-            _world.Mine(_localPos);
+            var material = _world.Mine(_localPos);
 
-            _itemSystem.CreateItem(_tileType, _localPos);
+            _itemSystem.CreateItem(_tileType, _localPos, material);
 
             _pathingSystem.SetPointSolid(_localPos, false);
 

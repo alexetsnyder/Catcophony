@@ -1,5 +1,4 @@
 using Godot;
-using Quasar.data;
 using Quasar.data.enums;
 using Quasar.scenes.common.interfaces;
 using System.Collections.Generic;
@@ -29,19 +28,14 @@ namespace Quasar.scenes.systems.items
             return _items;
         }
 
-        public void CreateItem(TileType tileType, Vector2 localPos, Color? color = null)
+        public void CreateItem(TileType tileType, Vector2 localPos, ItemMaterial material)
         {
             var coords = _itemTileMapLayer.LocalToMap(localPos);
-            var atlasCoords = GetAtlasCoords(tileType);
-            if (color == null)
-            {
-                color = GetColor(tileType);
-            }
 
             _items.TryAdd(coords, []);
-            _items[coords].Add(new(_nextId++, tileType, localPos));
+            _items[coords].Add(new(_nextId++, material, localPos));
 
-            SetCell(coords, atlasCoords, color);
+            SetCell(coords, material.AtlasCoords, material.Color);
         }
 
         public void TryAddStorage(int storageId)
@@ -120,15 +114,13 @@ namespace Quasar.scenes.systems.items
             item.Position = localPos;
 
             var coords = _itemTileMapLayer.LocalToMap(localPos);
-            var atlasCoords = GetAtlasCoords(item.TileType);
-            var color = GetColor(item.TileType);
 
             _items.TryAdd(coords, []);
             _items[coords].Add(item);
 
             _inventory[id].Remove(item);
 
-            SetCell(coords, atlasCoords, color);
+            SetCell(coords, item.Material.AtlasCoords, item.Material.Color);
         }
 
         private void TryClearCell(Vector2I coords)
@@ -142,16 +134,6 @@ namespace Quasar.scenes.systems.items
         private void SetCell(Vector2I coords, Vector2I? atlasCoords = null, Color? color = null)
         {
             _itemTileMapLayer.SetCell(coords, atlasCoords, color);
-        }
-
-        private static Vector2I GetAtlasCoords(TileType tileType)
-        {
-            return AtlasConstants.GetAtlasCoords(tileType);
-        }
-
-        private static Color GetColor(TileType tileType)
-        {
-            return AtlasConstants.GetColor(tileType);
         }
     }
 }

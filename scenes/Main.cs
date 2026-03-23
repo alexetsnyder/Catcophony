@@ -417,11 +417,7 @@ namespace Quasar.scenes
                         _inventoryControl.Add(item);
                     }
 
-                    var cameraViewportRect = _camera.GetViewportRect();
-                    var cameraCenter = _camera.GetScreenCenterPosition();
-                    var cameraLeftTop = cameraCenter - new Vector2(cameraViewportRect.Size.X / 2.0f, cameraViewportRect.Size.Y / 2.0f);
-
-                    _inventoryControl.Position = localPos - cameraLeftTop;
+                    _inventoryControl.GlobalPosition = _camera.GetCanvasTransform() * localPos;
                     _inventoryControl.Visible = true;
                 }
             }

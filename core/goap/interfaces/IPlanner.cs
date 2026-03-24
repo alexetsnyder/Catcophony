@@ -1,4 +1,4 @@
-namespace Quasar.core.goap.interfaces
+namespace Catcophony.core.goap.interfaces
 {
     public interface IPlanner
     {

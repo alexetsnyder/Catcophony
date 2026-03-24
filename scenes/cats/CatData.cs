@@ -1,7 +1,7 @@
 using Godot;
-using Quasar.data.enums;
+using Catcophony.data.enums;
 
-namespace Quasar.scenes.cats
+namespace Catcophony.scenes.cats
 {
     public partial class CatData(string name, string description, string feelings, int health, WorkType workType)
     {

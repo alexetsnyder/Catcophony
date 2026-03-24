@@ -1,10 +1,10 @@
 using Godot;
-using Quasar.data.enums;
-using Quasar.scenes.common.interfaces;
+using Catcophony.data.enums;
+using Catcophony.scenes.common.interfaces;
 using System.Collections.Generic;
 
 
-namespace Quasar.scenes.systems.items
+namespace Catcophony.scenes.systems.items
 {
     public partial class ItemSystem : Node2D, IItemSystem
     {

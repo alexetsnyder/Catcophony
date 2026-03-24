@@ -1,6 +1,6 @@
-using Quasar.core.naming;
+using Catcophony.core.naming;
 
-namespace Quasar.core.goap
+namespace Catcophony.core.goap
 {
     public static partial class Constants
     {

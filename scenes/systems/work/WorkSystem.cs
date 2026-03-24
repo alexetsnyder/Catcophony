@@ -1,15 +1,15 @@
 using Godot;
-using Quasar.data.enums;
-using Quasar.scenes.cats;
-using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.pathing;
-using Quasar.scenes.systems.work.commands;
-using Quasar.system;
+using Catcophony.data.enums;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.scenes.systems.pathing;
+using Catcophony.scenes.systems.work.commands;
+using Catcophony.system;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quasar.scenes.systems.work
+namespace Catcophony.scenes.systems.work
 {
     [GlobalClass]
     public partial class WorkSystem : Node, IWorkSystem

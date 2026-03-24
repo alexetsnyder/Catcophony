@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Quasar.core.naming
+namespace Catcophony.core.naming
 {
     public partial class FastName : IEquatable<FastName>, IComparable<FastName>
     {

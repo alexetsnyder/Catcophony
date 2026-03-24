@@ -1,9 +1,9 @@
-using Quasar.core.goap.interfaces;
-using Quasar.scenes.common.interfaces;
+using Catcophony.core.goap.interfaces;
+using Catcophony.scenes.common.interfaces;
 using System;
 using System.Collections.Generic;
 
-namespace Quasar.core.goap
+namespace Catcophony.core.goap
 {
     public class Leaf
     {

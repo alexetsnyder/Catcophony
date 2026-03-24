@@ -1,9 +1,9 @@
 using Godot;
-using Quasar.data.enums;
-using Quasar.scenes.common.interfaces;
-using Quasar.system;
+using Catcophony.data.enums;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.system;
 
-namespace Quasar.scenes.systems.work.commands
+namespace Catcophony.scenes.systems.work.commands
 {
     [GlobalClass]
     public partial class CommandFactory : Node

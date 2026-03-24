@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Quasar.system
+namespace Catcophony.system
 {
     public partial class GlobalSystem : Node
     {

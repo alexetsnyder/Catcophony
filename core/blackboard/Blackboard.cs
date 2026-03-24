@@ -1,10 +1,10 @@
 using Godot;
-using Quasar.scenes.systems.items;
-using Quasar.scenes.systems.pathing;
-using Quasar.scenes.systems.work;
+using Catcophony.scenes.systems.items;
+using Catcophony.scenes.systems.pathing;
+using Catcophony.scenes.systems.work;
 using System.Collections.Generic;
 
-namespace Quasar.core.blackboard
+namespace Catcophony.core.blackboard
 {
     public partial class Blackboard<T>
     {

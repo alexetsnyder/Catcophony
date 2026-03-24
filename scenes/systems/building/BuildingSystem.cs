@@ -1,11 +1,11 @@
 using Godot;
-using Quasar.data;
-using Quasar.data.enums;
-using Quasar.scenes.common.interfaces;
-using Quasar.scenes.world;
+using Catcophony.data;
+using Catcophony.data.enums;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.scenes.world;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.systems.building
+namespace Catcophony.scenes.systems.building
 {
     public partial class BuildingSystem : Node2D, IBuildingSystem
     {

@@ -1,8 +1,8 @@
-using Quasar.scenes.cats;
-using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.pathing;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.scenes.systems.pathing;
 
-namespace Quasar.scenes.systems.work.commands
+namespace Catcophony.scenes.systems.work.commands
 {
     public partial class MoveToCommand(Path path) : ICommand
     {

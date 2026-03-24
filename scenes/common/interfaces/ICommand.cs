@@ -1,7 +1,7 @@
 using Godot;
-using Quasar.scenes.cats;
+using Catcophony.scenes.cats;
 
-namespace Quasar.scenes.common.interfaces
+namespace Catcophony.scenes.common.interfaces
 {
     public interface ICommand
     {

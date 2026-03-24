@@ -1,10 +1,10 @@
-using Quasar.core.blackboard;
-using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
-using Quasar.data.enums;
+using Catcophony.core.blackboard;
+using Catcophony.core.goap.interfaces;
+using Catcophony.core.naming;
+using Catcophony.data.enums;
 using System.Linq;
 
-namespace Quasar.core.goap.goals
+namespace Catcophony.core.goap.goals
 {
     public partial class AdjToGoal : GoalBase
     {

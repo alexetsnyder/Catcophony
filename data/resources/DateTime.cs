@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Quasar.data.resources
+namespace Catcophony.data.resources
 {
     [GlobalClass]
     public partial class DateTime : Resource

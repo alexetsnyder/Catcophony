@@ -1,9 +1,9 @@
 using Godot;
-using Quasar.data;
+using Catcophony.data;
 using System;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.demos
+namespace Catcophony.scenes.demos
 {
     public partial class MultiColorTileMapDemo : TileMapLayer
     {

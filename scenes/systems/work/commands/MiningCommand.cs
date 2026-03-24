@@ -1,9 +1,9 @@
 using Godot;
-using Quasar.data.enums;
-using Quasar.scenes.cats;
-using Quasar.scenes.common.interfaces;
+using Catcophony.data.enums;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.common.interfaces;
 
-namespace Quasar.scenes.systems.work.commands
+namespace Catcophony.scenes.systems.work.commands
 {
     public partial class MiningCommand(IWorld world, IItemSystem itemSystem, IPathingSystem pathingSystem,
                                        ISelectionSystem selectionSystem, Vector2 localPos, TileType tileType) : ICommand

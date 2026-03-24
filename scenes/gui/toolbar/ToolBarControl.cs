@@ -1,7 +1,7 @@
 using Godot;
-using Quasar.data.enums;
+using Catcophony.data.enums;
 
-namespace Quasar.scenes.gui.toolbar
+namespace Catcophony.scenes.gui.toolbar
 {
     public partial class ToolBarControl : Control
     {

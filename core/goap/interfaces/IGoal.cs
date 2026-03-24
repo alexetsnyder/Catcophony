@@ -1,7 +1,7 @@
-using Quasar.core.blackboard;
-using Quasar.core.naming;
+using Catcophony.core.blackboard;
+using Catcophony.core.naming;
 
-namespace Quasar.core.goap.interfaces
+namespace Catcophony.core.goap.interfaces
 {
     public interface IGoal
     {

@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Quasar.scenes.systems.items
+namespace Catcophony.scenes.systems.items
 {
     public partial class Item(int iD, ItemMaterial material, Vector2 position) : Resource
     {

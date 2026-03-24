@@ -1,9 +1,9 @@
-using Quasar.core.blackboard;
-using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
-using Quasar.data.enums;
+using Catcophony.core.blackboard;
+using Catcophony.core.goap.interfaces;
+using Catcophony.core.naming;
+using Catcophony.data.enums;
 
-namespace Quasar.core.goap.goals
+namespace Catcophony.core.goap.goals
 {
     public partial class HasWorkGoal : GoalBase
     {

@@ -1,7 +1,7 @@
-using Quasar.data.enums;
-using Quasar.scenes.systems.building;
+using Catcophony.data.enums;
+using Catcophony.scenes.systems.building;
 
-namespace Quasar.scenes.common.interfaces
+namespace Catcophony.scenes.common.interfaces
 {
     public interface IBuildingSystem
     {

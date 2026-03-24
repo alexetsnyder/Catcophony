@@ -1,11 +1,11 @@
-using Quasar.core.goap.goals;
-using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
-using Quasar.scenes.cats;
-using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.work.commands;
+using Catcophony.core.goap.goals;
+using Catcophony.core.goap.interfaces;
+using Catcophony.core.naming;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.scenes.systems.work.commands;
 
-namespace Quasar.core.goap.actions
+namespace Catcophony.core.goap.actions
 {
     public partial class MoveToAction : ActionBase
     {

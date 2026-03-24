@@ -1,12 +1,12 @@
-using Quasar.core.blackboard;
-using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
-using Quasar.scenes.cats;
-using Quasar.scenes.common.interfaces;
+using Catcophony.core.blackboard;
+using Catcophony.core.goap.interfaces;
+using Catcophony.core.naming;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.common.interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quasar.core.goap.actions
+namespace Catcophony.core.goap.actions
 {
     public abstract partial class ActionBase : IAction
     {

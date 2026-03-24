@@ -1,8 +1,8 @@
 using Godot;
-using Quasar.scenes.common.interfaces;
+using Catcophony.scenes.common.interfaces;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.custom
+namespace Catcophony.scenes.custom
 {
     [GlobalClass]
     public partial class MultiColorTileMapLayer : TileMapLayer, IMultiColorTileMapLayer

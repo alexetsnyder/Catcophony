@@ -1,15 +1,15 @@
 using Godot;
-using Quasar.data;
-using Quasar.data.enums;
-using Quasar.math;
-using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.building;
-using Quasar.scenes.systems.items;
-using Quasar.system;
+using Catcophony.data;
+using Catcophony.data.enums;
+using Catcophony.math;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.scenes.systems.building;
+using Catcophony.scenes.systems.items;
+using Catcophony.system;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quasar.scenes.world
+namespace Catcophony.scenes.world
 {
     public partial class World : Node2D, IWorld
     {

@@ -1,7 +1,7 @@
 using Godot;
-using Quasar.data.resources;
+using Catcophony.data.resources;
 
-namespace Quasar.scenes.time
+namespace Catcophony.scenes.time
 {
     public partial class TimeSystem : Node
     {

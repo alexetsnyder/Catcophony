@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quasar.math
+namespace Catcophony.math
 {
     public static partial class Math
     {

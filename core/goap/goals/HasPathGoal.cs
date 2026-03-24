@@ -1,13 +1,13 @@
 using Godot;
-using Quasar.core.blackboard;
-using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
-using Quasar.data.enums;
-using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.work;
+using Catcophony.core.blackboard;
+using Catcophony.core.goap.interfaces;
+using Catcophony.core.naming;
+using Catcophony.data.enums;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.scenes.systems.work;
 using System.Collections.Generic;
 
-namespace Quasar.core.goap.goals
+namespace Catcophony.core.goap.goals
 {
     public partial class HasPathGoal : GoalBase
     {

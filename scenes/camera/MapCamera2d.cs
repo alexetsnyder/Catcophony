@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Quasar.scenes.camera
+namespace Catcophony.scenes.camera
 {
     public partial class MapCamera2d : Camera2D
     {

@@ -1,8 +1,8 @@
-using Quasar.core.goap.goals;
-using Quasar.core.naming;
-using Quasar.data.enums;
+using Catcophony.core.goap.goals;
+using Catcophony.core.naming;
+using Catcophony.data.enums;
 
-namespace Quasar.core.goap.actions
+namespace Catcophony.core.goap.actions
 {
     public partial class WorkAction : ActionBase
     {

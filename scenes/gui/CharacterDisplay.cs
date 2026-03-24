@@ -1,7 +1,7 @@
 using Godot;
-using Quasar.scenes.cats;
+using Catcophony.scenes.cats;
 
-namespace Quasar.scenes.gui
+namespace Catcophony.scenes.gui
 {
     public partial class CharacterDisplay : MarginContainer
     {

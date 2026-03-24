@@ -1,10 +1,10 @@
 using Godot;
-using Quasar.data;
-using Quasar.data.enums;
-using Quasar.math;
+using Catcophony.data;
+using Catcophony.data.enums;
+using Catcophony.math;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.map
+namespace Catcophony.scenes.map
 {
     public partial class Map : Node2D
     {

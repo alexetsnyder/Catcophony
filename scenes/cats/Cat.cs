@@ -1,17 +1,17 @@
 using Godot;
-using Quasar.core.goap;
-using Quasar.core.goap.goals;
-using Quasar.core.goap.interfaces;
-using Quasar.data.enums;
-using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.items;
-using Quasar.scenes.systems.pathing;
-using Quasar.scenes.systems.work;
-using Quasar.scenes.time;
+using Catcophony.core.goap;
+using Catcophony.core.goap.goals;
+using Catcophony.core.goap.interfaces;
+using Catcophony.data.enums;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.scenes.systems.items;
+using Catcophony.scenes.systems.pathing;
+using Catcophony.scenes.systems.work;
+using Catcophony.scenes.time;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quasar.scenes.cats
+namespace Catcophony.scenes.cats
 {
     public partial class Cat : Node2D, IGameObject, IAgent
     {

@@ -1,8 +1,8 @@
 using Godot;
-using Quasar.data.enums;
+using Catcophony.data.enums;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.systems.selection
+namespace Catcophony.scenes.systems.selection
 {
     public partial class Selection(WorkType workType, List<Vector2> points) : Resource
     {

@@ -1,9 +1,9 @@
 using Godot;
-using Quasar.scenes.common.interfaces;
-using Quasar.system;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.system;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.systems.pathing
+namespace Catcophony.scenes.systems.pathing
 {
     public partial class PathingSystem : Node2D, IPathingSystem
     {

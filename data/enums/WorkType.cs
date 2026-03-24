@@ -1,4 +1,4 @@
-namespace Quasar.data.enums
+namespace Catcophony.data.enums
 {
     public enum WorkType
     {

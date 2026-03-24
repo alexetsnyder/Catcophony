@@ -1,14 +1,14 @@
 using Godot;
-using Quasar.core.blackboard;
-using Quasar.core.goap.actions;
-using Quasar.core.goap.interfaces;
-using Quasar.core.naming;
-using Quasar.data.enums;
-using Quasar.scenes.common.interfaces;
+using Catcophony.core.blackboard;
+using Catcophony.core.goap.actions;
+using Catcophony.core.goap.interfaces;
+using Catcophony.core.naming;
+using Catcophony.data.enums;
+using Catcophony.scenes.common.interfaces;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quasar.core.goap
+namespace Catcophony.core.goap
 {
     public partial class WorldState
     {

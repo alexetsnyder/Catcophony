@@ -1,8 +1,8 @@
 using Godot;
-using Quasar.scenes.systems.items;
-using Quasar.system;
+using Catcophony.scenes.systems.items;
+using Catcophony.system;
 
-namespace Quasar.scenes.gui.items
+namespace Catcophony.scenes.gui.items
 {
     public partial class InventoryControl : Control
     {

@@ -1,24 +1,24 @@
 using Godot;
-using Quasar.core.goap;
-using Quasar.data;
-using Quasar.data.enums;
-using Quasar.scenes.camera;
-using Quasar.scenes.cats;
-using Quasar.scenes.gui;
-using Quasar.scenes.gui.debug;
-using Quasar.scenes.gui.items;
-using Quasar.scenes.gui.toolbar;
-using Quasar.scenes.map;
-using Quasar.scenes.systems.building;
-using Quasar.scenes.systems.items;
-using Quasar.scenes.systems.pathing;
-using Quasar.scenes.systems.selection;
-using Quasar.scenes.systems.work;
-using Quasar.scenes.world;
-using Quasar.system;
+using Catcophony.core.goap;
+using Catcophony.data;
+using Catcophony.data.enums;
+using Catcophony.scenes.camera;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.gui;
+using Catcophony.scenes.gui.debug;
+using Catcophony.scenes.gui.items;
+using Catcophony.scenes.gui.toolbar;
+using Catcophony.scenes.map;
+using Catcophony.scenes.systems.building;
+using Catcophony.scenes.systems.items;
+using Catcophony.scenes.systems.pathing;
+using Catcophony.scenes.systems.selection;
+using Catcophony.scenes.systems.work;
+using Catcophony.scenes.world;
+using Catcophony.system;
 using System.Collections.Generic;
 
-namespace Quasar.scenes
+namespace Catcophony.scenes
 {
     public partial class Main : Node2D
     {

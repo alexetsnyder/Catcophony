@@ -1,8 +1,8 @@
 using Godot;
-using Quasar.scenes.cats;
-using Quasar.scenes.common.interfaces;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.common.interfaces;
 
-namespace Quasar.scenes.systems.work.commands
+namespace Catcophony.scenes.systems.work.commands
 {
     public partial class FishingCommand(IWorld world, ISelectionSystem selectionSystem, Vector2 localPos) : ICommand
     {

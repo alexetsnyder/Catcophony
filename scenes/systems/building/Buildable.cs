@@ -1,8 +1,8 @@
 using Godot;
-using Quasar.data.enums;
-using Quasar.scenes.world;
+using Catcophony.data.enums;
+using Catcophony.scenes.world;
 
-namespace Quasar.scenes.systems.building
+namespace Catcophony.scenes.systems.building
 {
     public partial class Buildable(TileType tileType, TileMaterial material) : Resource
     {

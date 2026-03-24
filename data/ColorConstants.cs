@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Quasar.data
+namespace Catcophony.data
 {
     public static partial class ColorConstants
     {

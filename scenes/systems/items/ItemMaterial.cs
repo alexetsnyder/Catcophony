@@ -1,7 +1,7 @@
 using Godot;
-using Quasar.data.enums;
+using Catcophony.data.enums;
 
-namespace Quasar.scenes.systems.items
+namespace Catcophony.scenes.systems.items
 {
     public partial class ItemMaterial(TileType type, Vector2I atlasCoord, Color color) : Resource
     {

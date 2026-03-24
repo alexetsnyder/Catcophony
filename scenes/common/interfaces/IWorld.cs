@@ -1,10 +1,10 @@
 using Godot;
-using Quasar.data.enums;
-using Quasar.scenes.systems.building;
-using Quasar.scenes.systems.items;
+using Catcophony.data.enums;
+using Catcophony.scenes.systems.building;
+using Catcophony.scenes.systems.items;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.common.interfaces
+namespace Catcophony.scenes.common.interfaces
 {
     public interface IWorld
     {

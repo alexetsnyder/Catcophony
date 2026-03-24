@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-namespace Quasar.scenes.systems.pathing
+namespace Catcophony.scenes.systems.pathing
 {
     public partial class Path(int id, Queue<Vector2> points) : Resource
     {

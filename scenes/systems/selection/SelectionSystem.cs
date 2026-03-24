@@ -1,10 +1,10 @@
 using Godot;
-using Quasar.data;
-using Quasar.data.enums;
-using Quasar.scenes.common.interfaces;
-using Quasar.system;
+using Catcophony.data;
+using Catcophony.data.enums;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.system;
 
-namespace Quasar.scenes.systems.selection
+namespace Catcophony.scenes.systems.selection
 {
     public partial class SelectionSystem : Node2D, ISelectionSystem
     {

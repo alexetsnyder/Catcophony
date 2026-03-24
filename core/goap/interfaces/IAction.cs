@@ -1,10 +1,10 @@
-using Quasar.core.blackboard;
-using Quasar.core.naming;
-using Quasar.scenes.cats;
-using Quasar.scenes.common.interfaces;
+using Catcophony.core.blackboard;
+using Catcophony.core.naming;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.common.interfaces;
 using System.Collections.Generic;
 
-namespace Quasar.core.goap.interfaces
+namespace Catcophony.core.goap.interfaces
 {
     public interface IAction
     {

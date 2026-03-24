@@ -1,7 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 
-namespace Quasar.math
+namespace Catcophony.math
 {
     public static partial class Random
     {

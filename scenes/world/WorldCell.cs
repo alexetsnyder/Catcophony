@@ -1,6 +1,6 @@
-using Quasar.data.enums;
+using Catcophony.data.enums;
 
-namespace Quasar.scenes.world
+namespace Catcophony.scenes.world
 {
     public partial class WorldCell(TileType tileType, TileMaterial material)
     {

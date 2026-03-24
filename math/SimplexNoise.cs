@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Quasar.math
+namespace Catcophony.math
 {
     public partial class SimplexNoise
     {

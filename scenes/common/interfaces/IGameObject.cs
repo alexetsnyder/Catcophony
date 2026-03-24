@@ -1,4 +1,4 @@
-namespace Quasar.scenes.common.interfaces
+namespace Catcophony.scenes.common.interfaces
 {
     public interface IGameObject
     {

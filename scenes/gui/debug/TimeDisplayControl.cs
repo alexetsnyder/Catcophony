@@ -1,7 +1,7 @@
 using Godot;
-using Quasar.scenes.time;
+using Catcophony.scenes.time;
 
-namespace Quasar.scenes.gui.debug
+namespace Catcophony.scenes.gui.debug
 {
     public partial class TimeDisplayControl : Control
     {

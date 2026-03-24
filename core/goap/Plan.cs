@@ -1,8 +1,8 @@
-using Quasar.core.blackboard;
-using Quasar.core.goap.interfaces;
+using Catcophony.core.blackboard;
+using Catcophony.core.goap.interfaces;
 using System.Collections.Generic;
 
-namespace Quasar.core.goap
+namespace Catcophony.core.goap
 {
     public partial class Plan(Queue<IAction> actions)
     {

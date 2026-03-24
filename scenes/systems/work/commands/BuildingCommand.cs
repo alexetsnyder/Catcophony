@@ -1,9 +1,9 @@
 using Godot;
-using Quasar.scenes.cats;
-using Quasar.scenes.common.interfaces;
-using Quasar.scenes.systems.building;
+using Catcophony.scenes.cats;
+using Catcophony.scenes.common.interfaces;
+using Catcophony.scenes.systems.building;
 
-namespace Quasar.scenes.systems.work.commands
+namespace Catcophony.scenes.systems.work.commands
 {
     public partial class BuildingCommand(IWorld world, IPathingSystem pathingSystem, ISelectionSystem selectionSystem, Vector2 localPos, Buildable buildable) : ICommand
     {

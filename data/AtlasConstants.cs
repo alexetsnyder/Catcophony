@@ -1,8 +1,8 @@
 using Godot;
-using Quasar.data.enums;
+using Catcophony.data.enums;
 using System.Collections.Generic;
 
-namespace Quasar.data
+namespace Catcophony.data
 {
     public static partial class AtlasConstants
     {

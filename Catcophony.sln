@@ -1,6 +1,6 @@
 ﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quasar", "Quasar.csproj", "{E9FFE44A-8F31-44BE-B78A-EC6CA38DB7F6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catcophony", "Catcophony.csproj", "{E9FFE44A-8F31-44BE-B78A-EC6CA38DB7F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

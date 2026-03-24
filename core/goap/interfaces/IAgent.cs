@@ -1,9 +1,9 @@
 using Godot;
-using Quasar.data.enums;
-using Quasar.scenes.systems.pathing;
-using Quasar.scenes.systems.work;
+using Catcophony.data.enums;
+using Catcophony.scenes.systems.pathing;
+using Catcophony.scenes.systems.work;
 
-namespace Quasar.core.goap.interfaces
+namespace Catcophony.core.goap.interfaces
 {
     public interface IAgent
     {

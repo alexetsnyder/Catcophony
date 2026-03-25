@@ -440,7 +440,6 @@ namespace Catcophony.scenes
 
                 if (path != null)
                 {
-                    _pathingSystem.ShowPath(path.Id);
                     _selectedCat.SetPath(path);
                 }  
             } 

@@ -76,6 +76,8 @@ namespace Catcophony.core.goap.goals
 
                 if (path != null)
                 {
+                    _pathingSystem.RemovePath(path.Id);
+
                     return true;
                 }
             }

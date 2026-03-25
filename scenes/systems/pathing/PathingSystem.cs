@@ -1,6 +1,6 @@
-using Godot;
 using Catcophony.scenes.common.interfaces;
 using Catcophony.system;
+using Godot;
 using System.Collections.Generic;
 
 namespace Catcophony.scenes.systems.pathing
@@ -25,6 +25,8 @@ namespace Catcophony.scenes.systems.pathing
 
         private Vector2I _atlasCoords = Vector2I.Zero;
 
+        private Dictionary<Vector2I, int> _pathReferences = [];
+
         public override void _Ready()
         {
             _pathingTileMapLayer = GetNode<IMultiColorTileMapLayer>("PathingTileMapLayer");
@@ -36,9 +38,9 @@ namespace Catcophony.scenes.systems.pathing
 
         public Path CreateEmptyPath()
         {
-            _paths.Add(_nextId, new(_nextId, new()));
+            int pathId = AddPath([]);
 
-            return _paths[_nextId++];
+            return _paths[pathId];
         }
 
         public Vector2? ShortestPointWithAdjacent(Vector2 fromPos, List<Vector2> toPosList)
@@ -63,20 +65,32 @@ namespace Catcophony.scenes.systems.pathing
                         }
 
                         var path = FindPath(fromPos, adjPos);
+
                         if (path != null && path.Points.Count < minPathCount)
                         {
                             minPathCount = path.Points.Count;
                             minPoint = toPos;
+                        }
+
+                        if (path != null)
+                        {
+                            RemovePath(path.Id);
                         }
                     }
                 }
                 else
                 {
                     var path = FindPath(fromPos, toPos);
+
                     if (path != null && path.Points.Count < minPathCount)
                     {
                         minPathCount = path.Points.Count;
                         minPoint = toPos;
+                    }
+
+                    if (path != null)
+                    {
+                        RemovePath(path.Id);
                     }
                 }
             }
@@ -98,7 +112,11 @@ namespace Catcophony.scenes.systems.pathing
 
                 var path = FindPath(startPos, toPos);
 
-                if (path != null && path.Points.Count <  minPathCount)
+                if (path == null)
+                {
+                    continue;
+                }
+                else if (path.Points.Count < minPathCount)
                 {
                     if (shortestPath != null)
                     {
@@ -107,6 +125,10 @@ namespace Catcophony.scenes.systems.pathing
 
                     shortestPath = path;
                     minPathCount = path.Points.Count;
+                }
+                else
+                {
+                    RemovePath(path.Id);
                 }
             }
 
@@ -129,9 +151,9 @@ namespace Catcophony.scenes.systems.pathing
 
             if (pointQueue.Count > 0)
             {
-                _paths.Add(_nextId, new(_nextId, pointQueue));
+                int pathId = AddPath(pointQueue);
 
-                return _paths[_nextId++];
+                return _paths[pathId];
             }
 
             return null;
@@ -148,13 +170,33 @@ namespace Catcophony.scenes.systems.pathing
             } 
         }
 
+        public int AddPath(Queue<Vector2> pointQueue)
+        {
+            foreach (var point in pointQueue)
+            {
+                AddPathReference(point);
+            }
+
+            _paths.Add(_nextId, new Path(_nextId, pointQueue));
+
+            return _nextId++;
+        }
+
         public void RemovePath(int id)
         {
             if (_paths.TryGetValue(id, out Path path))
             {
                 foreach (var point in path.Points)
                 {
-                    SelectCell(point);
+                    RemovePathReference(point);
+
+                    if (IsTileSelected(point))
+                    {    
+                        if (GetPathReferences(point) == 0)
+                        {
+                            SelectCell(point);
+                        }
+                    }
                 }
 
                 _paths.Remove(id);
@@ -164,6 +206,49 @@ namespace Catcophony.scenes.systems.pathing
         public void SetPointSolid(Vector2 localPos, bool solid = true)
         {
             _aStarGrid2d.SetPointSolid(_pathingTileMapLayer.LocalToMap(localPos), solid);
+        }
+
+        private bool IsTileSelected(Vector2 localPos)
+        {
+            var coords = _pathingTileMapLayer.LocalToMap(localPos);
+
+            return _pathingTileMapLayer.GetCellSourceId(coords) != -1;
+        }
+
+        private int GetPathReferences(Vector2 localPos)
+        {
+            var coords = _pathingTileMapLayer.LocalToMap(localPos);
+
+            if (_pathReferences.TryGetValue(coords, out var count))
+            {
+                return count;
+            }
+
+            return 0;
+        }
+
+        private void AddPathReference(Vector2 localPos)
+        {
+            var coords = _pathingTileMapLayer.LocalToMap(localPos);
+
+            if (_pathReferences.TryGetValue(coords, out int value))
+            {
+                _pathReferences[coords] = ++value;
+            }
+            else
+            {
+                _pathReferences.Add(coords, 1);
+            }
+        }
+
+        private void RemovePathReference(Vector2 localPos)
+        {
+            var coords = _pathingTileMapLayer.LocalToMap(localPos);
+
+            if (_pathReferences.TryGetValue(coords, out int value))
+            {
+                _pathReferences[coords] = --value;
+            }
         }
 
         private void SelectCell(Vector2 localPos, Vector2I? atlasCoords = null, Color? color = null)

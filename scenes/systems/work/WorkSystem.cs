@@ -165,72 +165,10 @@ namespace Catcophony.scenes.systems.work
             return workList;
         }
 
-        public Tuple<List<Work>, Path> CheckForWork(Cat cat, bool assign = true)
-        {
-            var workType = cat.CatData.WorkType;
-
-            if (_allWork.TryGetValue(workType, out Dictionary<int, Work> workDict))
-            {
-                if (workDict.Count > 0)
-                {
-                    var shortestPath = ShortestPath([.. workDict.Values.Where(w => !w.IsAssigned)], cat, out Work work);
-
-                    if (work != null)
-                    {
-                        work.IsAssigned = assign;
-                        List<Work> workList = [work];
-
-                        return new(workList, shortestPath);
-                    }
-                }
-            }
-
-            return null;
-        }
-
         public List<Work> GetWork(WorkType workType)
         {
             _allWork.TryGetValue(workType, out Dictionary<int, Work> workDict);
             return [.. workDict.Select(kv => kv.Value)];
-        }
-
-        private Path ShortestPath(List<Work> workList, Cat cat, out Work work)
-        {
-            Path shortestPath = null;
-            int minPathCount = int.MaxValue;
-            work = null;
-
-            foreach (var pWork in workList)
-            {
-                var adjPosList = _world.GetAdjacentTiles(pWork.LocalPos, true);
-
-                var path = _pathingSystem.ShortestPath(cat.Position, adjPosList);
-
-                if (path == null)
-                {
-                    continue; 
-                }
-
-                if (path.Id == -1)
-                {
-                    work = pWork;
-                    return path;
-                }
-
-                if (path.Points.Count < minPathCount)
-                {
-                    if (shortestPath != null)
-                    {
-                        _pathingSystem.RemovePath(shortestPath.Id);
-                    }
-
-                    work = pWork;
-                    shortestPath = path;
-                    minPathCount = path.Points.Count;
-                }
-            }
-
-            return shortestPath;
         }
     }
 }

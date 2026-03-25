@@ -55,7 +55,7 @@ namespace Catcophony.scenes.cats
 
         public float Height { get => _catSprite.GetRect().Size.Y; }
 
-        private readonly Queue<Work> _workQueue = [];
+        private Work _currentWork;
 
         private IWorld _world;
 
@@ -141,18 +141,9 @@ namespace Catcophony.scenes.cats
 
         public void SetWork(Work work)
         {
-            SetWork([ work ]);
-        }
-
-        public void SetWork(List<Work> workList)
-        {
-            foreach (var work in workList)
-            {
-                _workQueue.Enqueue(work);
-            }
-
             IsWorking = true;
-            CatData.WorkPos = workList.First().LocalPos;
+            _currentWork = work;
+            CatData.WorkPos = _currentWork.LocalPos;
             _workProgress.Value = 0;
             _workProgress.Visible = true;
         }
@@ -161,15 +152,9 @@ namespace Catcophony.scenes.cats
         {
             _workProgress.Visible = false;
 
-            var work = _workQueue.Dequeue();
+            EmitSignal(SignalName.CatWork, this, _currentWork);
 
-            EmitSignal(SignalName.CatWork, this, work);
-
-            if (_workQueue.Count > 0)
-            {
-                StartNextWork();
-            }
-            else
+            if (_currentPlan == null || _currentPlan.Actions.Count == 0)
             {
                 IsWorking = false;
                 CatData.WorkPos = null;
@@ -233,19 +218,6 @@ namespace Catcophony.scenes.cats
                 CompleteWork();
                 ElapsedWorkTime %= WorkTicks;
             }
-        }
-
-        private void StartNextWork()
-        {
-            var work = _workQueue.Peek();
-            var path = _pathingSystem.ShortestPath(Position, _world.GetAdjacentTiles(work.LocalPos, true));
-
-            SetPath(path);
-            _pathingSystem.ShowPath(path.Id);
-            CatData.WorkPos = work.LocalPos;
-
-            _workProgress.Value = 0;
-            _workProgress.Visible = true;
         }
 
         private void OnCatAreaInputEvent(Viewport viewport, InputEvent @event, long shapeIdx)

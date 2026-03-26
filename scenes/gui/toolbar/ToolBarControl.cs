@@ -37,9 +37,12 @@ namespace Catcophony.scenes.gui.toolbar
 
         private ItemList _buildMenu;
 
+        private Control _areaSelectMenu;
+
         public override void _Ready()
         {
             _buildMenu = GetNode<ItemList>("BuildMenu");
+            _areaSelectMenu = GetNode<Control>("%AreaSelectMenu");
         }
 
         private static TileType GetTileType(int index)
@@ -62,69 +65,87 @@ namespace Catcophony.scenes.gui.toolbar
             }
         }
 
-        private void OnSelectButtonPressed()
+        private void ShowBuildMenu()
+        {
+            _buildMenu.Visible = true;
+        }
+
+        private void ShowAreaSelectMenu()
+        {
+            _areaSelectMenu.Visible = true;
+        }
+
+        private void HideSubMenus()
         {
             _buildMenu.Visible = false;
+            _areaSelectMenu.Visible = false;
+        }
+
+        private void OnSelectButtonPressed()
+        {
+            HideSubMenus();
             EmitSignal(SignalName.SelectPressed);
         }
 
         private void OnMineButtonPressed()
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
             EmitSignal(SignalName.MinePressed);
         }
 
         private void OnCutButtonPressed()
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
             EmitSignal(SignalName.CutPressed);
         }
 
         private void OnHaulButtonPressed()
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
             EmitSignal(SignalName.HaulPressed);
         }
 
         private void OnBuildButtonPressed()
         {
-            _buildMenu.Visible = true;
+            HideSubMenus();
+            ShowBuildMenu();
         }
 
         private void OnBuildMenuItemSelected(int index)
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
             var tileType = GetTileType(index);
             EmitSignal(SignalName.BuildPressed, (int)tileType);
         }
 
         private void OnFarmButtonPressed()
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
             EmitSignal(SignalName.FarmPressed);
         }
 
         private void OnGatherButtonPressed()
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
             EmitSignal(SignalName.GatherPressed);
         }
 
         private void OnAreaSelectButtonPressed()
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
+            ShowAreaSelectMenu();
             EmitSignal(SignalName.AreaSelectPressed);
         }
 
         private void OnFishButtonPressed()
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
             EmitSignal(SignalName.FishPressed);
         }
 
         private void OnCancelButtonPressed()
         {
-            _buildMenu.Visible = false;
+            HideSubMenus();
             EmitSignal(SignalName.CancelPressed);
         }
     }

@@ -1,4 +1,3 @@
-using Godot;
 using Catcophony.core.goap;
 using Catcophony.core.goap.goals;
 using Catcophony.core.goap.interfaces;
@@ -8,8 +7,8 @@ using Catcophony.scenes.systems.items;
 using Catcophony.scenes.systems.pathing;
 using Catcophony.scenes.systems.work;
 using Catcophony.scenes.time;
+using Godot;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Catcophony.scenes.cats
 {

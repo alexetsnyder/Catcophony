@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://cj1xmxbdj2s1u"]
+
+[ext_resource type="StyleBox" uid="uid://bf4vjqm2eq8lb" path="res://data/resources/normal_tool_bar_button_style.tres" id="1_1mu15"]
+[ext_resource type="StyleBox" uid="uid://b74aqrwp6mih1" path="res://data/resources/tool_bar_button_pressed.tres" id="2_ln4gr"]
+[ext_resource type="Texture2D" uid="uid://dd0s3ijgq4533" path="res://assets/textures/AreaIcon.png" id="3_kyjtg"]
+
+[node name="ToolBarButton" type="Button" unique_id=1250775291]
+offset_right = 26.0
+offset_bottom = 26.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/normal = ExtResource("1_1mu15")
+theme_override_styles/pressed = ExtResource("2_ln4gr")
+theme_override_styles/hover = ExtResource("2_ln4gr")
+toggle_mode = true
+icon = ExtResource("3_kyjtg")
+icon_alignment = 1

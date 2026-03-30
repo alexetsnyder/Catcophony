@@ -132,6 +132,42 @@ namespace Catcophony.scenes.world
             return _worldTileMapLayer.LocalToMap(localPos);
         }
 
+        public Vector2? SearchForNearest(Vector2 localPos, TileType tileType)
+        {
+            var startPos = _worldTileMapLayer.LocalToMap(localPos);
+            var allPoints = GetAllPoints();
+
+            Dictionary<Vector2I, bool> visited = allPoints.ToDictionary(p => p, p => false);
+            Queue<Vector2I> positionsToCheck = [];
+            positionsToCheck.Enqueue(startPos);
+
+            while (positionsToCheck.Count > 0)
+            {
+                var coords = positionsToCheck.Dequeue();
+
+                visited[coords] = true;
+
+                var worldCell = GetWorldCell(coords);
+                if (worldCell != null)
+                {
+                    if (worldCell.TileType == tileType)
+                    {
+                        return _worldTileMapLayer.MapToLocal(coords);
+                    }
+
+                    foreach (var adjCoords in GetAdjacentCells(coords, true))
+                    {
+                        if (IsInBounds(adjCoords) && !visited[adjCoords])
+                        {
+                            positionsToCheck.Enqueue(adjCoords);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
         /// <summary>
         /// Get spawn points in the largest connected area and closest to point.
         /// </summary>

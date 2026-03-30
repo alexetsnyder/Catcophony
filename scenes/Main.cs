@@ -19,6 +19,7 @@ using Catcophony.system;
 using System.Collections.Generic;
 using Catcophony.scenes.systems.regions;
 using Catcophony.scenes.gui.world;
+using System.Linq;
 
 namespace Catcophony.scenes
 {
@@ -150,6 +151,13 @@ namespace Catcophony.scenes
             if (@event.IsActionPressed("Quit"))
             {
                 GlobalSystem.Instance.Quit();
+            }
+            else if (@event.IsActionPressed("Test"))
+            {
+                var cat = _cats.First();
+                var nearestWater = _world.SearchForNearest(cat.Position, TileType.WATER);
+
+                GD.Print($"Cat: {cat.CatModel.Name} at {cat.Position} Nearest Water at {nearestWater}");
             }
             else if (@event.IsActionPressed("Map"))
             {

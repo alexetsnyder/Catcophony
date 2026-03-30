@@ -66,15 +66,30 @@ namespace Catcophony.scenes
 
         private Cat _selectedCat = null;
 
-        private readonly List<CatData> _catDataList = [
-            new("Fern", "Black Shorthair Cat", "Playful", 100, WorkType.MINING),
-            new("Fig", "Black Shorthair Cat", "Sad", 100, WorkType.BUILDING),
-            new("Pepper", "Longhair Cat", "Wary", 100, WorkType.FARMING),
-            new("New Year", "Russian Blue Cat", "Curious", 100, WorkType.FISHING),
-            new("Maslow", "Orange", "Timid", 100, WorkType.HAULING),
-            new("Millo", "Orange", "Adventurous", 100, WorkType.WOOD_CUTTING),
-            new("Inky", "Black", "Affectionate", 100, WorkType.GATHERING),
+        private readonly List<CatModel> _catModelList = [
+            BuildCatModel("Fern", "Black Shorthair Cat", "Playful", WorkType.MINING),
+            BuildCatModel("Fig", "Black Shorthair Cat", "Sad", WorkType.BUILDING),
+            BuildCatModel("Pepper", "Longhair Cat", "Wary", WorkType.FARMING),
+            BuildCatModel("New Year", "Russian Blue Cat", "Curious", WorkType.FISHING),
+            BuildCatModel("Maslow", "Orange", "Timid", WorkType.HAULING),
+            BuildCatModel("Millo", "Orange", "Adventurous", WorkType.WOOD_CUTTING),
+            BuildCatModel("Inky", "Black", "Affectionate", WorkType.GATHERING),
         ];
+
+        private static CatModel BuildCatModel(string name, string description, string mood, WorkType workType)
+        {
+            return new CatModel()
+            {
+                Name = name,
+                Description = description,
+                Feelings = mood,
+                Health = 100,
+                Stamina = 100,
+                Hunger = 100,
+                Thirst = 100,
+                WorkType = workType,
+            };
+        }
 
         public override void _Ready()
         {
@@ -229,7 +244,7 @@ namespace Catcophony.scenes
 
         private void CreateCats()
         {
-            int n = _catDataList.Count;
+            int n = _catModelList.Count;
             var spawnPoints = _world.GetSpawnPoints(_world.Center, n);
 
             var spawnPointsStr = "";
@@ -250,14 +265,14 @@ namespace Catcophony.scenes
                         cat.Id = i;
 
                         var newPlanner = new Planner(_workSystem, _pathingSystem, _itemSystem);
-                        cat.SetDeps(_world, _pathingSystem, newPlanner);
+                        cat.SetDeps(_pathingSystem, newPlanner);
 
                         var catPos = spawnPoints[i];
                         cat.Position = catPos;
                         PlaceCat(catPos);
 
                         cat.Speed = 8;
-                        cat.SetCatData(_catDataList[i]);
+                        cat.SetCatData(_catModelList[i]);
                         WireCatEvents(cat);
 
                         _cats.Add(cat);
@@ -470,7 +485,7 @@ namespace Catcophony.scenes
         private void OnCatClickedOn(Cat cat)
         {
             _selectedCat = cat;
-            _characterDisplay.SetCatData(cat.CatData);
+            _characterDisplay.SetCatData(cat.CatModel);
             _characterDisplay.Visible = true;
         }
 

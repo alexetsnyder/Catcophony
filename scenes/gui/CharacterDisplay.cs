@@ -29,7 +29,7 @@ namespace Catcophony.scenes.gui
 
         private Vector2 _prevMousePos;
 
-        private CatData _catData;
+        private CatModel _catData;
 
         public override void _Ready()
         {
@@ -50,7 +50,7 @@ namespace Catcophony.scenes.gui
             FillUI();
         }
 
-        public void SetCatData(CatData catData)
+        public void SetCatData(CatModel catData)
         {
             _catData = catData;
             FillUI();

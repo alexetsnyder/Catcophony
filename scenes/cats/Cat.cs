@@ -42,9 +42,9 @@ namespace Catcophony.scenes.cats
 
         public int Id { get; set; }
 
-        public CatData CatData { get; private set; }
+        public CatModel CatModel { get; private set; }
 
-        public WorkType WorkType { get => CatData.WorkType; }
+        public WorkType WorkType { get => CatModel.WorkType; }
 
         public bool IsWorking { get; private set; } = false;
 
@@ -55,8 +55,6 @@ namespace Catcophony.scenes.cats
         public float Height { get => _catSprite.GetRect().Size.Y; }
 
         private Work _currentWork;
-
-        private IWorld _world;
 
         private IPathingSystem _pathingSystem;
 
@@ -76,7 +74,7 @@ namespace Catcophony.scenes.cats
 
         private double ElapsedWorkTime = 0.0;
 
-        private IGoal _goal = new WorkGoal();
+        private readonly IGoal _goal = new WorkGoal();
 
         private IPlanner _planner;
 
@@ -126,14 +124,13 @@ namespace Catcophony.scenes.cats
             }
         }
 
-        public void SetCatData(CatData data)
+        public void SetCatData(CatModel data)
         {
-            CatData = data;
+            CatModel = data;
         }
 
-        public void SetDeps(IWorld world, IPathingSystem pathingSystem, IPlanner planner)
+        public void SetDeps(IPathingSystem pathingSystem, IPlanner planner)
         {
-            _world = world;
             _pathingSystem = pathingSystem;
             _planner = planner;
         }
@@ -142,7 +139,7 @@ namespace Catcophony.scenes.cats
         {
             IsWorking = true;
             _currentWork = work;
-            CatData.WorkPos = _currentWork.LocalPos;
+            CatModel.WorkPos = _currentWork.LocalPos;
             _workProgress.Value = 0;
             _workProgress.Visible = true;
         }
@@ -154,7 +151,7 @@ namespace Catcophony.scenes.cats
             EmitSignal(SignalName.CatWork, this, _currentWork);
 
             IsWorking = false;
-            CatData.WorkPos = null;  
+            CatModel.WorkPos = null;  
         }
 
         public void SetPath(Path path)
@@ -212,7 +209,7 @@ namespace Catcophony.scenes.cats
             if (ElapsedWorkTime >= WorkTicks)
             {
                 CompleteWork();
-                ElapsedWorkTime %= WorkTicks;
+                ElapsedWorkTime %= WorkTicks; 
             }
         }
 

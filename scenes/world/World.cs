@@ -139,13 +139,13 @@ namespace Catcophony.scenes.world
 
             Dictionary<Vector2I, bool> visited = allPoints.ToDictionary(p => p, p => false);
             Queue<Vector2I> positionsToCheck = [];
+
             positionsToCheck.Enqueue(startPos);
+            visited[startPos] = true;
 
             while (positionsToCheck.Count > 0)
             {
                 var coords = positionsToCheck.Dequeue();
-
-                visited[coords] = true;
 
                 var worldCell = GetWorldCell(coords);
                 if (worldCell != null)
@@ -159,6 +159,7 @@ namespace Catcophony.scenes.world
                     {
                         if (IsInBounds(adjCoords) && !visited[adjCoords])
                         {
+                            visited[adjCoords] = true;
                             positionsToCheck.Enqueue(adjCoords);
                         }
                     }

@@ -24,7 +24,7 @@ namespace Catcophony.scenes.systems.building
 
         private TileType _current = TileType.NONE;
 
-        private List<Vector2I> _atlasCoords = [];
+        private readonly List<Vector2I> _atlasCoords = [];
 
         private int _atlasIndex = 0;
 

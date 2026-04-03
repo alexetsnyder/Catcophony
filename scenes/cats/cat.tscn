@@ -16,6 +16,7 @@ script = ExtResource("1_3xrku")
 texture = ExtResource("2_3xrku")
 
 [node name="CatArea" type="Area2D" parent="." unique_id=1913409475]
+process_mode = 3
 
 [node name="CatAreaCollision" type="CollisionShape2D" parent="CatArea" unique_id=1920732016]
 shape = SubResource("RectangleShape2D_3xrku")

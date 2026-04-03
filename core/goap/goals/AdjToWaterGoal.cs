@@ -7,7 +7,7 @@ namespace Catcophony.core.goap.goals
 {
     public partial class AdjToWaterGoal : GoalBase
     {
-        private IWorld _world;
+        private readonly IWorld _world;
 
         public AdjToWaterGoal(IAction parentAction, IWorld world)
         {
@@ -24,7 +24,7 @@ namespace Catcophony.core.goap.goals
 
             if (worldStateBlackboard.TryGetVector2(Constants.Names.AgentPos, out var agentPos))
             {
-                //Find Nearest water
+                //Find Nearest water 
                 //Are we adj to it.
             }
 

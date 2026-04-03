@@ -16,6 +16,7 @@
 [ext_resource type="Script" uid="uid://c3jqhc2yy0sqe" path="res://scenes/systems/work/commands/CommandFactory.cs" id="9_trceg"]
 
 [node name="Main" type="Node2D" unique_id=25718441]
+process_mode = 3
 script = ExtResource("1_o5qli")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=932187986]
@@ -28,7 +29,7 @@ color = Color(0, 0, 0, 1)
 
 [node name="CommandFactory" type="Node" parent="." unique_id=276563073 node_paths=PackedStringArray("WorldNode", "PathingSystemNode", "ItemSystemNode", "BuildingSystemNode", "SelectionSystemNode")]
 script = ExtResource("9_trceg")
-WorldNode = NodePath("../World")
+WorldNode = NodePath("../PausableNodes/World")
 PathingSystemNode = NodePath("../PathingSystem")
 ItemSystemNode = NodePath("../ItemSystem")
 BuildingSystemNode = NodePath("../BuildingSystem")
@@ -38,29 +39,35 @@ metadata/_custom_type_script = "uid://c3jqhc2yy0sqe"
 [node name="WorkSystem" type="Node" parent="." unique_id=826126942 node_paths=PackedStringArray("PathingSystemNode", "WorldNode", "CommandFactory")]
 script = ExtResource("2_choun")
 PathingSystemNode = NodePath("../PathingSystem")
-WorldNode = NodePath("../World")
+WorldNode = NodePath("../PausableNodes/World")
 CommandFactory = NodePath("../CommandFactory")
 metadata/_custom_type_script = "uid://c11836ohje6pr"
 
-[node name="Map" parent="." unique_id=692249368 instance=ExtResource("3_jyhfs")]
+[node name="PausableNodes" type="Node2D" parent="." unique_id=1891035213]
+unique_name_in_owner = true
+process_mode = 1
+
+[node name="World" parent="PausableNodes" unique_id=1915405860 node_paths=PackedStringArray("ItemSystemNode") instance=ExtResource("2_sugp2")]
+unique_name_in_owner = true
+Rows = 192
+Cols = 192
+ItemSystemNode = NodePath("../../ItemSystem")
+
+[node name="Map" parent="PausableNodes" unique_id=692249368 instance=ExtResource("3_jyhfs")]
+unique_name_in_owner = true
 visible = false
 Rows = 192
 Cols = 192
-
-[node name="World" parent="." unique_id=1915405860 node_paths=PackedStringArray("ItemSystemNode") instance=ExtResource("2_sugp2")]
-Rows = 192
-Cols = 192
-ItemSystemNode = NodePath("../ItemSystem")
 
 [node name="RegionSystem" parent="." unique_id=147166882 instance=ExtResource("6_a8y0u")]
 
 [node name="ItemSystem" parent="." unique_id=722635205 instance=ExtResource("5_eb6dy")]
 
 [node name="SelectionSystem" parent="." unique_id=1554002201 node_paths=PackedStringArray("WorldNode") instance=ExtResource("2_tipki")]
-WorldNode = NodePath("../World")
+WorldNode = NodePath("../PausableNodes/World")
 
 [node name="PathingSystem" parent="." unique_id=66750832 node_paths=PackedStringArray("WorldNode") instance=ExtResource("6_85g3d")]
-WorldNode = NodePath("../World")
+WorldNode = NodePath("../PausableNodes/World")
 
 [node name="BuildingSystem" parent="." unique_id=598471193 instance=ExtResource("8_ya4ey")]
 

@@ -25,6 +25,8 @@ namespace Catcophony.scenes
 {
     public partial class Main : Node2D
     {
+        private Node2D _pausableNodes;
+
         private Map _map;
 
         private World _world;
@@ -67,6 +69,8 @@ namespace Catcophony.scenes
 
         private Cat _selectedCat = null;
 
+        private bool _isPaused = false;
+
         private readonly List<CatModel> _catModelList = [
             BuildCatModel("Fern", "Black Shorthair Cat", "Playful", WorkType.MINING),
             BuildCatModel("Fig", "Black Shorthair Cat", "Sad", WorkType.BUILDING),
@@ -96,8 +100,9 @@ namespace Catcophony.scenes
         {
             _debugGUI = GetNode<CanvasLayer>("DebugGUI");
             _gui = GetNode<CanvasLayer>("GUI");
-            _map = GetNode<Map>("Map");
-            _world = GetNode<World>("World");
+            _pausableNodes = GetNode<Node2D>("%PausableNodes");
+            _map = GetNode<Map>("%Map");
+            _world = GetNode<World>("%World");
             _selectionSystem = GetNode<SelectionSystem>("SelectionSystem");
             _pathingSystem = GetNode<PathingSystem>("PathingSystem");
             _buildingSystem = GetNode<BuildingSystem>("BuildingSystem");
@@ -151,6 +156,18 @@ namespace Catcophony.scenes
             if (@event.IsActionPressed("Quit"))
             {
                 GlobalSystem.Instance.Quit();
+            }
+            else if (@event.IsActionPressed("Pause"))
+            {
+                _isPaused = !_isPaused;
+                if (_isPaused)
+                {
+                    GetTree().Paused = true;
+                }
+                else
+                {
+                    GetTree().Paused = false;
+                }
             }
             else if (@event.IsActionPressed("Test"))
             {
@@ -268,7 +285,7 @@ namespace Catcophony.scenes
                     var cat = GlobalSystem.Instance.InstantiateScene<Cat>("res://scenes/cats/cat.tscn");
                     if (cat != null)
                     {
-                        AddChild(cat);
+                        _pausableNodes.AddChild(cat);
 
                         cat.Id = i;
 
@@ -473,7 +490,7 @@ namespace Catcophony.scenes
                     _inventoryControl.Visible = true;
                 }
             } 
-            else
+            else if (!_cats.Any(c => _world.GetCoords(c.Position) == _world.GetCoords(localPos)))
             {
                 var worldInfoData = new WorldInfoData()
                 {
@@ -484,7 +501,7 @@ namespace Catcophony.scenes
                     RegionType = _regionSystem.GetRegionType(localPos),
                     Items = _itemSystem.GetItems(localPos),
                 };
-                
+
                 _worldInfoDisplay.SetInfo(worldInfoData);
                 _worldInfoDisplay.Visible = true;
             }

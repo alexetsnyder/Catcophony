@@ -16,9 +16,11 @@ namespace Catcophony.core.goap
         public bool IsSuccess { get; set; }
     }
 
-    public partial class Planner(IWorkSystem workSystem, IPathingSystem pathingSystem, IItemSystem itemSystem) : IPlanner
+    public partial class Planner(IWorld world, IWorkSystem workSystem, IPathingSystem pathingSystem, IItemSystem itemSystem) : IPlanner
     {
         private WorldState _worldState = null;
+
+        private readonly IWorld _world = world;
 
         private readonly IWorkSystem _workSystem = workSystem;
 
@@ -28,7 +30,7 @@ namespace Catcophony.core.goap
 
         public Plan Plan(IAgent agent, IGoal goal)
         {
-            _worldState = new(agent, _workSystem, _pathingSystem, _itemSystem);
+            _worldState = new(agent, _world, _workSystem, _pathingSystem, _itemSystem);
 
             Leaf root = new()
             {

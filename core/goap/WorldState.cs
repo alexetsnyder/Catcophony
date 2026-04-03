@@ -16,6 +16,8 @@ namespace Catcophony.core.goap
 
         private readonly IAgent _agent;
 
+        private readonly IWorld _world;
+
         private readonly IWorkSystem _workSystem;
 
         private readonly IPathingSystem _pathingSystem;
@@ -37,20 +39,27 @@ namespace Catcophony.core.goap
         public enum Actions
         {
             NONE,
+
             MINE,
             CUT,
             BUILD,
             FARM,
             GATHER, 
             FISH,
+
             MOVE_TO,
+            MOVE_TO_WATER,
+
             HAUL,
             GET_ITEM,
+
+            DRINK,  
         }
 
-        public WorldState(IAgent agent, IWorkSystem workSystem, IPathingSystem pathingSystem, IItemSystem itemSystem) 
+        public WorldState(IAgent agent, IWorld world, IWorkSystem workSystem, IPathingSystem pathingSystem, IItemSystem itemSystem) 
         { 
             _agent = agent;
+            _world = world;
             _workSystem = workSystem;
             _pathingSystem = pathingSystem;
             _itemSystem = itemSystem;
@@ -85,10 +94,14 @@ namespace Catcophony.core.goap
                     return new WorkAction(new(workType.ToString()), 1, workType);
                 case Actions.MOVE_TO:
                     return new MoveToAction(_pathingSystem);
+                case Actions.MOVE_TO_WATER:
+                    return new MoveToWaterAction(_world, _pathingSystem);
                 case Actions.HAUL:
                     return new HaulAction();
                 case Actions.GET_ITEM:
                     return new GetItemAction();
+                case Actions.DRINK:
+                    return new DrinkAction(_world);
                 default:
                     GD.Print($"Action {action} not implimented in BuildAction method.");
                     return null;

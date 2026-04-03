@@ -1,6 +1,6 @@
+using Catcophony.core.goap.goals;
 using Catcophony.core.naming;
-using Godot;
-using System;
+using Catcophony.scenes.common.interfaces;
 
 namespace Catcophony.core.goap.actions
 {
@@ -10,11 +10,19 @@ namespace Catcophony.core.goap.actions
 
         public override int Cost { get => 1; }
 
+        public override bool SkipAssign { get => true; }
+
         private readonly FastName _name = new("DrinkAction");
 
-        public DrinkAction()
+        public DrinkAction(IWorld world)
         {
+            var waterGoal = new WaterGoal();
+            _effects.Add(waterGoal);
 
+            var findWaterGoal = new FindWaterGoal(this, world);
+            var adjToWaterGoal = new AdjToWaterGoal(this, world);
+            _preconditions.Add(findWaterGoal);
+            _preconditions.Add(adjToWaterGoal);
         }
     }
 }

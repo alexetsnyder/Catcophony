@@ -38,6 +38,8 @@ namespace Catcophony.scenes.common.interfaces
 
         public List<Vector2I> GetAllPoints();
 
+        public Vector2? SearchForNearest(Vector2 localPos, TileType tileType);
+
         public List<Vector2> GetAdjacentTiles(Vector2 localPos, bool includeDiagonals = false);
 
         public ItemMaterial Mine(Vector2 localPos);

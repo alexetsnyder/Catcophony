@@ -24,8 +24,16 @@ namespace Catcophony.core.goap.goals
 
             if (worldStateBlackboard.TryGetVector2(Constants.Names.AgentPos, out var agentPos))
             {
-                //Find Nearest water 
-                //Are we adj to it.
+                if (blackboard.TryGetVector2(Constants.Names.GoalPos, out var goalPos))
+                {
+                    foreach (var adjPos in _world.GetAdjacentTiles(goalPos))
+                    {
+                        if (agentPos.IsEqualApprox(adjPos))
+                        {
+                            return true;
+                        }
+                    }
+                }
             }
 
             return false;

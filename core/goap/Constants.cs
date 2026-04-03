@@ -14,6 +14,7 @@ namespace Catcophony.core.goap
             public static readonly FastName HasWork = new("Work.HasWork");
             public static readonly FastName HasPath = new("Work.HasPath");
             public static readonly FastName Path = new("Work.Path");
+            public static readonly FastName GoalPos = new("Goal.Position");
         }
     }
 }

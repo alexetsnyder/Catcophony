@@ -109,7 +109,8 @@ namespace Catcophony.core.goap.actions
         public virtual void Execute(Cat cat)
         {
             if (_blackboard.TryGetWork(Constants.Names.Work, out var work) ||
-                _child.GetBlackboard().TryGetWork(Constants.Names.Work, out work))
+                (_child != null &&
+                _child.GetBlackboard().TryGetWork(Constants.Names.Work, out work)))
             {
                 cat.SetWork(work);
             }

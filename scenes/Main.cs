@@ -1,5 +1,5 @@
-using Godot;
 using Catcophony.core.goap;
+using Catcophony.core.goap.goals;
 using Catcophony.data;
 using Catcophony.data.enums;
 using Catcophony.scenes.camera;
@@ -8,17 +8,18 @@ using Catcophony.scenes.gui;
 using Catcophony.scenes.gui.debug;
 using Catcophony.scenes.gui.items;
 using Catcophony.scenes.gui.toolbar;
+using Catcophony.scenes.gui.world;
 using Catcophony.scenes.map;
 using Catcophony.scenes.systems.building;
 using Catcophony.scenes.systems.items;
 using Catcophony.scenes.systems.pathing;
+using Catcophony.scenes.systems.regions;
 using Catcophony.scenes.systems.selection;
 using Catcophony.scenes.systems.work;
 using Catcophony.scenes.world;
 using Catcophony.system;
+using Godot;
 using System.Collections.Generic;
-using Catcophony.scenes.systems.regions;
-using Catcophony.scenes.gui.world;
 using System.Linq;
 
 namespace Catcophony.scenes
@@ -171,10 +172,9 @@ namespace Catcophony.scenes
             }
             else if (@event.IsActionPressed("Test"))
             {
-                var cat = _cats.First();
-                var nearestWater = _world.SearchForNearest(cat.Position, TileType.WATER);
+                var cat = _cats.First(c => c.CatModel.Name == "Maslow");
 
-                GD.Print($"Cat: {cat.CatModel.Name} at {cat.Position} Nearest Water at {nearestWater}");
+                cat.Goal = new WaterGoal();
             }
             else if (@event.IsActionPressed("Map"))
             {
@@ -289,15 +289,17 @@ namespace Catcophony.scenes
 
                         cat.Id = i;
 
-                        var newPlanner = new Planner(_workSystem, _pathingSystem, _itemSystem);
+                        var newPlanner = new Planner(_world, _workSystem, _pathingSystem, _itemSystem);
                         cat.SetDeps(_pathingSystem, newPlanner);
 
                         var catPos = spawnPoints[i];
                         cat.Position = catPos;
                         PlaceCat(catPos);
 
+                        var catData = _catModelList[i];
+                        cat.Goal = new WorkGoal();
                         cat.Speed = 8;
-                        cat.SetCatData(_catModelList[i]);
+                        cat.SetCatModel(catData);
                         WireCatEvents(cat);
 
                         _cats.Add(cat);

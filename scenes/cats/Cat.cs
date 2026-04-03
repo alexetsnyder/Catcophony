@@ -54,6 +54,8 @@ namespace Catcophony.scenes.cats
 
         public float Height { get => _catSprite.GetRect().Size.Y; }
 
+        public IGoal Goal { get; set; }
+
         private Work _currentWork;
 
         private IPathingSystem _pathingSystem;
@@ -73,8 +75,6 @@ namespace Catcophony.scenes.cats
         private Vector2 _nextPos = new();
 
         private double ElapsedWorkTime = 0.0;
-
-        private readonly IGoal _goal = new WorkGoal();
 
         private IPlanner _planner;
 
@@ -118,13 +118,13 @@ namespace Catcophony.scenes.cats
 
         public void Plan()
         {
-            if (_currentPlan == null || _currentPlan.Actions.Count == 0)
+            if (Goal != null && (_currentPlan == null || _currentPlan.Actions.Count == 0))
             {
-                _currentPlan = _planner.Plan(this, _goal);
+                _currentPlan = _planner.Plan(this, Goal);
             }
         }
 
-        public void SetCatData(CatModel data)
+        public void SetCatModel(CatModel data)
         {
             CatModel = data;
         }
